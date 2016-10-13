@@ -1,0 +1,80 @@
+.wpna-tabs {
+	width: auto;
+	margin: 0 auto;
+}
+.wpna-tabs.ui-corner-all {
+	border: 0px;
+}
+
+.wpna-tabs ul {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	border: 0px;
+	border-bottom: 1px solid #eee;
+	background: none;
+}
+
+.wpna-tabs.ui-tabs .ui-tabs-nav li {
+	display: inherit;
+	margin-bottom: 0px;
+	list-style: none;
+	float: none;
+	top: inherit;
+	margin: 0px;
+	border-bottom-width: 0;
+	padding: 0;
+	white-space: nowrap;
+	color: inherit;
+}
+
+.wpna-tabs.ui-tabs .ui-tabs-nav li.ui-state-default {
+	border: 0px;
+	background: none;
+}
+
+
+.wpna-tabs ul li a {
+	display: inline-block;
+	margin:0;
+	cursor: pointer;
+	border: 1px solid #ccc;
+	border-bottom: none;
+	margin-left: .5em;
+	padding: 5px 10px;
+	background: #e5e5e5;
+	color: #555;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.wpna-tabs ul li.ui-state-active {
+	background: none;
+	border: 0px;
+}
+
+.wpna-tabs ul li.ui-tabs-active a {
+	margin-bottom: -1px;
+	border-bottom: 1px solid #fff;
+	background: #fff;
+	color: #000;
+}
+
+.wpna-tabs ul li:hover a {
+	background-color: #fff;
+	color: #444;
+}
+
+.wpna-tabs > div {
+	display: none;
+	padding: 15px;
+	line-height:1.4;
+}
+
+.wpna-tabs > div.current{
+	display: inherit;
+}
+
+.wpna-error {
+	color: red !important;
+}
