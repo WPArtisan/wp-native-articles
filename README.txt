@@ -58,7 +58,7 @@ Yep. It can be found [here](https://wp-native-articles.com/roadmap/).
 
 = I've found a bug? I have a feature request? =
 
-Excellent. We'd love to here from you. All support for the free plugin is done
+Excellent. We'd love to hear from you. All support for the free plugin is done
 through the WordPress support forum found on the Plugin download page.
 
 = Does it support WordPress Multisite? =
