@@ -1,4 +1,4 @@
-=== WPArtisan Native Articles ===
+=== WP Native Articles ===
 Contributors: OzTheGreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
@@ -69,7 +69,11 @@ to inherit settings from when new blogs are created.
 
 == Screenshots ==
 
-1.
+1. Default options page.
+2. Default options page (cont).
+3. Feed specific options.
+4. Post options overrides box.
+5. Multisite options page.
 
 == Changelog ==
 
