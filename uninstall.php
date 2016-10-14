@@ -5,7 +5,7 @@
  *
  * When the plugin is removed make sure it cleans up after itself.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 // If uninstall not called from WordPress, then exit.

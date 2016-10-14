@@ -6,7 +6,7 @@
  * instance of WPNA_Facebook_Post. This template can be overridden by creating
  * a template of the same name in your theme folder.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 ?>
 <!doctype html>
@@ -118,7 +118,7 @@
 					/**
 					 * Use this action to output any further elements in the article header
 					 *
-					 * @since 0.0.1
+					 * @since 1.0.0
 					 * @param WP_Post $post The current post.
 					 */
 					do_action( 'wpna_facebook_article_content_header', $post );
@@ -162,7 +162,7 @@
 							 * Filter any attributes applied to the <li> element
 							 * of the related articles. e.g. sponsored
 							 *
-							 * @since 0.0.1
+							 * @since 1.0.0
 							 * @param $attrs List of attributes to add
 							 * @param $related_article The current related articles
 							 * @param $post The current post
@@ -180,7 +180,7 @@
 					/**
 					 * Use this action to output any further elements in the article footer.
 					 *
-					 * @since 0.0.1
+					 * @since 1.0.0
 					 * @param WP_Post $post The current post.
 					 */
 					do_action( 'wpna_facebook_article_content_footer', $post );

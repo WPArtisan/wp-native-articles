@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Extends the Admin Base and adds the Support page and related content.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface {
 
@@ -20,7 +20,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * Used for registering menu items and tabs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var string
 	 */
@@ -31,7 +31,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -45,7 +45,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * This adds the sub level menu page for the Support page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -66,7 +66,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		/**
 		 * Custom action for adding more menu items.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $page_hook The Unique hook of the newly registered page
 		 */
 		do_action( 'wpna_admin_support_menu_items', $page_hook );
@@ -79,7 +79,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * the WPNA_Helper_Tabs class to setup and register the tabbed interface.
 	 * The WPNA_Helper_Tabs class is initiated in the setup_tabs method.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return nul
@@ -106,7 +106,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * 'General' & 'Debug' tabs. Other tabs are added using the
 	 * 'wpna_support_admin_tabs' action.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -133,7 +133,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 * Called after tabs have been setup for this page.
 		 * Passes the tabs in so it can be modified, other tabs added etc.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param WPNA_Helper_Tabs $this->tabs Instance of the tabs helper. Used
 		 *                                     to register new tabs.
 		 */
@@ -145,7 +145,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * Do actions for registering meta boxes for this screen.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -157,14 +157,14 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 * Trigger the add_meta_boxes_{$screen_id} hook to allow meta boxes
 		 * to be added to this screen.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		do_action( 'add_meta_boxes_' . $screen->id );
 
 		/**
 		* Trigger the add_meta_boxes hook to allow meta boxes to be added.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $screen->id The ID of the screen for the admin page.
 		 */
 		do_action( 'add_meta_boxes', $screen->id );
@@ -178,7 +178,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * Nothing fancy here. Just HTML.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -206,7 +206,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * Has a summary table then a large box with full system debug.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -302,7 +302,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * N.b. We don't want this translated otherwise I wont be able to read it!
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return array
@@ -421,7 +421,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 *
 	 * Parses the phpinfo() function and returns everything as a handy array.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return array
@@ -470,7 +470,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	/**
 	 * Retrives the current MySql version and returns it.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string

@@ -7,7 +7,7 @@
  * of WPNA_Facebook_Post. This template can be overridden by creating a
  * template of the same name in your theme folder.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 ?>
 <item>

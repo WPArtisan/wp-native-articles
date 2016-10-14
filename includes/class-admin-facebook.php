@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Extends the Admin Base and adds all generic Facebook pages & settings that
  * aren't directly related to the RSS feed or API.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interface {
 
@@ -21,7 +21,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * Used for registering menu items and tabs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var string
 	 */
@@ -30,7 +30,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	/**
 	 * An instance of the Helper_Tabs class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var WPNA_Helper_Tabs
 	 */
@@ -41,7 +41,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -93,7 +93,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * This adds the sub level menu page for the Facebook settings page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -114,7 +114,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		/**
 		 * Custom action for adding more menu items.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $page_hook The Unique hook of the newly registered page
 		 */
 		do_action( 'wpna_admin_facebook_menu_items', $page_hook );
@@ -127,7 +127,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * the WPNA_Helper_Tabs class to setup and register the tabbed interface.
 	 * The WPNA_Helper_Tabs class is initiated in the setup_tabs method.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return nul
@@ -153,7 +153,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * first tab, 'General'. Other tabs are added using the
 	 * 'wpna_admin_facebook_tabs' action.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -173,7 +173,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		 * Called after the first tab has been setup for this page.
 		 * Passes the tabs in so it can be modified, other tabs added etc.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param WPNA_Helper_Tabs $this->tabs Instance of the tabs helper. Used
 		 *                                     to register new tabs.
 		 */
@@ -185,7 +185,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * Do actions for registering meta boxes for this screen.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -197,14 +197,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		 * Trigger the add_meta_boxes_{$screen_id} hook to allow meta boxes
 		 * to be added to this screen.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		do_action( 'add_meta_boxes_' . $screen->id );
 
 		/**
 		* Trigger the add_meta_boxes hook to allow meta boxes to be added.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $screen->id The ID of the screen for the admin page.
 		 */
 		do_action( 'add_meta_boxes', $screen->id );
@@ -225,7 +225,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * settings array that aren't registered here and merges them in to ensure
 	 * they're not lost.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -349,7 +349,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * settings_fields() requries the name of the group of settings to ouput.
 	 * do_settings_sections() requires the unique page slug for this settings form.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -367,7 +367,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	/**
 	 * Outputs the HTML displayed at the top of the settings section.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -386,7 +386,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * Whether the Facebook Instant Articles feed is enabled or not.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -408,7 +408,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 *
 	 * The authorisation ID from claiming your URL. Outputted in the header.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -426,7 +426,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the default styling template to use for articles. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -444,7 +444,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the default copyright to use for each article. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -474,7 +474,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Auto adds Like option to images. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -497,7 +497,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Auto adds Comments option to images. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -520,7 +520,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the default credits to use for each article. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -538,7 +538,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the default copyright to use for each article. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -556,7 +556,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the analytics code to use in each article. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -574,7 +574,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Enables Ads in Facebook instant articles. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -597,7 +597,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Enables the auto ad placement feature in Facebook. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -620,7 +620,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Sets the default ad code to use for each article. Can be overridden on a
 	 * per article basis.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -638,7 +638,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Just a filter that enables modification of the $tabs array.
 	 * Would be better switched to a function.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Refactor. Tabs class?
 	 *
 	 * @access public
@@ -665,7 +665,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * checking if the global variables has been overridden at an article level
 	 * or not.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Publish button
 	 * @todo Swtich to hooks for fields
 	 *
@@ -775,7 +775,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			 * Add extra fields using this action. Or deregister this method
 			 * altogether and register your own.
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 */
 			do_action( 'wpna_post_meta_box_facebook_settings_footer' );
 			?>
@@ -792,7 +792,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * Creates a unique filter for each value that then uses hooks to provide
 	 * sanitization. Values are then stored in the post meta.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  int    $post_id The post ID.
@@ -836,7 +836,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		/**
 		 * Use this filter to add any custom fields to the data.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @var array  $field_keys The keys to check.
 		 * @var object $post       Whether this is an existing post being updated or not.
@@ -858,7 +858,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			 *
 			 * All sanitization hooks should be registerd in the hooks() method.
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 *
 			 * @param mixed  $value  The value to sanitize
 			 * @param string $key    The options name

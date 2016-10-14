@@ -13,14 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * A wrapper around the WP_Post class that provides access to all the fields
  * needed for instant articles as well as adding in filters.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class WPNA_Facebook_Post {
 
 	/**
 	 * The post id we're currently working with.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var ints
 	 */
@@ -31,7 +31,7 @@ class WPNA_Facebook_Post {
 	 *
 	 * Sets the $post_id variable.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -43,7 +43,7 @@ class WPNA_Facebook_Post {
 	/**
 	 * Returns the post ID.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return int
@@ -58,7 +58,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -71,7 +71,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the article style.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $style The style to be used for the post.
 		 */
 		$style = apply_filters( 'wpna_facebook_post_get_style', $style );
@@ -85,7 +85,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -96,7 +96,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the title.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $title The title to be used for the post.
 		 */
 		return apply_filters( 'wpna_facebook_post_get_the_title', $title );
@@ -108,7 +108,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -119,7 +119,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the permalink.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $permalink The permalink to be used for the post.
 		 */
 		return apply_filters( 'wpna_facebook_post_get_permalink', $permalink );
@@ -131,7 +131,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -142,7 +142,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the guid.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $guid The guid to be used for the post.
 		 */
 		return apply_filters( 'wpna_facebook_post_get_the_guid', $guid );
@@ -161,7 +161,7 @@ class WPNA_Facebook_Post {
 	 *	    'caption'         => string,
 	 *     );
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return array Array of image properties.
@@ -200,7 +200,7 @@ class WPNA_Facebook_Post {
 		 * Filter the featured image url.
 		 * For example, set a default for articles that don't have one.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var array|null $image The image to use in the featured spot.
 		 */
 		return apply_filters( 'wpna_facebook_post_get_the_featured_image', $image );
@@ -211,7 +211,7 @@ class WPNA_Facebook_Post {
 	 *
 	 * Defaults to the article's caregories
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string $kicker
 	 */
@@ -225,7 +225,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * If empty or false then kicker is hidden.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var string $kicker The article kicker.
 		 */
 		$kicker = apply_filters( 'wpna_facebook_post_get_the_kicker', $kicker );
@@ -236,7 +236,7 @@ class WPNA_Facebook_Post {
 	/**
 	 * Returns the excerpt of the post.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -250,7 +250,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Apply the default WP Filters for the post excerpt.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $post_excerpt The post excerpt.
 		 */
 		$excerpt = apply_filters( 'get_the_excerpt', $post->post_excerpt );
@@ -258,7 +258,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Apply custom wpna filters for the post excerpt.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $post_excerpt The post excerpt.
 		 */
 		$excerpt = apply_filters( 'wpna_facebook_post_get_the_excerpt', $excerpt );
@@ -280,7 +280,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the publish date ISO format
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $publish_date The publish date of the article in ISO 8601 format.
 		 */
 		$publish_date = apply_filters( 'wpna_facebook_post_get_publish_date_iso', $publish_date );
@@ -291,7 +291,7 @@ class WPNA_Facebook_Post {
 	/**
 	 * Returns the publish data of the post in pretty format.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -302,7 +302,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the publish date.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $publish_date The publish date of the article in display format.
 		 */
 		$publish_date = apply_filters( 'wpna_facebook_post_get_publish_date', $publish_date );
@@ -322,7 +322,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the modified date ISO format
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $modified_date The modified date of the article in iso format.
 		 */
 		$modified_date = apply_filters( 'wpna_facebook_post_get_modified_date_iso', $modified_date );
@@ -333,7 +333,7 @@ class WPNA_Facebook_Post {
 	/**
 	 * Returns the modified date of the post in pretty format.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -344,7 +344,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the modified date
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $modified_date The modified date of the article in display format.
 		 */
 		$modified_date = apply_filters( 'wpna_facebook_post_get_modified_date', $modified_date );
@@ -373,7 +373,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * We check for the co-author plus plugin in the transformer class.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param array $authors Array of author data.
 		 */
 		$authors = apply_filters( 'wpna_facebook_post_authors', $authors );
@@ -388,7 +388,7 @@ class WPNA_Facebook_Post {
 	 * Then uses DOMDocument to provide better parsing hooks, (which the transformer
 	 * class makes extensive use of). Tries to cache the result in transients.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -407,7 +407,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * The transformer class uses this to wrap shortcodes before they're parsed.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $content The post content
 		 */
 		$content = apply_filters( 'wpna_facebook_article_pre_the_content_filter', $content );
@@ -441,7 +441,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * The transformer classes uses this to clean up unnecessary elements.
 		 *
-		 * @since 0.0.1.
+		 * @since 1.0.0.
 		 * @param string $content The post content.
 		 */
 		$content = apply_filters( 'wpna_facebook_article_after_the_content_filter', $content );
@@ -468,7 +468,7 @@ class WPNA_Facebook_Post {
 			 * The transformer class uses this filter extensively to parse the content
 			 * and make it instant article compatible.
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 * @param DOMDocument $DOMDocument
 			 */
 			$DOMDocument = apply_filters( 'wpna_facebook_article_content_transform', $DOMDocument );
@@ -484,7 +484,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * The transformer class uses this to clean up after itself
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $content The post content
 		 */
 		$content = apply_filters( 'wpna_facebook_article_content_after_transform', $content );
@@ -500,7 +500,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -515,7 +515,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the credits for each article.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var string $credits The article credits.
 		 */
 		$credits = apply_filters( 'wpna_facebook_article_content_credits', $credits );
@@ -529,7 +529,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -544,7 +544,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the copyright for each article.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var string $copyright The article copyright.
 		 */
 		$copyright = apply_filters( 'wpna_facebook_article_content_copyright', $copyright );
@@ -558,7 +558,7 @@ class WPNA_Facebook_Post {
 	 * Facebook allows up to three related articles to be specified at the
 	 * bottom of every article.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return object WP_Query
@@ -588,7 +588,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the query arguments used to generate the related posts links.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var array $query_args Associated array of query arguments.
 		 */
 		$query_args = apply_filters( 'wpna_facebook_article_related_articles_query', $query_args );
@@ -602,7 +602,7 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
@@ -619,7 +619,7 @@ class WPNA_Facebook_Post {
 		/**
 		 * Filter the analytics code for the article.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var string
 		 */
 		$code = apply_filters( 'wpna_facebook_post_analytics', $code );
@@ -630,7 +630,7 @@ class WPNA_Facebook_Post {
 	/**
 	 * Returns the cached contents of a post.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  int $id The ID of the post to retrieve the cache for,
@@ -646,7 +646,7 @@ class WPNA_Facebook_Post {
 	 * The post content is expensive to generate, ideally we want to generate
 	 * it as few tiems as possible.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param int    $id      The ID of the post to set the cache for.
@@ -659,7 +659,7 @@ class WPNA_Facebook_Post {
 		 *
 		 * Default to 1 week.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @var int Length of time in seconds.
 		 */
 		$cache_time = apply_filters( 'wpna_facebook_post_content_cache_time', WEEK_IN_SECONDS );

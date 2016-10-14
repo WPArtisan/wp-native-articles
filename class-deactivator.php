@@ -7,7 +7,7 @@
  * deactivated should be here. Will only be run the once.
  *
  * @author OzTheGreat
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 // Exit if accessed directly
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class WPNA_Deactivator {
 
@@ -39,7 +39,7 @@ class WPNA_Deactivator {
 	 * We're adding a custom endpoint with the permalinks API
 	 * so we need to flush the rewrite rules to clean it up and remove it.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null

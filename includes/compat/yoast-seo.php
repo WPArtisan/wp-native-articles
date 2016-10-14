@@ -4,7 +4,7 @@
  * Yoast SEO compatibility
  *
  * @link https://en-gb.wordpress.org/plugins/wordpress-seo/
- * @since 0.0.1
+ * @since 1.0.0
  */
 add_filter( 'wpna_facebook_post_authors', 'wpna_yoast_fb_link', 10, 1 );
 add_filter( 'wpna_facebook_post_get_the_featured_image', 'wpna_yoast_featured_image', 10, 1 );
@@ -14,7 +14,7 @@ add_filter( 'wpna_facebook_post_get_the_featured_image', 'wpna_yoast_featured_im
  *
  * For each author add a link to their FB profile if it has been set.
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @access public
  * @param  array $authors
@@ -39,7 +39,7 @@ function wpna_yoast_fb_link( $authors ) {
  * The Yoast SEO plugin allows you to set an Opengraph image. Defaults
  * to that if it's set.
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @access public
  * @param  array  $image

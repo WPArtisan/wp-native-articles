@@ -4,7 +4,7 @@
  * Playbuzz compatibility
  *
  * @link https://wordpress.org/plugins/playbuzz/
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 add_filter( 'pre_option_playbuzz', 'wpna_enable_playbuzz', 10, 1 );
@@ -16,7 +16,7 @@ add_filter( 'pre_option_playbuzz', 'wpna_enable_playbuzz', 10, 1 );
  * Because feeds are classed as categories the embed code won't
  * be inserted. This will enable it.
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @access public
  * @param  array $playbuzz

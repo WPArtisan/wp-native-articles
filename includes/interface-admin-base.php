@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * All classes that extend the admin base class should
  * implement this as well.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 interface WPNA_Admin_Interface {
 
 	/**
 	 * Register hooks here
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -31,7 +31,7 @@ interface WPNA_Admin_Interface {
 	/**
 	 * Returns the full url to the current page
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string

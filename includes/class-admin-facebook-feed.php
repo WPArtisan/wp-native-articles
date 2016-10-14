@@ -2,7 +2,7 @@
 /**
  * Facebook feed admin class.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 // Exit if accessed directly
@@ -23,7 +23,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Used for registering menu items and tabs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var string
 	 */
@@ -34,7 +34,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -83,7 +83,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * settings array that aren't registered here and merges them in to ensure
 	 * they're not lost.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -159,7 +159,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * settings_fields() requries the name of the group of settings to ouput.
 	 * do_settings_sections() requires the unique page slug for this settings form.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -177,7 +177,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	/**
 	 * Outputs the HTML displayed at the top of the settings section.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -202,7 +202,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Maximum amount of posts to show in the feed. Facebook won't read more
 	 * than 50 so let's default to that
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -220,7 +220,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Maximum amount of posts to show in the feed. Facebook won't read more
 	 * than 50 so let's default to that
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -237,7 +237,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Whether to cache the article contents in transients or not.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -257,7 +257,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Whether to show only the most recently modified posts.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -277,7 +277,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Creates endpoints for the feed with WordPress.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -296,7 +296,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * called, checks if it has alraedy been cached in transients and if so
 	 * makes sure no query runs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/
 	 *
 	 * @access public
@@ -326,7 +326,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * the feed results. This will cache it for 1 hour. Everytime a post is
 	 * updated it is also flushed.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/
 	 *
 	 * @access public
@@ -356,7 +356,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Whenever a post is updated flush the feed query cache.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  int  $post_id
@@ -372,7 +372,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Sets order and number. Adds a fitler to try and remove posts with no content.
 	 * Optionally adds a date query to only show modified posts in the last 24 hours.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  WP_Query $query
@@ -412,7 +412,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Facebook doesn't like empty articles so let's try and remove them
 	 * Unhook this filter, we only want it to run once.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  string $where
@@ -429,7 +429,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Adds an action to enable the setting of headers.
 	 * Locates the correct template for the feed and loads it in.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -438,7 +438,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		/**
 		 * Executed before the RSS feed.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		do_action( 'wpna_facebook_pre_feed' );
 
@@ -448,7 +448,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		/**
 		 * Executed at the end of the RSS feed.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		do_action( 'wpna_facebook_post_feed' );
 	}
@@ -458,7 +458,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Filter the type, this hook wil set the correct HTTP header for Content-type.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  string $content_type The current feed content type.
@@ -481,7 +481,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * Ensures that when article caching is disabled so is browser caching.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  array $headers The current feed headers.

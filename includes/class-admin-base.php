@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Will trigger the hooks method and setup anything
  * necessary for the admin page.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 abstract class WPNA_Admin_Base {
 
 	/**
 	 * Holds the slug of the current page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var array
 	 */
@@ -33,7 +33,7 @@ abstract class WPNA_Admin_Base {
 	 *
 	 * Triggers the hooks method straight away.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -48,7 +48,7 @@ abstract class WPNA_Admin_Base {
 	 * Uses the page_slug class variable to construct the full URL to the
 	 * current admin plugin page. Custom query args can be passed in as well.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  array  Optional. Query args to add to the URL. Default none

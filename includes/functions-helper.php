@@ -19,7 +19,7 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 	 * filters then returns it. The second param can set a default value to be
 	 * returned if the option doesn't exist
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @global $wpna_options   Global array holding the plugin options.
 	 *
@@ -41,7 +41,7 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 		/**
 		 * Filter all the option values before they're returned
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param mixed  $value   The value being returned.
 		 * @param string $name    The name of the option being retrieved.
@@ -52,7 +52,7 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 		/**
 		 * Filter a specific option value before it's returned
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param mixed  $value   The value being returned.
 		 * @param string $name    The name of the option being retrieved.
@@ -74,7 +74,7 @@ if ( ! function_exists( 'wpna_get_options' ) ) :
 	 * Gets all options from the global array, runs them through
 	 * filters then returns them.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @global $wpna_options Global array holding the plugin options.
 	 *
@@ -89,7 +89,7 @@ if ( ! function_exists( 'wpna_get_options' ) ) :
 		/**
 		 * Filter all the option values before they're returned
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param array $wpna_options The options being returned.
 		 */
@@ -109,7 +109,7 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 	 * If it is not it will return to the global plugin value.
 	 * Failing that it will return the default value passed.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  int    $post_id The ID of the post to retrieve the option for.
 	 * @param  string $name    The name of the option to retrieve.
@@ -130,7 +130,7 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 		/**
 		 * Filter all the option values before they're returned
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param mixed  $value   The value being returned.
 		 * @param string $name    The name of the option being retrieved.
@@ -142,7 +142,7 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 		/**
 		 * Filter a specific option value before it's returned
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param mixed  $value   The value being returned.
 		 * @param string $name    The name of the option being retrieved.
@@ -166,7 +166,7 @@ if ( ! function_exists( 'wpna_locate_template' ) ) :
 	 * it's been overridden or not. If it can't find it defaults to the one
 	 * located in the plugin.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Pass params through?
 	 *
 	 * @param  string $name Name of the template to locate.
@@ -189,7 +189,7 @@ if ( ! function_exists( 'wpna_locate_template' ) ) :
 		/**
 		 * Alter the path for a template file
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param string $template_path The path to the template.
 		 * @param string $name          The name of the template to locate.
@@ -210,7 +210,7 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 	 * Takes a given URL and uses several different methods to try and find
 	 * the attachment URL corresponding to it. Results are cached.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @link http://wpscholar.com/blog/get-attachment-id-from-wp-image-url/
 	 *
@@ -287,7 +287,7 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 		/**
 		 * Filter the attachment ID found from the URL
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @param int|null $attachment_id The ID if it's found or null if not.
 		 * @param string   $url               The URL we were trying to find the ID for

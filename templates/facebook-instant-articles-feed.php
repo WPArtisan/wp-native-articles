@@ -8,7 +8,7 @@
  * This template can be overridden by creating a template of the same name
  * in your theme folder.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 ?>
 <?xml version="1.0" encoding="<?php echo esc_attr( get_option( 'blog_charset' ) );?>"?>
@@ -23,7 +23,7 @@
 			 * Add any custom output to the articles feed channel header.
 			 * Has access to all global variables.
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 */
 			do_action( 'wpna_facebook_channel_header' );
 		?>
@@ -71,7 +71,7 @@
 				 * Dates are already in the correct format (ISO8601) by this point.
 				 * $posts is available globally.
 				 *
-				 * @since 0.0.1
+				 * @since 1.0.0
 				 * @param string The date of the most recent post
 				 */
 				$last_modified = apply_filters( 'wpna_facebook_lastbuilddate', array_pop( $post_dates ) );
@@ -89,7 +89,7 @@
 			 * Add any custom output to the articles feed channel header.
 			 * Has access to all global variables.
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 */
 			do_action( 'wpna_facebook_channel_footer' );
 		?>

@@ -19,7 +19,7 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 	 * validating. Once done gets the current global options and merges them
 	 * into them so they're not lost.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  array  $values {
 	 *     Array of values to sanitize
@@ -38,7 +38,7 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 			/**
 			 * Sanitize the an options value
 			 *
-			 * @since 0.0.1
+			 * @since 1.0.0
 			 *
 			 * @param mixed  $value  The value to sanitize.
 			 * @param string $key    The option name.
@@ -63,7 +63,7 @@ if ( ! function_exists( 'wpna_switchval' ) ) :
 	 * Due to WordPress limitations in storing true / false we use
 	 * on / off instead. This validates that an option is equal to on / off.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  mixed $value The value to sanitize.
 	 * @return string       Either on / off.
@@ -81,7 +81,7 @@ if ( ! function_exists( 'wpna_to_switch' ) ) :
 	 * Due to WordPress limitations in storing true / false we use
 	 * on / off instead. This takes a value and converts it to on / off.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  mixed $value The value to sanitize.
 	 * @return string       Either on / off.
@@ -100,7 +100,7 @@ if ( ! function_exists( 'wpna_switch_to_boolean' ) ) :
 	 * on / off instead.  Takes a switch value (on / off) and converts
 	 * it to a boolean.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  mixed $value The value to sanitize.
 	 * @return bool  on == true / off == false.
@@ -118,7 +118,7 @@ if ( ! function_exists( 'wpna_valid_date' ) ) :
 	 * Ensures that a date exists and is valid. Needs to be the in the
 	 * yyyy-mm-dd format.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @param  string  $date A date string in Y-m-d format
 	 * @return boolean       Whether the date is valid or not

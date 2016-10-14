@@ -31,7 +31,7 @@ define( 'WPNA_ITEM_NAME', 'WP Native Articles' );
  * It includes all the necessary files and initalises all classes that need
  * to be initalised
  *
- * @since 0.0.1
+ * @since 1.0.0
  *
  * @return null
  */

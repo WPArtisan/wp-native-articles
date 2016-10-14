@@ -2,7 +2,7 @@
 /**
  * Admin class
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 
@@ -23,7 +23,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 *
 	 * Used for registering menu items and tabs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var string
 	 */
@@ -34,7 +34,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Change meta box hook
 	 *
 	 * @access public
@@ -54,7 +54,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * This adds the top level menu page for the plugin.
 	 * All plugin sub pages are added using the action provided.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -75,7 +75,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		/**
 		 * Use this action to add any more menu items to the admin menu
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param string $page_slug The unique slug for the menu page.
 		 */
 		do_action( 'wpna_admin_menu_items', $page_slug );
@@ -87,7 +87,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * Targets the new and edit posts screens and loads in the javascript
 	 * required for setting up the meta boxes.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  string $hook The current page hook
@@ -106,7 +106,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * Targets the new and edit posts screens and loads in the CSS
 	 * required for setting up the meta boxes. Uses the Pure CSS framework.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Check for SCRIPT_DEBUG
 	 *
 	 * @access public
@@ -128,7 +128,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * This method is called from the load-post.php & load-post-new.php
 	 * actions so the meta boxes are only registered on those screens.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -143,7 +143,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * Reigsters the post meta box for the plugin. To add more or alter this
 	 * hook into the 'add_meta_boxes' native WP hook.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -166,7 +166,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * a tabbed layout. Any new content should be added in using the post meta box
 	 * tabs filter 'wpna_post_meta_box_content_tabs'.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @todo Change to function?
 	 *
 	 * @access public
@@ -178,7 +178,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		/**
 		 * Outputs content in the post meta box header.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param $post  WP_Post The current post object being edited
 		 */
 		do_action( 'wpna_post_meta_box_content_header', $post );
@@ -196,7 +196,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		 *         'callback' => array( $this, 'fbia_settings_post_meta_box_callback' ),
 		 *        );
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param array Empty array of tabs.
 		 */
 		$tabs = apply_filters( 'wpna_post_meta_box_content_tabs', array() );
@@ -225,7 +225,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		/**
 		 * Outputs content in the post meta box footer.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @param $post  WP_Post The current post object being edited
 		 */
 		do_action( 'wpna_post_meta_box_content_footer', $post );

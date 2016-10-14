@@ -11,14 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * A helper class for creating tabbed interfaces in the WP admin.
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class WPNA_Helper_Tabs {
 
 	/**
 	 * All the currently registered tabs.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var array
 	 */
@@ -27,7 +27,7 @@ class WPNA_Helper_Tabs {
 	/**
 	 * The currently active tab.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @access public
 	 * @var string
 	 */
@@ -38,7 +38,7 @@ class WPNA_Helper_Tabs {
 	 *
 	 * Does nothing currently.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -51,7 +51,7 @@ class WPNA_Helper_Tabs {
 	 *
 	 * Takes all the params and registers a new tab ready for ouput.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @param  string  $key      Unique key for the tab.
@@ -80,7 +80,7 @@ class WPNA_Helper_Tabs {
 	 * Checks for the active tab in this order:
 	 *     $_GET, $_POST, default, first tab
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string The unique key of the active tab.
@@ -112,7 +112,7 @@ class WPNA_Helper_Tabs {
 	 * Cycles through all the registered tabs and constructs and outputs
 	 * the HTML for the nav.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
@@ -136,7 +136,7 @@ class WPNA_Helper_Tabs {
 	 *
 	 * Calls the callback registered for the current tab and outputs the content.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return null
