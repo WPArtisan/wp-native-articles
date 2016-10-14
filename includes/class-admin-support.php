@@ -184,17 +184,20 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @return null
 	 */
 	public function general_tab_callback() {
+		$allowed_html = array( 'a' => array( 'href' => array(), 'target' => array() ) );
 		?>
 		<h1><?php esc_html_e( 'Support', 'wp-native-articles' ); ?></h1>
-		<nav>
-			<ul>
-				<li><a href="#tutorial"><?php esc_html_e( 'Tutorials', 'wp-native-articles' ); ?></a></li>
-				<li><a href="#faqs"><?php esc_html_e( 'FAQs', 'wp-native-articles' ); ?></a></li>
-				<li><a href="#bugs"><?php esc_html_e( 'Report a bug', 'wp-native-articles' ); ?></a></li>
-				<li><a href="#contact"><?php esc_html_e( 'Contact', 'wp-native-articles' ); ?></a></li>
-			</ul>
-		</nav>
 
+		<h3><?php esc_html_e( 'Documentation &amp; Knowledge Base', 'wp-native-articles' ); ?></h3>
+		<p><?php echo sprintf( wp_kses( __( 'Documentation, tutorials and knowledge base for both the free and pro versions of the plugin can be found at <a target="_blank" href="%s">docs.wp-native-articles.com</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'http://docs.wp-native-articles.com' ) );?></p>
+
+		<h3><?php esc_html_e( 'Bugs and Support', 'wp-native-articles' ); ?></h3>
+		<p><?php echo sprintf( wp_kses( __( 'All bugs for the free version of the Plugin should be reported via the <a target="_blank" href="%s">WordPress plugin support forum</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/support/plugins/wp-native-articles/' ) );?></p>
+		<p><?php echo sprintf( wp_kses( __( 'If you have the Pro version of the plugin you can access our premium support and email us directly by visiting your account <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wp-native-articles.com/account/' ) );?></p>
+
+		<h3><?php esc_html_e( 'FAQs', 'wp-native-articles' ); ?></h3>
+		<p><?php echo sprintf( wp_kses( __( 'Popular FAQs regarding the free version are included in the WordPress readme <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/plugins/wp-native-articles/' ) );?></p>
+		<p><?php echo sprintf( wp_kses( __( 'Further FAQs can be found on our website <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wp-native-articles.com/#faqs' ) );?></p>
 		<?php
 	}
 

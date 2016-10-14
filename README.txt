@@ -93,6 +93,10 @@ Yes it does. There's a management panel in the Network Admin sidebar menu.
 It can be used to copy settings from one blog to another and set a default blog
 to inherit settings from when new blogs are created.
 
+= Is it multilingual compatible? =
+
+Yes. All text strings use the WordPress i18n translation functions. If you'd like to help translate the plugin we'd love to hear from you!
+
 = I've found a bug? I have a feature request? =
 
 Excellent. We'd love to hear from you. All support for the free plugin is done
