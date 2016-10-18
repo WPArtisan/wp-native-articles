@@ -70,6 +70,10 @@ Intentionally left blank
 
 == Frequently Asked Questions ==
 
+= Where can I find the support documentation? =
+
+All documentation is available at [docs.wp-native-articles.com](http://docs.wp-native-articles.com). It is a work in progress so please bear with us.
+
 = Does it support Branded Content? =
 
 Yes. Individual articles can be setup as branded. The author details are used and displayed on the Instant Article.
@@ -82,6 +86,11 @@ Yes. Both can be added on a global level or overridden for individual articles.
 
 They won't automatically be added to the Instant Articles unfortunately. However, they should be easy enough to add as
 not only are there hooks galore in the plugin but the Instant Article templates can be overridden in your own theme or plugin.
+
+= Does it play well with other plugins? =
+
+Yes, extremely well. We've tested loads of popular plugins that embed content and built in support for Yoast, Co-Authors-Plus and Playbuzz to name a few.
+If you find any that don't work or that we've missed please let us know and we'll be sure to fix them.
 
 = Is there a road map? =
 
