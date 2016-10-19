@@ -44,7 +44,7 @@ class WPNA_Deactivator {
 	 * @access public
 	 * @return null
 	 */
-	public function flush_rewrite_rules() {
+	public static function flush_rewrite_rules() {
 		flush_rewrite_rules();
 	}
 

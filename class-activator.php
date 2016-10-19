@@ -41,7 +41,7 @@ class WPNA_Activator {
 	 * @access public
 	 * @return null
 	 */
-	public function flush_rewrite_rules() {
+	public static function flush_rewrite_rules() {
 		flush_rewrite_rules();
 	}
 
@@ -56,7 +56,7 @@ class WPNA_Activator {
 	 * @access public
 	 * @return null
 	 */
-	public function add_default_options() {
+	public static function add_default_options() {
 		if ( false == get_option( 'wpna_options' ) ) {
 
 			$default_options = array(

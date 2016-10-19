@@ -13,16 +13,20 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define the current version
-define( 'WPNA_VERSION', '1.0.0' );
+if ( ! defined( 'WPNA_VERSION' ) )
+	define( 'WPNA_VERSION', '1.0.0' );
 
 // Define the plugin base path
-define( 'WPNA_BASE_PATH', dirname( __FILE__ ) );
+if ( ! defined( 'WPNA_BASE_PATH' ) )
+	define( 'WPNA_BASE_PATH', dirname( __FILE__ ) );
 
 // Define the URL to check for updates
-define( 'WPNA_STORE_URL', 'https://wp-native-articles.com' );
+if ( ! defined( 'WPNA_STORE_URL' ) )
+	define( 'WPNA_STORE_URL', 'https://wp-native-articles.com' );
 
 // Define the item name
-define( 'WPNA_ITEM_NAME', 'WP Native Articles' );
+if ( ! defined( 'WPNA_ITEM_NAME' ) )
+	define( 'WPNA_ITEM_NAME', 'WP Native Articles' );
 
 
 /**
@@ -113,4 +117,39 @@ function wpna_initialise() {
 
 }
 
-wpna_initialise();
+/**
+ * Disables the current plugin and shows a die message.
+ *
+ * To be shown if this plugin is trying to be activated over the Pro one.
+ *
+ * @since 1.0.0
+ * @return null
+ */
+function wpna_disable_pro_plugin_notice() {
+
+	// Deactivate the current plugin
+	deactivate_plugins( plugin_basename( __FILE__ ) );
+
+	// Show an error message with a back link.
+	wp_die(
+		esc_html__( 'Please disable the Pro version before activating the Free version.', 'wp-native-articles' ),
+		esc_html__( 'Plugin Activation Error', 'wp-native-articles' ),
+		array( 'back_link' => true )
+	);
+
+}
+
+// The start
+if ( ! is_plugin_active( 'wp-native-articles-pro/wp-native-articles.php' ) ) {
+
+	// If the Pro plugin isn't active continue as normal.
+	wpna_initialise();
+
+} else {
+
+	// If the Pro plugin is active register the notice function to both the plugin
+	// activation hook and admin_init (incase it was activated in an obscure manner).
+	register_activation_hook( __FILE__, 'wpna_disable_pro_plugin_notice' );
+	add_action( 'admin_init', 'wpna_disable_pro_plugin_notice' );
+
+}
