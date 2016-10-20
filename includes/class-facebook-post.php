@@ -558,6 +558,8 @@ class WPNA_Facebook_Post {
 	 * Facebook allows up to three related articles to be specified at the
 	 * bottom of every article.
 	 *
+	 * @link https://developers.facebook.com/docs/instant-articles/reference/related-articles
+	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
@@ -575,7 +577,7 @@ class WPNA_Facebook_Post {
 		$query_args = array(
 			'category__in'           => $post_categories_ids,
 			'post__not_in'           => array( $this->get_the_ID() ),
-			'posts_per_page'         => 3, // FB uses 3 related articles
+			'posts_per_page'         => 4, // FB uses 4 related articles
 			'ignore_sticky_posts'    => true, // Turn off sticky posts
 			'order'                  => 'DESC',
 			'orderby'                => 'date',

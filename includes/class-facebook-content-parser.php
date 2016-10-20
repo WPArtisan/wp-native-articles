@@ -60,7 +60,8 @@ class WPNA_Facebook_Content_Parser {
 	public function content_hooks() {
 
 		// We can help clean up the content before WP gets to it
-		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'wrap_shortcodes' ), 5, 1 );
+		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_shortcodes' ), 5, 1 );
+		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_oembeds' ), 5, 1 );
 
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'convert_headings' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'strip_elements' ), 10, 1 );
@@ -68,23 +69,28 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'unique_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'featured_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'images_exist' ), 10, 1 );
-		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'move_images' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'move_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_images' ), 10, 1 );
-		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'move_iframes' ), 10, 1 );
-		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_iframes' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'remove_attributes' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_text' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'remove_empty_elements' ), 10, 1 );
 
-		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'unwrap_shortcodes' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_shortcode_wrapper' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_oembed_wrapper' ), 10, 1 );
 	}
 
 	/**
-	 * Wraps shortcodes in pre tags to stop them getting getting wrapped in p tags.
+	 * Wrap shortcodes in <figure> elements.
 	 *
-	 * Wraps all custom shortcodes in <pre class="embed-wrap"> to stop
-	 * them getting caught up in the filters and we can replace later.
-	 * pre tags doesn't get parsed by wpautop.
+	 * Shortcodes can output anything. There's no sane way to try and
+	 * anticipate them, this ensures they're always wrapped in <figure> tags.
+	 *
+	 * Hijacks the global array of shortcodes and funtions. Replaces the functions
+	 * with a custom  method that wraps the the shortcode before calling the
+	 * function.
+	 *
+	 * Though technically a filter this is being used more like an action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -92,15 +98,68 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  string $content
 	 * @return string
 	 */
-	public function wrap_shortcodes( $content ) {
-		// Add the filter so oembeds are auto wrapped
-		add_filter( 'embed_oembed_html', array( $this, 'wrap_oembeds' ), 10, 4 );
+	public function setup_wrap_shortcodes( $content ) {
+		global $shortcode_tags, $_shortcode_tags;
 
-		preg_match_all( '/' . get_shortcode_regex() . '/', $content, $matches, PREG_SET_ORDER );
-		foreach ( (array) $matches as $match ) {
-			if ( ! in_array( $match[2], array( 'caption' ) ) )
-				$content = str_ireplace( $match[0], sprintf( '<pre data-embed-wrap="true">%s</pre>', $match[0] ), $content );
+		// Let's make a back-up of the shortcodes
+		$_shortcode_tags = $shortcode_tags;
+
+		// Add any shortcode tags that we shouldn't touch here
+		$disabled_tags = array( 'gallery', 'caption' );
+
+		/**
+		 * Add a filter allowing alteration of the $disabled_tags array.
+		 *
+		 * @since 1.0.0
+		 * @param array   $disabled_tags
+		 * @param content $content
+		 */
+		$disabled_tags = apply_filters( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', $disabled_tags, $content );
+
+		foreach ( $shortcode_tags as $tag => $cb ) {
+			if ( in_array( $tag, $disabled_tags ) ) {
+				continue;
+			}
+			// Overwrite the callback function
+			$shortcode_tags[ $tag ] = array( $this, 'wrap_shortcode' );
 		}
+
+		return $content;
+	}
+
+	/**
+	 * Wrap a shortcode function result in a <figure> element.
+	 *
+	 * Ensures all shortcodes are wrapped in <figure> elements before the
+	 * shortcodes original function is called.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @param  array  $attr    Shortcode attributes
+	 * @param  string $content The post content
+	 * @param  string $tag
+	 * @return string
+	 */
+	public function wrap_shortcode( $attr, $content = null, $tag ) {
+		global $_shortcode_tags;
+		return '<figure class="op-interactive">' . call_user_func( $_shortcode_tags[ $tag ], $attr, $content, $tag ) . '</figure>';
+	}
+
+	/**
+	 * Wraps oembeds in <figure> elements.
+	 *
+	 * Registers a filter metod for all oembeds so they get wrapped in <figure>
+	 * elements before returning.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @param  string $content
+	 * @return string
+	 */
+	public function setup_wrap_oembeds( $content ) {
+		add_filter( 'embed_oembed_html', array( $this, 'wrap_oembed' ), 10, 4 );
 
 		return $content;
 	}
@@ -108,13 +167,16 @@ class WPNA_Facebook_Content_Parser {
 	/**
 	 * Ensures all oembeds are properly wrapped in <figure> elements.
 	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
 	 * @param  string  $cache
 	 * @param  string  $url
 	 * @param  array   $attr
 	 * @param  int     $post_ID
 	 * @return string
 	 */
-	public function wrap_oembeds( $cache, $url, $attr, $post_ID ) {
+	public function wrap_oembed( $cache, $url, $attr, $post_ID ) {
 		return '<figure class="op-interactive">' . $cache . '</figure>';
 	}
 
@@ -275,7 +337,7 @@ class WPNA_Facebook_Content_Parser {
 	/**
 	 * Ensures all images exist.
 	 *
-	 * Facebook get cross if the images don't exist. Let's check they all exist.
+	 * Facebook gets cross if the images don't exist. Let's check they all exist.
 	 *
 	 * @since 1.0.0
 	 * @todo Investigate curl multi exec, background cron and any other more
@@ -294,74 +356,6 @@ class WPNA_Facebook_Content_Parser {
 				$parent = $image->parentNode;
 				$parent->removeChild( $image );
 			}
-		}
-
-		return $DOMDocument;
-	}
-
-	/**
-	 * Ensures images aren't wrapped in other elements.
-	 *
-	 * Images have to be top level, not nestled inside other elements.
-	 * This does prove tricky with some of the markup generated by WP.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @param  DOMDocument $DOMDocument
-	 * @return object
-	 */
-	public function move_images( DOMDocument $DOMDocument ) {
-
-		foreach ( $images = $DOMDocument->getElementsByTagName('img') as $image ) {
-
-			$parentNode = $image->parentNode;
-
-			// Take account of images wrapped in captions
-			if ( 'div' == $parentNode->nodeName && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
-				$parentNode = $parentNode->parentNode;
-			}
-
-			// If it's already top level then let's not worry
-			if ( 'body' === $parentNode->nodeName )
-				continue;
-
-			// Get the parent nearest to the body element
-			// Keep track of how many elements deep the image is nested.
-			$parents = array();
-			while ( 'body' !== $parentNode->nodeName ) {
-				$parents[] = sprintf( "%s>", $parentNode->nodeName );
-				$parentNode = $parentNode->parentNode;
-			}
-
-			// Construct the opening and closing tags for before and after the image.
-			$parents_closing_tags = '</' . implode( '</', $parents );
-			$parents_opening_tags = '<' . implode( '<', array_reverse( $parents ) );
-
-			// Get the string to replace the image element with
-			$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveHTML( $image ), PHP_EOL, $parents_opening_tags );
-
-			// Replace the image element with the new opening and closing tags
-			$parent_node_html = str_replace( $DOMDocument->saveHTML( $image ), $replace_with, $DOMDocument->saveHTML( $parentNode ) );
-
-			// To replace the current parent we need to load the new node
-			// fragment into a new instance of DOMDocument
-			$libxml_previous_state = libxml_use_internal_errors( true );
-			$DOMDocument_temp = new \DOMDocument( '1.0', get_option( 'blog_charset' ) );
-
-			// Make sure it's the correct encoding
-			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$parent_node_html = mb_convert_encoding( $parent_node_html, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
-			}
-
-			$DOMDocument_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-			$body_temp = $DOMDocument_temp->getElementsByTagName( 'body' )->item( 0 );
-			$importedNode = $DOMDocument->importNode( $body_temp, TRUE );
-
-			// Now replace the existing element with the new element in the real DOMDocument
-			$parentNode->parentNode->replaceChild( $importedNode, $parentNode );
 		}
 
 		return $DOMDocument;
@@ -478,10 +472,11 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
-	 * Ensures iFrames aren't wrapped in other elements.
+	 * Ensures specified elements aren't wrapped in other elements.
 	 *
-	 * iFrames have to be top level, not nestled inside other elements.
-	 * This does prove tricky with some of the markup generated by WP.
+	 * Some elements (iFrames, figures etc) have to be top level, not nestled
+	 * inside other elements. This does prove tricky with some of the markup
+	 * generated by WP.
 	 *
 	 * @since 1.0.0
 	 *
@@ -489,61 +484,84 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  DOMDocument $DOMDocument
 	 * @return object
 	 */
-	public function move_iframes( DOMDocument $DOMDocument ) {
+	public function move_elements( DOMDocument $DOMDocument ) {
 
-		foreach ( $iframes = $DOMDocument->getElementsByTagName('iframe') as $iframe ) {
+		// Elements to move
+		$elements_to_move = array( 'iframe', 'figure', 'img', 'table' );
 
-			$parentNode = $iframe->parentNode;
+		/**
+		 * Elements to move
+		 *
+		 * @since 1.0.0
+		 * @param array The elements to search for and wrap.
+		 */
+		$elements_to_wrap = apply_filters( 'wpna_facebook_article_setup_move_elements', $elements_to_move );
 
-			// If it's already top level then let's not worry
-			if ( 'body' === $parentNode->nodeName )
-				continue;
+		foreach ( $elements_to_move as $element_to_move ) {
 
-			// Get the parent nearest to the body element
-			// Keep track of how many elements deep the image is nested.
-			$parents = array();
-			while ( 'body' !== $parentNode->nodeName ) {
-				$parents[] = sprintf( "%s>", $parentNode->nodeName );
-				$parentNode = $parentNode->parentNode;
+			foreach ( $elements = $DOMDocument->getElementsByTagName( $element_to_move ) as $element ) {
+
+				$parentNode = $element->parentNode;
+
+				// If it's an image it has special rules.
+				if ( 'img' == $element_to_move ) {
+					// Take account of images wrapped in captions
+					if ( 'div' == $parentNode->nodeName && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
+						$parentNode = $parentNode->parentNode;
+					}
+				}
+
+				// If it's already top level then let's not worry
+				if ( 'body' === $parentNode->nodeName )
+					continue;
+
+				// Get the parent nearest to the body element
+				// Keep track of how many elements deep the image is nested.
+				$parents = array();
+				while ( 'body' !== $parentNode->nodeName ) {
+					$parents[] = sprintf( "%s>", $parentNode->nodeName );
+					$parentNode = $parentNode->parentNode;
+				}
+
+				// Construct the opening and closing tags for before and after the element.
+				$parents_closing_tags = '</' . implode( '</', $parents );
+				$parents_opening_tags = '<' . implode( '<', array_reverse( $parents ) );
+
+				// Get the string to replace the image element with
+				$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveHTML( $element ), PHP_EOL, $parents_opening_tags );
+
+				// Replace the image element with the new opening and closing tags
+				$parent_node_html = str_replace( $DOMDocument->saveHTML( $element ), $replace_with, $DOMDocument->saveHTML( $parentNode ) );
+
+				// To replace the current parent we need to load the new node
+				// fragment into a new instance of DOMDocument
+				$libxml_previous_state = libxml_use_internal_errors( true );
+				$DOMDocument_temp = new \DOMDocument( '1.0', get_option( 'blog_charset' ) );
+
+				// Make sure it's the correct encoding
+				if ( function_exists( 'mb_convert_encoding' ) ) {
+					$parent_node_html = mb_convert_encoding( $parent_node_html, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
+				}
+
+				$DOMDocument_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
+				libxml_clear_errors();
+				libxml_use_internal_errors( $libxml_previous_state );
+				$body_temp = $DOMDocument_temp->getElementsByTagName( 'body' )->item( 0 );
+				$importedNode = $DOMDocument->importNode( $body_temp, TRUE );
+
+				// Now replace the existing element with the new element in the real DOMDocument
+				$parentNode->parentNode->replaceChild( $importedNode, $parentNode );
 			}
 
-			// Construct the opening and closing tags for before and after the image.
-			$parents_closing_tags = '</' . implode( '</', $parents );
-			$parents_opening_tags = '<' . implode( '<', array_reverse( $parents ) );
-
-			// Get the string to replace the image element with
-			$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveHTML( $iframe ), PHP_EOL, $parents_opening_tags );
-
-			// Replace the image element with the new opening and closing tags
-			$parent_node_html = str_replace( $DOMDocument->saveHTML( $iframe ), $replace_with, $DOMDocument->saveHTML( $parentNode ) );
-
-			// To replace the current parent we need to load the new node
-			// fragment into a new instance of DOMDocument
-			$libxml_previous_state = libxml_use_internal_errors( true );
-			$DOMDocument_temp = new \DOMDocument( '1.0', get_option( 'blog_charset' ) );
-
-			// Make sure it's the correct encoding
-			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$parent_node_html = mb_convert_encoding( $parent_node_html, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
-			}
-
-			$DOMDocument_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
-			libxml_clear_errors();
-			libxml_use_internal_errors( $libxml_previous_state );
-			$body_temp = $DOMDocument_temp->getElementsByTagName( 'body' )->item( 0 );
-			$importedNode = $DOMDocument->importNode( $body_temp, TRUE );
-
-			// Now replace the existing element with the new element in the real DOMDocument
-			$parentNode->parentNode->replaceChild( $importedNode, $parentNode );
 		}
 
 		return $DOMDocument;
 	}
 
 	/**
-	 * Ensures all iFrames are wrapped in figure tags.
+	 * Ensures certain elements are wrapped in figure tags.
 	 *
-	 * Wraps all iFrames in <figure> elements as specified by the Facebook spec.
+	 * Wraps all specifiec elements in <figure> tags. E.g. iFrames.
 	 *
 	 * @since 1.0.0
 	 *
@@ -551,19 +569,34 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  DOMDocument $DOMDocument
 	 * @return DOMDocument
 	 */
-	public function wrap_iframes( DOMDocument $DOMDocument ) {
+	public function wrap_elements( DOMDocument $DOMDocument ) {
 
 		$figure_template_base = $DOMDocument->createElement('figure');
 		$figure_template_base->setAttribute('class', 'op-interactive');
 
-		foreach ( $DOMDocument->getElementsByTagName('iframe') as $iframe ) {
-			if ( 'figure' != $iframe->parentNode->tagName ) {
+		// The elements to wrap
+		$elements_to_wrap = array( 'iframe', 'table' );
 
-				$figure_template = clone $figure_template_base;
-				$iframe->parentNode->replaceChild( $figure_template, $iframe );
-				$figure_template->appendChild( $iframe );
+		/**
+		 * Elements to wrap in <figure> tags.
+		 *
+		 * @since 1.0.0
+		 * @param array The elements to search for and wrap.
+		 */
+		$elements_to_wrap = apply_filters( 'wpna_facebook_article_setup_wrap_elements', $elements_to_wrap );
 
+		foreach ( $elements_to_wrap as $element_to_wrap ) {
+
+			foreach ( $elements = $DOMDocument->getElementsByTagName( $element_to_wrap ) as $element ) {
+				if ( 'figure' != $element->parentNode->tagName ) {
+
+					$figure_template = clone $figure_template_base;
+					$element->parentNode->replaceChild( $figure_template, $element );
+					$figure_template->appendChild( $element );
+
+				}
 			}
+
 		}
 
 		return $DOMDocument;
@@ -644,10 +677,10 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
-	 * Remove pre tags from shortcodes.
+	 * Remove the shortcode wrap filter.
 	 *
-	 * Replace any embed wraps that may exist but don't actually need wrapping.
-	 * The pre tag isn't an authorised FB IA element so it can go as well.
+	 * Cleaning up after ourselves. Restore the shortcode original functions.
+	 * Though technically a filter this is being used more like an action.
 	 *
 	 * @since 1.0.0
 	 *
@@ -655,11 +688,30 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  string $content
 	 * @return string
 	 */
-	public function unwrap_shortcodes( $content ) {
-		// Remove the oembed filter wrap
-		remove_filter( 'embed_oembed_html', array( $this, 'wrap_oembeds' ) );
+	public function remove_shortcode_wrapper( $content ) {
+		global $shortcode_tags, $_shortcode_tags;
 
-		return str_ireplace( array( '<pre data-embed-wrap="true">', '</pre>' ), '', $content );
+		$shortcode_tags = $_shortcode_tags;
+
+		return $content;
+	}
+
+	/**
+	 * Remove the oembed wrap filter.
+	 *
+	 * Cleaning up after ourselves. Though technically a filter this is being
+	 * used more like an action.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @param  string $content
+	 * @return string
+	 */
+	public function remove_oembed_wrapper( $content ) {
+		remove_filter( 'embed_oembed_html', array( $this, 'wrap_oembed' ) );
+
+		return $content;
 	}
 
 }
