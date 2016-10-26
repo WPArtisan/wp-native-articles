@@ -52,7 +52,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 */
 	public function add_menu_items() {
 		$page_hook = add_submenu_page(
-			'wpna_facebook', // Parent page slug
+			'wpna_general', // Parent page slug
 			esc_html__( 'Support', 'wp-native-articles' ),
 			esc_html__( 'Support', 'wp-native-articles' ),
 			'manage_options', // Debug cotains potentially sensitive information

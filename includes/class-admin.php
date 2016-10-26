@@ -27,7 +27,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @access public
 	 * @var string
 	 */
-	public $page_slug = 'wpna_facebook';
+	public $page_slug = 'wpna_general';
 
 	/**
 	 * Hooks registered in this class.
@@ -42,10 +42,14 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 */
 	public function hooks() {
 		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );
-		add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
-		add_action( 'load-post-new.php',     array( $this, 'setup_post_meta_box' ), 10, 0 );
+
+		// These actions are only applied if Instant Articles is enabled
+		if ( wpna_switch_to_boolean( wpna_get_option('fbia_enable') ) ) {
+			add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );
+			add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
+			add_action( 'load-post-new.php',     array( $this, 'setup_post_meta_box' ), 10, 0 );
+		}
 	}
 
 	/**

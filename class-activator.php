@@ -79,7 +79,7 @@ class WPNA_Activator {
 				'fbia_app_id'            => '',
 				'fbia_app_secret'        => '',
 				'fbia_sync_articles'     => 'on',
-				'fbia_enviroment'        => 'production',
+				'fbia_enviroment'        => 'development',
 			);
 
 			// Add in the default options

@@ -51,7 +51,6 @@ class WPNA_Multisite_Admin {
 	 */
 	public $option_group_reset = 'wpna_multisite-reset';
 
-
 	/**
 	 * Constructor.
 	 *
@@ -79,8 +78,8 @@ class WPNA_Multisite_Admin {
 		add_action( 'network_admin_notices',   array( $this, 'notices'), 10, 0 );
 		add_action( 'network_admin_menu',      array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'wpmu_new_blog',           array( $this, 'new_blog_defaults' ), 10, 6 );
-		add_action( 'network_admin_edit_' . $this->page_slug, array( $this, 'save_options_callback' ), 10, 1 );
-		add_action( 'network_admin_edit_' . $this->page_slug, array( $this, 'reset_blog_callback' ), 10, 1 );
+		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'save_options_callback' ), 10, 1 );
+		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'reset_blog_callback' ), 10, 1 );
 
 		add_filter( 'admin_menu',              array( $this, 'admin_page_capability' ), 999, 0 );
 	}

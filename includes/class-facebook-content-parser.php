@@ -30,6 +30,9 @@ class WPNA_Facebook_Content_Parser {
 	 * @return null
 	 */
 	public function __construct() {
+		// Used to store the shortcode & oEmbed content
+		$GLOBALS['_shortcode_content'] = array();
+
 		$this->hooks();
 	}
 
@@ -64,7 +67,6 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_oembeds' ), 5, 1 );
 
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'convert_headings' ), 10, 1 );
-		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'strip_elements' ), 10, 1 );
 
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'unique_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'featured_images' ), 10, 1 );
@@ -76,8 +78,10 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_text' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'remove_empty_elements' ), 10, 1 );
 
+		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'strip_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_shortcode_wrapper' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_oembed_wrapper' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'restore_embeds' ), 10, 1 );
 	}
 
 	/**
@@ -105,7 +109,7 @@ class WPNA_Facebook_Content_Parser {
 		$_shortcode_tags = $shortcode_tags;
 
 		// Add any shortcode tags that we shouldn't touch here
-		$disabled_tags = array( 'gallery', 'caption' );
+		$disabled_tags = array( 'gallery', 'caption', 'wp_caption' );
 
 		/**
 		 * Add a filter allowing alteration of the $disabled_tags array.
@@ -130,8 +134,8 @@ class WPNA_Facebook_Content_Parser {
 	/**
 	 * Wrap a shortcode function result in a <figure> element.
 	 *
-	 * Ensures all shortcodes are wrapped in <figure> elements before the
-	 * shortcodes original function is called.
+	 * Ensures all shortcodes are wrapped in <figure> elements before replacing
+	 * them with a unique key. Means they won't get caught up in the parsing.
 	 *
 	 * @since 1.0.0
 	 *
@@ -142,8 +146,23 @@ class WPNA_Facebook_Content_Parser {
 	 * @return string
 	 */
 	public function wrap_shortcode( $attr, $content = null, $tag ) {
-		global $_shortcode_tags;
-		return '<figure class="op-interactive">' . call_user_func( $_shortcode_tags[ $tag ], $attr, $content, $tag ) . '</figure>';
+		global $_shortcode_tags, $_shortcode_content;
+
+		// Generate a unique (enough) key for this shortcode
+		$shortcode_key = mt_rand();
+
+		$content = call_user_func( $_shortcode_tags[ $tag ], $attr, $content, $tag );
+
+		// Wrap it in an iframe if it isn't already
+		if ( '<iframe' != substr( $content, 0, 7 ) ) {
+			$content = '<iframe>' . $content . '</iframe>';
+		}
+
+		// Store the shortocde content in the global array
+		$_shortcode_content[ $shortcode_key ] = $content;
+
+		// Return the unique key wrapped in a figure element
+		return '<figure class="op-interactive">' . $shortcode_key . '</figure>';
 	}
 
 	/**
@@ -167,6 +186,9 @@ class WPNA_Facebook_Content_Parser {
 	/**
 	 * Ensures all oembeds are properly wrapped in <figure> elements.
 	 *
+	 * Replaces them with a unique key to ensure they're not caught up in the
+	 * content parsing.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
@@ -177,7 +199,18 @@ class WPNA_Facebook_Content_Parser {
 	 * @return string
 	 */
 	public function wrap_oembed( $cache, $url, $attr, $post_ID ) {
-		return '<figure class="op-interactive">' . $cache . '</figure>';
+		global $_shortcode_content;
+
+		$shortcode_key = mt_rand();
+
+		// Wrap it in an iframe if it isn't already
+		if ( '<iframe' != substr( $cache, 0, 7 ) ) {
+			$cache = '<iframe>' . $cache . '</iframe>';
+		}
+
+		$_shortcode_content[ $shortcode_key ] = $cache;
+
+		return '<figure class="op-interactive">' . $shortcode_key . '</figure>';
 	}
 
 	/**
@@ -665,12 +698,31 @@ class WPNA_Facebook_Content_Parser {
 	 */
 	public function remove_empty_elements( DOMDocument $DOMDocument ) {
 
+		// Holds the empty nodes that will need removing
+		$nodes_to_remove = array();
+
 		foreach ( $DOMDocument->getElementsByTagName('*') as $node ) {
 
-			if ( ! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ) ) && ! $node->hasChildNodes() && '' == $node->nodeValue ) {
-				$node->parentNode->removeChild( $node );
+			// If the node is completely empty queue it for removal
+			if (
+				! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ) ) &&
+				empty( trim( $node->textContent ) )
+			) {
+				$nodes_to_remove[] = $node;
+			} else {
+				// Trim paragraphs
+				if ( 'p' == $node->tagName ){
+					$node->nodeValue = trim( $node->nodeValue );
+				}
 			}
 
+		}
+
+		// Remove all the empty nodes we found.
+		// WARNING :: Don't attempt to do this inline in the loop above,
+		// it won't work for all nodes
+		foreach ( $nodes_to_remove as $node ) {
+			$node->parentNode->removeChild( $node );
 		}
 
 		return $DOMDocument;
@@ -712,6 +764,24 @@ class WPNA_Facebook_Content_Parser {
 		remove_filter( 'embed_oembed_html', array( $this, 'wrap_oembed' ) );
 
 		return $content;
+	}
+
+	/**
+	 * Repalces embeds.
+	 *
+	 * Shortcodes and embeds were removed while we format the article.
+	 * This places the m back.
+	 *
+	 * @since 0.0.1
+	 *
+	 * @access public
+	 * @param  string $content
+	 * @return string
+	 */
+	public function restore_embeds( $content ) {
+		global $_shortcode_content;
+
+		return str_replace( array_keys( $_shortcode_content ), array_values( $_shortcode_content ), $content );
 	}
 
 }

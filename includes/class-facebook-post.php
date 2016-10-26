@@ -456,7 +456,7 @@ class WPNA_Facebook_Post {
 				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
 			}
 
-			$content = str_ireplace( [ '<body>', '</body>', '<html>', '</html>' ], '', $content );
+			$content = str_ireplace( array( '<body>', '</body>', '<html>', '</html>' ), '', $content );
 
 			$DOMDocument->loadHTML( '<!doctype html><html><body>' . $content . '</body></html>' );
 			libxml_clear_errors();

@@ -301,3 +301,19 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 	}
 
 endif;
+
+if ( ! function_exists( 'wpna_load_textdomain' ) ) :
+
+	/**
+	 * Load plugin textdomain.
+	 *
+	 * Checks in the languages folder by default.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return null
+	 */
+	function wpna_load_textdomain() {
+		load_plugin_textdomain( 'wp-native-articles', false, WPNA_BASE_PATH . '/languages' );
+	}
+endif;

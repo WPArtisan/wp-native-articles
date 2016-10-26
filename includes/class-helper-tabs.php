@@ -87,11 +87,11 @@ class WPNA_Helper_Tabs {
 	 */
 	public function active_tab() {
 		// Check $_GET first
-		if ( ! empty( $_GET['tab'] ) )
+		if ( ! empty( $_GET['tab'] ) && ! empty( $this->tabs[ $_GET['tab'] ] ) )
 			return $_GET['tab'];
 
 		// Check $_POST next
-		if ( ! empty( $_POST['tab'] ) )
+		if ( ! empty( $_POST['tab'] ) && ! empty( $this->tabs[ $_POST['tab'] ] ) )
 			return $_POST['tab'];
 
 		// Work out if a default has been set
