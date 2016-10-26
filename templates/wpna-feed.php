@@ -42,7 +42,7 @@
 					$post = new WPNA_Facebook_Post( get_the_ID() );
 
 					// Load in the item template
-					include wpna_locate_template( 'facebook-instant-articles-item' );
+					include wpna_locate_template( 'wpna-feed-item' );
 				?>
 
 			<?php endwhile; ?>

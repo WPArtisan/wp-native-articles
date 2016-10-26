@@ -14,7 +14,7 @@
 	<title><?php echo esc_html( $post->get_the_title() ); ?></title>
 	<link><?php echo esc_url( $post->get_permalink() ); ?></link>
 	<content:encoded><![CDATA[
-		<?php include wpna_locate_template( 'facebook-instant-articles-item-content' ); ?>
+		<?php include wpna_locate_template( 'wpna-article' ); ?>
 	]]></content:encoded>
 	<guid isPermaLink="false"><?php echo esc_url( get_the_guid() ); ?></guid>
 	<description><![CDATA[<?php echo esc_html( $post->get_the_excerpt() ); ?>]]></description>

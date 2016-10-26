@@ -443,7 +443,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		do_action( 'wpna_facebook_pre_feed' );
 
 		// Load in the main feed template
-		include wpna_locate_template( 'facebook-instant-articles-feed' );
+		include wpna_locate_template( 'wpna-feed' );
 
 		/**
 		 * Executed at the end of the RSS feed.

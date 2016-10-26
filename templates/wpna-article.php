@@ -92,8 +92,13 @@
 				<?php endif; ?>
 
 				<!-- Ad code for the article -->
-				<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) && $ad_code = wpna_get_post_option( $post->get_the_ID(), 'fbia_ad_code' ) ) : ?>
-					<?php echo $ad_code; ?>
+				<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
+					<?php
+						// Make sure there's ad codes before we output it
+						$ad_code = wpna_get_post_option( $post->get_the_ID(), 'fbia_ad_code' );
+						if ( ! empty( $ad_code ) )
+							echo $ad_code;
+					?>
 				<?php endif; ?>
 
 				<!-- Sponsored code for the article -->
@@ -135,11 +140,11 @@
 			<footer>
 
 				<!-- First aside block is for article credits -->
-				<aside>
 				<?php if ( $post->get_credits() ) : ?>
-					<?php echo sanitize_text_field( $post->get_credits() ); ?>
+					<aside>
+						<?php echo sanitize_text_field( $post->get_credits() ); ?>
+					</aside>
 				<?php endif; ?>
-				</aside>
 
 				<!-- Copyright follows credits -->
 				<?php if ( $post->get_copyright() ) : ?>
