@@ -75,34 +75,32 @@
 					<h3 class="op-kicker"><?php echo esc_html( $post->get_the_kicker() ); ?></h3>
 				<?php endif; ?>
 
-				<!-- The date and time when your article was originally published -->
+				<?php // The date and time when your article was originally published ?>
 				<time class="op-published" datetime="<?php echo esc_attr( $post->get_publish_date_iso() ); ?>"><?php echo esc_html( $post->get_publish_date() ); ?></time>
 
-				<!-- The date and time when your article was last updated -->
+				<?php // The date and time when your article was last updated ?>
 				<time class="op-modified" datetime="<?php echo esc_attr( $post->get_modified_date_iso() ); ?>"><?php echo esc_html( $post->get_modified_date() ); ?></time>
 
-				<!-- The authors of your article -->
-				<?php if ( ! empty( $authors = $post->get_authors() ) ) : ?>
+				<?php
+				// The authors of your article
+				if ( ! empty( $authors = $post->get_authors() ) ) : ?>
 					<?php foreach ( (array) $authors as $author ) : ?>
 						<address>
 							<a><?php echo esc_html( $author->display_name ); ?></a>
-							<?php echo sanitize_text_field( get_the_author_meta( 'description', $author->ID ) ); ?>
+							<?php echo esc_html( get_the_author_meta( 'description', $author->ID ) ); ?>
 						</address>
 					<?php endforeach; ?>
 				<?php endif; ?>
 
-				<!-- Ad code for the article -->
-				<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
-					<?php
-						// Make sure there's ad codes before we output it
-						$ad_code = wpna_get_post_option( $post->get_the_ID(), 'fbia_ad_code' );
-						if ( ! empty( $ad_code ) )
-							echo $ad_code;
-					?>
+				<?php
+				// Ad code for the article
+				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
+					<?php echo $post->get_ads(); ?>
 				<?php endif; ?>
 
-				<!-- Sponsored code for the article -->
-				<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_sponsored' ) ) ) : ?>
+				<?php
+				// Sponsored code for the article
+				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_sponsored' ) ) ) : ?>
 					<?php if ( ! empty( $authors = $post->get_authors() ) ) : ?>
 						<ul class="op-sponsors">
 						<?php foreach ( (array) $authors as $author ) : ?>
@@ -131,22 +129,26 @@
 
 			</header>
 
-			<!-- Article body -->
-			<?php echo $post->get_the_content(); ?>
+			<?php
+				// Article body
+				echo $post->get_the_content();
+			?>
 
-			<!-- Article analytics code -->
-			<?php echo $post->get_analytics(); ?>
+			<?php
+				// Article analytics code
+				echo $post->get_analytics();
+			?>
 
 			<footer>
 
-				<!-- First aside block is for article credits -->
+				<?php // First aside block is for article credits ?>
 				<?php if ( $post->get_credits() ) : ?>
 					<aside>
-						<?php echo sanitize_text_field( $post->get_credits() ); ?>
+						<?php echo esc_html( $post->get_credits() ); ?>
 					</aside>
 				<?php endif; ?>
 
-				<!-- Copyright follows credits -->
+				<?php // Copyright follows credits ?>
 				<?php if ( $post->get_copyright() ) : ?>
 					<small><?php echo esc_html( $post->get_copyright() ); ?></small>
 				<?php endif; ?>

@@ -35,7 +35,7 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 		$value = $default;
 
 		// Check if it exists in the global options array
-		if ( isset( $wpna_options[ $name ] ) )
+		if ( ! empty( $wpna_options[ $name ] ) )
 			$value = $wpna_options[ $name ];
 
 		/**
@@ -119,7 +119,10 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 	 */
 	function wpna_get_post_option( $post_id, $name, $default = false ) {
 
-		if ( $post_meta = get_post_meta( $post_id, $name, true ) ) {
+		// Options stored in posts are prefixed with '_wpna_'.
+		$post_option_name = '_wpna_' . $name;
+
+		if ( $post_meta = get_post_meta( $post_id, $post_option_name, true ) ) {
 			// Get the post specific option
 			$value = $post_meta;
 		} else {

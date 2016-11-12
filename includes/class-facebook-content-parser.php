@@ -280,13 +280,8 @@ class WPNA_Facebook_Content_Parser {
 			'<acronym>',
 			'<b>',
 			'<br>',
-			'<font>',
 			'<hr>',
-			'<i>',
-
-			// Not allowed by FB but used to stop
-			// shortcodes getting wrapped in <p> tags
-			'<pre>',
+			'<i>'
 		);
 
 		return strip_tags( $content, implode( '', $allowed_tags ) );
@@ -540,6 +535,7 @@ class WPNA_Facebook_Content_Parser {
 				if ( 'img' == $element_to_move ) {
 					// Take account of images wrapped in captions
 					if ( 'div' == $parentNode->nodeName && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
+						$element = $parentNode;
 						$parentNode = $parentNode->parentNode;
 					}
 				}
@@ -709,11 +705,6 @@ class WPNA_Facebook_Content_Parser {
 				empty( trim( $node->textContent ) )
 			) {
 				$nodes_to_remove[] = $node;
-			} else {
-				// Trim paragraphs
-				if ( 'p' == $node->tagName ){
-					$node->nodeValue = trim( $node->nodeValue );
-				}
 			}
 
 		}

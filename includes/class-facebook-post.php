@@ -65,8 +65,8 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_style() {
 
-		if ( ! $style = get_post_meta( get_the_ID(), 'fbna_style', true ) )
-			$style = wpna_get_option('fbna_style', 'default' );
+		// Checks for post options, then global options then default.
+		$style = wpna_get_post_option( get_the_ID(), 'fbia_style', 'default' );
 
 		/**
 		 * Filter the article style.
@@ -506,11 +506,8 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_credits() {
 
-		if ( ! $credits = get_post_meta( get_the_ID(), 'fbia_credits', true ) )
-			$credits = wpna_get_option('fbia_credits', '');
-
-		// Convert the switch value to boolean
-		$credits = wpna_switch_to_boolean( $credits );
+		// Checks for post options, then global options then default.
+		$credits = wpna_get_post_option( get_the_ID(), 'fbia_credits', '' );
 
 		/**
 		 * Filter the credits for each article.
@@ -535,11 +532,8 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_copyright() {
 
-		if ( ! $copyright = get_post_meta( get_the_ID(), 'fbna_copyright', true ) )
-			$copyright = wpna_get_option('fbna_copyright', '');
-
-		// Convert the switch value to boolean
-		$copyright = wpna_switch_to_boolean( $copyright );
+		// Checks for post options, then global options then default.
+		$copyright = wpna_get_post_option( get_the_ID(), 'fbia_copyright', '' );
 
 		/**
 		 * Filter the copyright for each article.
@@ -572,7 +566,7 @@ class WPNA_Facebook_Post {
 		$post_categories = get_the_category( $this->get_the_ID() );
 		$post_categories_ids = wp_list_pluck( $post_categories, 'term_id' );
 
-		// Nothing fancy here. Just get the three latest posts
+		// Nothing fancy here. Just get the four latest posts
 		// that are in any of the same categories
 		$query_args = array(
 			'category__in'           => $post_categories_ids,
@@ -584,7 +578,9 @@ class WPNA_Facebook_Post {
 			'no_found_rows'          => true, // Turn of pagination, we don't need it
 			'update_post_term_cache' => false,
 			'update_post_meta_cache' => false,
-			'cache_results'          => false
+			'cache_results'          => false,
+			'post_type'              => 'post',
+			'post_status'            => 'publish',
 		);
 
 		/**
@@ -611,12 +607,19 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_analytics() {
 
-		if ( ! $code = get_post_meta( get_the_ID(), 'fbia_analytics', true ) )
-			$code = wpna_get_option('fbia_analytics', '');
+		// Checks for post options, then global options then default.
+		$analytics_code = wpna_get_post_option( get_the_ID(), 'fbia_analytics', '' );
 
-		// It may or may not be wrapped in an iframe and figure tags. It needs to be.
-		$code = str_ireplace( array( '<figure class="op-tracker">', '</figure>', '<iframe>', '</iframe>' ), '', $code );
-		$code = sprintf( '<figure class="op-tracker"><iframe>%s</iframe></figure>', $code );
+		// It may or may not be wrapped in figure tags.
+		$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
+
+		// If it's not wrapped it in an iFrame then ensure it is.
+		if ( '<iframe>' != substr( $analytics_code, 0, 8 ) ) {
+			$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
+		}
+
+		// Ensure it's wrapped in figure tags.
+		$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 
 		/**
 		 * Filter the analytics code for the article.
@@ -624,9 +627,35 @@ class WPNA_Facebook_Post {
 		 * @since 1.0.0
 		 * @var string
 		 */
-		$code = apply_filters( 'wpna_facebook_post_analytics', $code );
+		$analytics_code = apply_filters( 'wpna_facebook_post_analytics', $analytics_code );
 
-		return $code;
+		return $analytics_code;
+	}
+
+	/**
+	 * Get the ad code for the article.
+	 *
+	 * First checks the post meta to see if it's been overridden.
+	 * If not it returns the global default.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function get_ads() {
+		// Make sure there's ad codes before we output it
+		$ad_code = wpna_get_post_option( get_the_ID(), 'fbia_ad_code' );
+
+		/**
+		 * Filter the ad code for the article.
+		 *
+		 * @since 1.0.0
+		 * @var string
+		 */
+		$ad_code = apply_filters( 'wpna_facebook_post_ads', $ad_code );
+
+		return $ad_code;
 	}
 
 	/**
