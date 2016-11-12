@@ -27,7 +27,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @access public
 	 * @var string
 	 */
-	public $page_slug = 'wpna_general';
+	public $page_slug = 'wpna_facebook';
 
 	/**
 	 * Hooks registered in this class.
