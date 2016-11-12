@@ -44,7 +44,7 @@ if ( is_multisite() ) {
 	 */
 	if ( ! empty( $sites ) ) {
 		foreach ( $sites as $site_id ) {
-			$wpdb->delete( $wpdb->base_prefix . intval( $site_id ) '_options', array( 'option_name' => 'wpna_options' ) );
+			$wpdb->delete( $wpdb->base_prefix . intval( $site_id ) . '_options', array( 'option_name' => 'wpna_options' ) );
 		}
 	}
 
