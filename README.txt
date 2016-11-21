@@ -1,14 +1,14 @@
 === WP Native Articles ===
-Contributors: OzTheGreat
+Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 3.0.1
 Tested up to: 4.6.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Advanced Facebook Instant Articles integration for WordPress
+Easy Facebook Instant Articles for your WordPress site with better content parsing and advanced features.
 
 == Description ==
 
@@ -28,7 +28,7 @@ When the article is shared or posted its instant status will also be denoted by 
 
 **Content Parsing**
 
-A large part of the complexity of integrating Instant Articles is the rigorous content structure
+A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure
 imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content
 tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take
 account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort
@@ -120,6 +120,9 @@ through the WordPress support forum found on the Plugin download page.
 5. Multisite options page.
 
 == Changelog ==
+
+= 1.0.1 =
+* Readme corrections
 
 = 1.0.0 =
 * Plugin released
