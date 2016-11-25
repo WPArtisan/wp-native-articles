@@ -120,6 +120,12 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$wpna_support_admin = new WPNA_Admin_Support();
 
+		// Load the support admin section
+		if ( ! class_exists( 'WPNA_Admin_Premium' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-admin-premium.php';
+		}
+		$wpna_premium_admin = new WPNA_Admin_Premium();
+
 		// Load Facebook Instant Articles functionality
 		if ( ! class_exists( 'WPNA_Admin_Facebook' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook.php';

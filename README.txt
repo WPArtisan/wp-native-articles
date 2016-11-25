@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 3.0.1
 Tested up to: 4.6.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Easy Facebook Instant Articles for your WordPress site with better content parsi
 
 == Description ==
 
-A better implementation of Facebook Instant Articles (FBIA) for WordPress.
+A better implementation of Facebook Instant Articles for WordPress.
 
 Only available in the Facebook mobile app, Instant Articles are a pre-loaded, super fast, and optimized version of your regular articles.
 Boasting some impressive stats (10x faster, 20% more reads, 70% less abandonment) they have quickly become a must for every publisher.
@@ -20,7 +20,7 @@ Boasting some impressive stats (10x faster, 20% more reads, 70% less abandonment
 **How it works**
 
 After installation and setup this plugin auto generates an instant article version for each of your WordPress articles.
-The article's regular HTML is parsed and converted to correct FBIA markup which is then submitted to Facebook via a RSS feed. When your
+The article's regular HTML is parsed and converted to correct Facebook Instant Article markup which is then submitted to Facebook via a RSS feed. When your
 article is viewed using the Facebook mobile app it will now load the fast, optimized instant article version directly in the app.
 When the article is shared or posted its instant status will also be denoted by the lightening symbol in the corner.
 
@@ -33,23 +33,25 @@ imposed. Due to the WYSIWYG editor and the plethora of plugins and themes availa
 tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take
 account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort
 to correctly format any WordPress content it could possibly come across. You can read more about the challenges and
-solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/).
+solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
 
-**PRO Version**
-
-The [Pro version](https://wp-native-articles.com/) of the plugin comes with full Facebook Instant Articles API integration and has
-advanced features such as:
-
-* Full API integration.
-* Publish, unpublish and manage Instant Articles directly from the WP post page.
-* FBIA synced instantly with WP, no waiting for FB to scrape the RSS feed.
-* FBIA Errors & import status display live in every article.
-* FBIA analytics, individual and aggregated site overview.
-* Premium support.
+> **PRO Version**
+>
+> [WP Native Articles Pro](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-a) comes with full [Facebook Instant Articles API](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-b#features) integration and has
+> advanced features such as:
+>
+> * **Full API integration**
+> * **Manage Articles** Publish, unpublish and manage Instant Articles directly from the WordPress post page.
+> * **Live Sync** Instant Articles synced instantly from WordPress, no waiting for FaceBook to scrape the RSS feed.
+> * **Article Status** Errors & import status for your Instant Articles displayed live in every article.
+> * **Instant Articles Analytics** Individual and aggregated site overview.
+> * **Premium support**
+>
+> Check out the Pro version at [https://wp-native-articles.com/](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-c).
 
 **Future**
 
-A features planned for the near future.
+Features planned for the near future.
 
 * Image options manager
 * Embed manager (ads, related articles, anything)
@@ -94,7 +96,7 @@ If you find any that don't work or that we've missed please let us know and we'l
 
 = Is there a road map? =
 
-Yep. It can be found [here](https://wp-native-articles.com/roadmap/).
+Yep. It can be found on our [instant articles roadmap page](https://wp-native-articles.com/roadmap/?utm_source=fplugin&utm_medium=readme-d).
 
 = Does it support WordPress Multisite? =
 
@@ -120,6 +122,12 @@ through the WordPress support forum found on the Plugin download page.
 5. Multisite options page.
 
 == Changelog ==
+
+= 1.0.2 =
+* Fix for images using HTML5 markup
+* Take account of captions when removing images
+* 'Premium' page
+* Readme corrections
 
 = 1.0.1 =
 * Readme corrections
