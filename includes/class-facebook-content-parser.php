@@ -351,10 +351,22 @@ class WPNA_Facebook_Content_Parser {
 			$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
 			$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-			foreach ( $images = $DOMDocument->getElementsByTagName('img') as $image ) {
-				if ( preg_match( $regex, $image->getAttribute('src') ) ) {
-					$parent = $image->parentNode;
-					$parent->removeChild( $image );
+			// Get all images
+			foreach ( $images = $DOMDocument->getElementsByTagName('img') as $element ) {
+				// Check if the src is the same as the featured image
+				if ( preg_match( $regex, $element->getAttribute('src') ) ) {
+
+					// Get the parent node
+					$parentNode = $element->parentNode;
+
+					// If the image has a caption remove that as well
+					if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
+						$element = $parentNode;
+						$parentNode = $parentNode->parentNode;
+					}
+
+					// Remove the element
+					$parentNode->removeChild( $element );
 				}
 			}
 		}
@@ -375,14 +387,28 @@ class WPNA_Facebook_Content_Parser {
 	 * @return null
 	 */
 	public function images_exist( DOMDocument $DOMDocument ) {
-		foreach ( $images = $DOMDocument->getElementsByTagName('img') as $image ) {
-			// This is obviously less than ideal
-			$response = wp_remote_head( $image->getAttribute('src') );
+		// Find all images and loop through them
+		foreach ( $images = $DOMDocument->getElementsByTagName('img') as $element ) {
+
+			// This is obviously less than ideal as it can be slow
+			$response = wp_remote_head( $element->getAttribute('src') );
 			$response_code = wp_remote_retrieve_response_code( $response );
+
+			// The image doesn't exist, remove it
 			if ( 200 != $response_code ) {
-				// Remove the image
-				$parent = $image->parentNode;
-				$parent->removeChild( $image );
+
+				// Get the parent node
+				$parentNode = $element->parentNode;
+
+				// If the image has a caption remove that as well
+				if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
+					$element = $parentNode;
+					$parentNode = $parentNode->parentNode;
+				}
+
+				// Remove the element
+				$parentNode->removeChild( $element );
+
 			}
 		}
 
@@ -460,27 +486,34 @@ class WPNA_Facebook_Content_Parser {
 			$fragment_template->appendChild( $figure_template );
 
 			// If the image has a caption we also wish to wrap that
-			if ( 'div' == $image->parentNode->nodeName && false !== strpos( $image->parentNode->getAttribute('class'), 'wp-caption' ) ) {
+			if ( in_array( $image->parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $image->parentNode->getAttribute('class'), 'wp-caption' ) ) {
 
+				// Images that have captions are wrapped, use the parent element
 				$image = $image->parentNode;
 
-				$caption = $image->getElementsByTagName('p');
+				// Create a blank template
+				$figcaption_template = $DOMDocument->createElement('figcaption');
 
-				if ( 1 == $caption->length ) {
+				// If they've added theme support for HTML5 try that first
+				$caption = $image->getElementsByTagName('figcaption');
 
-					$figcaption_template = $DOMDocument->createElement('figcaption');
+				// If no HTML5 elements have been found try the default p elements
+				if ( 1 != $caption->length )
+					$caption = $image->getElementsByTagName('p');
+
+				// If we've found anything add the contents to the template
+				if ( 1 == $caption->length )
 					$figcaption_template->nodeValue = $caption->item(0)->nodeValue;
 
-					/**
-					 * Use this filter at add attributes to the image caption.
-					 *
-					 * @since 1.0.0
-					 * @param DOMDocumentFragment $figcaption_template
-					 */
-					apply_filters( 'wpna_facebook_article_image_figurecaption', $figcaption_template );
+				/**
+				 * Use this filter at add attributes to the image caption.
+				 *
+				 * @since 1.0.0
+				 * @param DOMDocumentFragment $figcaption_template
+				 */
+				apply_filters( 'wpna_facebook_article_image_figurecaption', $figcaption_template );
 
-					$figure_template->appendChild( $figcaption_template );
-				}
+				$figure_template->appendChild( $figcaption_template );
 
 			}
 
@@ -534,7 +567,7 @@ class WPNA_Facebook_Content_Parser {
 				// If it's an image it has special rules.
 				if ( 'img' == $element_to_move ) {
 					// Take account of images wrapped in captions
-					if ( 'div' == $parentNode->nodeName && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
+					if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
 						$element = $parentNode;
 						$parentNode = $parentNode->parentNode;
 					}
