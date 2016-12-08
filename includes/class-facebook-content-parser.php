@@ -470,8 +470,14 @@ class WPNA_Facebook_Content_Parser {
 			$image_source = $image->getAttribute('src');
 
 			// The recommended img size is 2048x2048.
-			// We ideally need to workout the image size and get the largest possible
-			$attachment_id = wpna_get_attachment_id_from_src( $image_source );
+			// We ideally need to workout the image size and get the largest possible.
+			// For WordPress embedded images, the image id can be in the class name,
+			// which is a much cheaper lookup.
+			if ( preg_match( '/wp-image-([\d]+)/', $image->getAttribute( 'class' ), $matches ) ) {
+				$attachment_id = (int) $matches[1];
+			} else {
+				$attachment_id = wpna_get_attachment_id_from_src( $image_source );
+			}
 
 			if ( $attachment_id ) {
 				// Try and get a larger version
