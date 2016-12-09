@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Define the current version
 if ( ! defined( 'WPNA_VERSION' ) )
-	define( 'WPNA_VERSION', '1.0.2' );
+	define( 'WPNA_VERSION', '1.0.3' );
 
 // Define the plugin base path
 if ( ! defined( 'WPNA_BASE_PATH' ) )

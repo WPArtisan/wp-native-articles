@@ -41,10 +41,13 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @return null
 	 */
 	public function hooks() {
-		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
+		add_action( 'admin_menu',                         array( $this, 'add_menu_items' ), 10, 0 );
+		add_action( 'admin_init',                         array( $this, 'rating_notice' ), 10, 0 );
 
 		// These actions are only applied if Instant Articles is enabled
 		if ( wpna_switch_to_boolean( wpna_get_option('fbia_enable') ) ) {
+			add_action( 'wp_ajax_wpna-dismiss-notice', array( $this, 'ajax_dismiss_notice' ), 10, 0 );
+
 			add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );
 			add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
@@ -102,6 +105,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		if ( in_array( $hook, array( 'post.php', 'post-new.php') ) ) {
 			wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', dirname( __FILE__ ) ), array( 'jquery-ui-tabs' ), WPNA_VERSION, true );
 		}
+
+		// Dismissible JS. Create Nonce.
+		wp_enqueue_script( 'wpna-notices', plugins_url( '/assets/js/notices.js', dirname( __FILE__ ) ), array( 'jquery', 'wp-util' ), WPNA_VERSION, true );
+		wp_localize_script( 'wpna-notices', 'wpnaNotices', array(
+			'nonce' => wp_create_nonce( 'wpna_notices_ajax_nonce' ),
+		));
 	}
 
 	/**
@@ -233,6 +242,124 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		 * @param $post  WP_Post The current post object being edited
 		 */
 		do_action( 'wpna_post_meta_box_content_footer', $post );
+	}
+
+	/**
+	 * Whether to display the rating notice prompts.
+	 *
+	 * Compares the activation time to the prompt intervals aon whether to
+	 * show a rating prompt notice or not.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function rating_notice() {
+
+		// We only want admins
+		if ( ! current_user_can( 'manage_options' ) )
+			return;
+
+		$activation_time = get_site_option( 'wpna_activation_time' );
+		$prompts = (array) get_site_option( 'wpna_rating_prompts' );
+
+		// Sort the prompts to ensure they're in order.
+		sort( $prompts, SORT_NUMERIC );
+
+		// If any of the prompts are within the activation time then show the admin message
+		foreach ( $prompts as $prompt ) {
+			if ( strtotime( $activation_time ) < strtotime( "-{$prompt} days" ) ) {
+				add_action( 'admin_notices', array( $this, 'rating_notice_callback' ), 10, 0 );
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Outputs the HTML for the rating notice admin prompt.
+	 *
+	 * We bug admins at certain intervals to rate the plugin.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function rating_notice_callback() {
+		?>
+			<div class="wpna-notice notice notice-info is-dismissible">
+				<p><?php _e( "Hey, we noticed you've been using WP Native Articles for a little while now – that’s brilliant! Could you please do me a BIG favor and give it a 5-star rating on WordPress? It really helps us spread the word and boosts our motivation.", 'wp-native-articles' ); ?></p>
+				<p>- Edward</p>
+				<p><a href="https://wordpress.org/support/plugin/wp-native-articles/reviews/" target="_blank"><?php _e( 'Sure, you deserve it', 'wp-native-articles' ); ?></a></p>
+				<p><a href="#" class="wpna-dismiss" data-notice="rating-permanent"><?php _e( 'I already have', 'wp-native-articles' ); ?></a></p>
+				<p><a href="#" class="wpna-dismiss" data-notice="rating-temporary"><?php _e( "Nope, not right now", 'wp-native-articles' ); ?></a></p>
+			</div>
+
+		<?php
+	}
+
+	/**
+	 * Dismisses admin notices.
+	 *
+	 * Ajax end point for dealing with notice dismissal. Ensure the notice has a
+	 * custom name then deal with it in the switch statment.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public function ajax_dismiss_notice() {
+
+		// Check it's an AJAX request
+		if ( ! defined('DOING_AJAX') || ! DOING_AJAX )
+			wp_die();
+
+		// Check the nonce is valid
+		check_ajax_referer( 'wpna_notices_ajax_nonce' );
+
+		// We only want admins
+		if ( ! current_user_can( 'manage_options' ) )
+			wp_die();
+
+		// If the notice isn't set then do nothing
+		if ( empty( $_POST['notice'] ) )
+			wp_die();
+
+		switch ( $_POST['notice'] ) {
+
+			// They've already rated the app, kill all rating prompts
+			case 'rating-permanent':
+				delete_site_option( 'wpna_rating_prompts' );
+			break;
+
+			// They don't want to be bugged anymore at the moment.
+			// Remove the current interval prompt
+			case 'rating-temporary':
+				$prompts = (array) get_site_option( 'wpna_rating_prompts' );
+
+				// 1 or fewer intervals and just remove the whole option
+				if ( count( $prompts ) <= 1 ) {
+					delete_site_option( 'wpna_rating_prompts' );
+
+				} else {
+					// Sort the array and remove the lowest interval
+					sort( $prompts, SORT_NUMERIC );
+					array_shift( $prompts );
+					update_site_option( 'wpna_rating_prompts', $prompts );
+				}
+
+			break;
+
+			default:
+				// Notice not found, do nothing.
+			break;
+		}
+
+		// Kill the response properly
+		wp_die();
+
 	}
 
 }

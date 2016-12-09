@@ -28,6 +28,7 @@ class WPNA_Activator {
 	public static function run() {
 		self::flush_rewrite_rules();
 		self::add_default_options();
+		self::add_default_site_options();
 	}
 
 	/**
@@ -87,6 +88,26 @@ class WPNA_Activator {
 
 		}
 
+	}
+
+	/**
+	 * Adds some default site options.
+	 *
+	 * Log when the plugin was first activated + intervals of when to
+	 * send rating prompt messages.
+	 *
+	 * @since 1.0.3
+	 *
+	 * @access public
+	 * @return null
+	 */
+	public static function add_default_site_options() {
+		// They may deactivate / re-activate. Let's try not to be annoying
+		if ( ! get_site_option( 'wpna_activation_time' ) ) {
+			add_site_option( 'wpna_activation_time', date("c") );
+			// When to provide prompts for plugin ratings, in days.
+			add_site_option( 'wpna_rating_prompts', array( 7, 30, 90 ) );
+		}
 	}
 
 }

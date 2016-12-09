@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 3.0.1
-Tested up to: 4.6.1
-Stable tag: 1.0.2
+Tested up to: 4.7
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,6 +122,10 @@ through the WordPress support forum found on the Plugin download page.
 5. Multisite options page.
 
 == Changelog ==
+
+= 1.0.3 =
+* WordPress 4.7 compatibility
+* Speed improvements for locating attachment IDs
 
 = 1.0.2 =
 * Fix for images using HTML5 markup
