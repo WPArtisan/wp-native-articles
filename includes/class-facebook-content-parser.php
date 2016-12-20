@@ -509,7 +509,7 @@ class WPNA_Facebook_Content_Parser {
 
 				// If we've found anything add the contents to the template
 				if ( 1 == $caption->length )
-					$figcaption_template->nodeValue = $caption->item(0)->nodeValue;
+					$figcaption_template->nodeValue = htmlspecialchars( $caption->item(0)->nodeValue );
 
 				/**
 				 * Use this filter at add attributes to the image caption.
