@@ -738,10 +738,13 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $DOMDocument->getElementsByTagName('*') as $node ) {
 
+			// Ensure there's no empty paragraphs
+			$trimmed_content = trim( $node->textContent );
+
 			// If the node is completely empty queue it for removal
 			if (
 				! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ) ) &&
-				empty( trim( $node->textContent ) )
+				empty( $trimmed_content )
 			) {
 				$nodes_to_remove[] = $node;
 			}
