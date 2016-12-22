@@ -83,7 +83,8 @@
 
 				<?php
 				// The authors of your article
-				if ( ! empty( $authors = $post->get_authors() ) ) : ?>
+				$authors = $post->get_authors();
+				if ( ! empty( $authors ) ) : ?>
 					<?php foreach ( (array) $authors as $author ) : ?>
 						<address>
 							<a><?php echo esc_html( $author->display_name ); ?></a>
@@ -101,7 +102,10 @@
 				<?php
 				// Sponsored code for the article
 				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_sponsored' ) ) ) : ?>
-					<?php if ( ! empty( $authors = $post->get_authors() ) ) : ?>
+					<?php
+					// The authors of your article
+					$authors = $post->get_authors();
+					if ( ! empty( $authors ) ) : ?>
 						<ul class="op-sponsors">
 						<?php foreach ( (array) $authors as $author ) : ?>
 							<?php if ( $fb_url = get_the_author_meta( 'facebook', $author->ID ) ) : ?>

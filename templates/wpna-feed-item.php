@@ -21,7 +21,10 @@
 	<pubDate><?php echo esc_html( $post->get_publish_date_iso() ); ?></pubDate>
 	<modDate><?php echo esc_html( $post->get_modified_date_iso() ); ?></modDate>
 
-	<?php if ( ! empty( $authors = $post->get_authors() ) ) : ?>
+	<?php
+	// Get the authors
+	$authors = $post->get_authors();
+	if ( ! empty( $authors ) ) : ?>
 		<?php foreach ( (array) $authors as $author ) : ?>
 			<author><?php echo esc_html( $author->display_name ); ?></author>
 		<?php endforeach; ?>
