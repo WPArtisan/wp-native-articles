@@ -159,6 +159,23 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 
 endif;
 
+if ( ! function_exists( 'boolval' ) ) :
+
+	/**
+	 * Converts a value to a boolean.
+	 *
+	 * PHP <= 5.5 didn't have boolval function, this patches it in.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param  mixed $value
+	 * @return boolean
+	 */
+	function boolval( $value ) {
+		return (bool) $value;
+	}
+
+endif;
 
 if ( ! function_exists( 'wpna_locate_template' ) ) :
 

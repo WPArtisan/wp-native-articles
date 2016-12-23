@@ -595,16 +595,16 @@ class WPNA_Facebook_Content_Parser {
 				$parents_closing_tags = '</' . implode( '</', $parents );
 				$parents_opening_tags = '<' . implode( '<', array_reverse( $parents ) );
 
-				// Get the string to replace the image element with
-				$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveHTML( $element ), PHP_EOL, $parents_opening_tags );
+				// Get the string with which to replace the element with.
+				$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveXML( $element ), PHP_EOL, $parents_opening_tags );
 
-				// Replace the image element with the new opening and closing tags
-				$parent_node_html = str_replace( $DOMDocument->saveHTML( $element ), $replace_with, $DOMDocument->saveHTML( $parentNode ) );
+				// Replace the image element with the new string that has opening and closing tags
+				$parent_node_html = str_replace( $DOMDocument->saveXML( $element ), $replace_with, $DOMDocument->saveXML( $parentNode ) );
 
 				// To replace the current parent we need to load the new node
 				// fragment into a new instance of DOMDocument
 				$libxml_previous_state = libxml_use_internal_errors( true );
-				$DOMDocument_temp = new \DOMDocument( '1.0', get_option( 'blog_charset' ) );
+				$DOMDocument_temp = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
 
 				// Make sure it's the correct encoding
 				if ( function_exists( 'mb_convert_encoding' ) ) {
@@ -685,7 +685,7 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $DOMDocument->getElementsByTagName('*') as $node ) {
 
-			if ( $node instanceof \DOMElement && ! in_array( $node->tagName, array( 'figure' ) ) ) {
+			if ( $node instanceof DOMElement && ! in_array( $node->tagName, array( 'figure' ) ) ) {
 				$node->removeAttribute('style');
 				$node->removeAttribute('class');
 				$node->removeAttribute('id');

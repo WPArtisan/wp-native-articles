@@ -220,7 +220,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			<?php esc_html_e( 'Unlike the API, the RSS feed generates many articles at once. This can be very intensive so it is highly recomended you enable caching.', 'wp-native-articles' ); ?>
 			<br />
 			<?php esc_html_e( 'Your feed can be found here:', 'wp-native-articles' ); ?>
-			<a href="<?php echo esc_url( site_url( '/feed/' . $feed_slug ) ); ?>" target="_blank"><?php echo esc_url( site_url( '/feed/' . $feed_slug ) ); ?></a>
+			<a href="<?php echo esc_url( get_feed_link( $feed_slug ) ); ?>" target="_blank"><?php echo esc_url( get_feed_link( $feed_slug ) ); ?></a>
 		</p>
 		<?php
 	}

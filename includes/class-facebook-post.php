@@ -450,7 +450,7 @@ class WPNA_Facebook_Post {
 		if ( class_exists( 'DOMDocument' ) ) {
 
 			$libxml_previous_state = libxml_use_internal_errors( true );
-			$DOMDocument = new \DOMDocument( '1.0', get_option( 'blog_charset' ) );
+			$DOMDocument = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
 
 			if ( function_exists( 'mb_convert_encoding' ) ) {
 				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
@@ -476,7 +476,7 @@ class WPNA_Facebook_Post {
 			// Get just the body content
 			$body = $DOMDocument->getElementsByTagName( 'body' )->item( 0 );
 
-			$content = $DOMDocument->saveHTML( $body );
+			$content = $DOMDocument->saveXML( $body );
 		}
 
 		/**
