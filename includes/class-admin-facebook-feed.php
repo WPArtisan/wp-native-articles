@@ -48,7 +48,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 
 		// A custom endpoint is added with the permalinks API so we need to
 		// flush the rewrite rules to clean it up and remove it.
-		add_action( 'load-native-articles_page_wpna_facebook', array( $this, 'flush_rewrite_rules' ), 10, 0 );
+		add_action( 'load-toplevel_page_wpna_facebook', array( $this, 'flush_rewrite_rules' ), 10, 0 );
 
 		// These actions are only applied if Instant Articles is enabled
 		if ( wpna_switch_to_boolean( wpna_get_option('fbia_enable') ) ) {
