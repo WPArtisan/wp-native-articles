@@ -1,0 +1,61 @@
+machine:
+  timezone:
+    Europe/London
+
+  php:
+    version: 5.3.3
+
+  # This will be added to the `/etc/hosts` file
+  hosts:
+    wp-native-articles-plugin.dev: 127.0.0.1
+
+dependencies:
+  pre:
+    # No password is required for the MySQL user `ubuntu`
+    - mysql -u ubuntu -e "create database wordpress"
+
+    # Use cURL to fetch WP-CLI
+    - curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+    # Make sure WP-CLI is executable
+    - chmod +x wp-cli.phar
+
+    # Download WordPress into `wordpress` directory
+    - ./wp-cli.phar core download --allow-root --path=wordpress
+
+    # Generate `wp-config.php` file
+    - ./wp-cli.phar core config --allow-root --dbname=wordpress --dbuser=ubuntu --dbhost=localhost --path=wordpress
+
+    # Install WordPress
+    - ./wp-cli.phar core install --allow-root --admin_name=admin --admin_password=admin --admin_email=admin@example.com --url=http://wp-native-articles-plugin.dev:8080 --title=WordPress --path=wordpress
+
+    # Clonse WP Native Articles plugin from GitHub
+    - git clone git@github.com:WPArtisan/wp-native-articles.git wordpress/wp-content/plugins/wp-native-articles
+
+    # And use WP-CLI to activate it
+    - ./wp-cli.phar plugin activate wp-native-articles --path=wordpress
+
+  post:
+    # Copy Apache conf into `site-available`
+    - cp ~/wppusher-plugin/apache-ci.conf /etc/apache2/sites-available
+
+    # Use `a2ensite` to create a symlink for the config
+    - a2ensite apache-ci.conf
+
+    # Restart the Apache server
+    - sudo service apache2 restart
+
+test:
+  override:
+    # This is just for us to see that the WP Pusher plugin was actually installed and is active
+    - ./wp-cli.phar plugin list --path=wordpress
+
+    # Finally, run our Behat features
+    - vendor/bin/behat
+
+# deployment:
+#
+#   staging:
+#     branch: develop
+#     commands:
+#       - eb deploy --staged test-graph-api
