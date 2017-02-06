@@ -7,63 +7,65 @@
  * Version: 1.0.7
  * Plugin URI: https://wp-native-articles.com
  *
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) )
+	exit;
 
-// Define the current version
+// Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) )
 	define( 'WPNA_VERSION', '1.0.7' );
 
-// Define the plugin base path
+// Define the plugin base path.
 if ( ! defined( 'WPNA_BASE_PATH' ) )
 	define( 'WPNA_BASE_PATH', dirname( __FILE__ ) );
 
-// Define the URL to check for updates
+// Define the URL to check for updates.
 if ( ! defined( 'WPNA_STORE_URL' ) )
 	define( 'WPNA_STORE_URL', 'https://wp-native-articles.com' );
 
-// Define the item name
+// Define the item name.
 if ( ! defined( 'WPNA_ITEM_NAME' ) )
 	define( 'WPNA_ITEM_NAME', 'WP Native Articles' );
 
 
 if ( ! function_exists( 'wpna_initialise' ) ) :
+
 	/**
 	 * This function kicks everything off.
 	 *
 	 * It includes all the necessary files and initalises all classes that need
-	 * to be initalised
+	 * to be initalised.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return null
+	 * @return void
 	 */
 	function wpna_initialise() {
 
-		// Require the class if it doesn't exist
+		// Require the class if it doesn't exist.
 		if ( ! class_exists( 'WPNA_Activator' ) ) {
 			require WPNA_BASE_PATH . '/class-activator.php';
 		}
 
-		// Register the plugin activation method
+		// Register the plugin activation method.
 		register_activation_hook( __FILE__, array( 'WPNA_Activator', 'run' ) );
 
-		// Require the class if it doesn't exist
+		// Require the class if it doesn't exist.
 		if ( ! class_exists( 'WPNA_Deactivator' ) ) {
 			require WPNA_BASE_PATH . '/class-deactivator.php';
 		}
 
-		// Register the plugin deactivation method
+		// Register the plugin deactivation method.
 		register_deactivation_hook( __FILE__, array( 'WPNA_Deactivator', 'run' ) );
 
+		/**
+		 * Global functions and helper files.
+		 */
 
-		//
-		// Global functions and helper files
-		//
-
-		// Load the helper class
+		// Load the helper class.
 		require WPNA_BASE_PATH . '/includes/functions-helper.php';
 
 		/**
@@ -73,20 +75,19 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		 */
 		$GLOBALS['wpna_options'] = wpna_get_options();
 
-		// Load the sanitization class
+		// Load the sanitization class.
 		require WPNA_BASE_PATH . '/includes/functions-sanitization.php';
 
+		/**
+		 * Classes that register hooks and do stuff.
+		 */
 
-		//
-		// Classes that register hooks and do stuff
-		//
-
-		// Load the admin tabs helper class
+		// Load the admin tabs helper class.
 		if ( ! class_exists( 'WPNA_Helper_Tabs' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-helper-tabs.php';
 		}
 
-		// Load the base admin class & interface
+		// Load the base admin class & interface.
 		if ( ! class_exists( 'WPNA_Admin_Base' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-base.php';
 		}
@@ -95,12 +96,12 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			require WPNA_BASE_PATH . '/includes/interface-admin-base.php';
 		}
 
-		// Facebook post object. Used in the templates
+		// Facebook post object. Used in the templates.
 		if ( ! class_exists( 'WPNA_Facebook_Post' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-post.php';
 		}
 
-		// Load the multisite functionality
+		// Load the multisite functionality.
 		if ( is_multisite() ) {
 			if ( ! class_exists( 'WPNA_Multisite_Admin' ) ) {
 				require WPNA_BASE_PATH . '/includes/class-multisite-admin.php';
@@ -108,25 +109,25 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			$wpna_multisite_admin = new WPNA_Multisite_Admin();
 		}
 
-		// Load the main admin section
+		// Load the main admin section.
 		if ( ! class_exists( 'WPNA_Admin' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin.php';
 		}
 		$wpna_admin = new WPNA_Admin();
 
-		// Load the support admin section
+		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Support' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-support.php';
 		}
 		$wpna_support_admin = new WPNA_Admin_Support();
 
-		// Load the support admin section
+		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Premium' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-premium.php';
 		}
 		$wpna_premium_admin = new WPNA_Admin_Premium();
 
-		// Load Facebook Instant Articles functionality
+		// Load Facebook Instant Articles functionality.
 		if ( ! class_exists( 'WPNA_Admin_Facebook' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook.php';
 		}
@@ -137,25 +138,25 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$wpna_facebook_feed = new WPNA_Admin_Facebook_Feed();
 
-		// Load the Facebook post content parser
+		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';
 		}
 		$wpna_facebook_content = new WPNA_Facebook_Content_Parser();
 
-
-		//
-		// Third party compatibility functions
-		//
+		/**
+		 * Third party compatibility functions.
+		 */
 
 		include WPNA_BASE_PATH . '/includes/compat/playbuzz.php';
 		include WPNA_BASE_PATH . '/includes/compat/yoast-seo.php';
 		include WPNA_BASE_PATH . '/includes/compat/co-authors-plus.php';
+		include WPNA_BASE_PATH . '/includes/compat/infogram.php';
 
+		/**
+		 * Load the plugin text domain. For i18n.
+		 */
 
-		//
-		// Load the plugin text domain. For i18n.
-		//
 		add_action( 'init', 'wpna_load_textdomain', 10, 0 );
 
 	}
@@ -172,13 +173,13 @@ wpna_initialise();
  * To be shown if this plugin is trying to be activated over the Pro one.
  *
  * @since 1.0.0
- * @return null
+ * @return void
  */
 function wpna_disable_pro_plugin_check() {
 
 	if ( is_plugin_active( 'wp-native-articles-pro/wp-native-articles.php' ) ) {
 
-		// Deactivate the current plugin
+		// Deactivate the current plugin.
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 
 		// Show an error message with a back link.
