@@ -3,10 +3,13 @@
  * Deals with multisite stuff.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Class for handling all multisite settings.
@@ -30,9 +33,9 @@ class WPNA_Multisite_Admin {
 	public $page_slug = 'wpna_multisite';
 
 	/**
-	 * The slug of the general option group
+	 * The slug of the general option group.
 	 *
-	 * Used for registering fields, creating nonces etc
+	 * Used for registering fields, creating nonces etc.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -41,9 +44,9 @@ class WPNA_Multisite_Admin {
 	public $option_group_general = 'wpna_multisite-general';
 
 	/**
-	 * The slug of the reset option group
+	 * The slug of the reset option group.
 	 *
-	 * Used for registering fields, creating nonces etc
+	 * Used for registering fields, creating nonces etc.
 	 *
 	 * @since 1.0.0
 	 * @access public
@@ -59,7 +62,7 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function __construct() {
 		$this->hooks();
@@ -71,11 +74,11 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
 		add_action( 'admin_init',              array( $this, 'setup_settings' ), 10, 0 );
-		add_action( 'network_admin_notices',   array( $this, 'notices'), 10, 0 );
+		add_action( 'network_admin_notices',   array( $this, 'notices' ), 10, 0 );
 		add_action( 'network_admin_menu',      array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'wpmu_new_blog',           array( $this, 'new_blog_defaults' ), 10, 6 );
 		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'save_options_callback' ), 10, 1 );
@@ -90,30 +93,30 @@ class WPNA_Multisite_Admin {
 	 * Uses the settings API to register fields and manage options for the
 	 * network dashboard. The settings API doesn't auto save fields for the
 	 * multisite dashboard so this is handled manually below.
-	 * @see save_options_callback()
 	 *
+	 * @see save_options_callback()
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_settings() {
 
 		register_setting( $this->option_group_general, 'wpna_multisite_options', array( $this, 'validate_options_callback' ) );
 
 		add_settings_section(
-			$this->option_group_general, // Section ID
+			$this->option_group_general, // Section ID.
 			esc_html__( 'Multisite Options', 'wp-native-articles' ),
 			array( $this, 'general_section_callback' ),
-			$this->option_group_general // ID used to output fields
+			$this->option_group_general // ID used to output fields.
 		);
 
 		add_settings_field(
 			'access_level',
 			sprintf( '<label for="access_level">%s</label>', esc_html__( 'Access Level', 'wp-native-articles' ) ),
 			array( $this, 'access_level_field_callback' ),
-			$this->option_group_general, // ID used to output fields
-			$this->option_group_general // Section ID
+			$this->option_group_general, // ID used to output fields.
+			$this->option_group_general // Section ID.
 		);
 
 		add_settings_field(
@@ -140,7 +143,6 @@ class WPNA_Multisite_Admin {
 			$this->option_group_reset,
 			$this->option_group_reset
 		);
-
 	}
 
 	/**
@@ -154,13 +156,14 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function notices() {
-		if ( empty( $_REQUEST['notice'] ) )
+		if ( empty( $_REQUEST['notice'] ) ) { // Input var okay.
 			return;
+		}
 
-		switch ( $_REQUEST['notice'] ) {
+		switch ( $_REQUEST['notice'] ) { // Input var okay.
 			case 'wpna_multisite_options_success':
 				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_options_success', esc_html__( 'Multisite settings updated successfully.', 'wp-native-articles' ), 'updated' );
 				break;
@@ -177,15 +180,36 @@ class WPNA_Multisite_Admin {
 				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_reset_error_missing_id', esc_html__( 'Error: Please provide a blog ID to reset.', 'wp-native-articles' ), 'error' );
 				break;
 
+			case 'wpna_multisite_save_license_success':
+				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_save_license_success', esc_html__( 'License key successfully updated.', 'wp-native-articles' ), 'updated' );
+				break;
+
+			case 'wpna_multisite_save_license_error':
+				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_save_license_error', esc_html__( 'Error: Could not update license key.', 'wp-native-articles' ), 'error' );
+				break;
+
+			case 'wpna_multisite_activate_license_success':
+				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_activate_license_success', esc_html__( 'License successfully activated. You are now receiving updates.', 'wp-native-articles' ), 'updated' );
+				break;
+
+			case 'wpna_multisite_deactivate_license_success':
+				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_deactivate_license_success', esc_html__( 'License successfully deactivated.', 'wp-native-articles' ), 'updated' );
+				break;
+
+			case 'wpna_multisite_activate_license_error':
+				$message = ! empty( $_REQUEST['message'] ) ? esc_html( urldecode( wp_unslash( $_REQUEST['message'] ) ) ) : esc_html__( 'Error: Your license could not be activated. Please try again.', 'wp-native-articles' ); // Input var okay.
+				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_activate_license_error', $message, 'error' );
+				break;
+
 			default:
 
 				/**
-				 * Use htis action to scan for any custom notices.
+				 * Use this action to scan for any custom notices.
 				 *
 				 * @since 1.0.0
-				 * @param string The notice key
+				 * @param string The notice key.
 				 */
-				do_action( 'wpna_multisite_notices', $_REQUEST['notice'] );
+				do_action( 'wpna_multisite_notices', wp_unslash( $_REQUEST['notice'] ) ); // Input var okay.
 
 				break;
 		}
@@ -200,37 +224,36 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_menu_items() {
 		$settings_page = add_menu_page(
 			esc_html__( 'Multisite Settings', 'wp-native-articles' ),
 			esc_html__( 'Native Articles', 'wp-native-articles' ),
 			'manage_network_options',
-			$this->page_slug, // Page slug
+			$this->page_slug, // Page slug.
 			array( $this, 'options_page_callback' ),
 			'',
 			89
 		);
-
 	}
 
 	/**
-	 * Outputs the content for the main network admin page.s
+	 * Outputs the content for the main network admin page.
 	 *
 	 * Uses the settings API to display the fields registered.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function options_page_callback() {
 		// URL of the current page. For submitting forms to.
 		$page_url = add_query_arg(
-				array( 'action' => $this->page_slug ),
-				network_admin_url( 'edit.php' )
-			);
+			array( 'action' => $this->page_slug ),
+			network_admin_url( 'edit.php' )
+		);
 		?>
 		<h1><?php esc_html_e( 'Multisite Settings', 'wp-native-articles' ); ?></h1>
 		<?php settings_errors(); ?>
@@ -265,10 +288,10 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function general_section_callback() {
-		// Intentionally left blank
+		// Intentionally left blank.
 	}
 
 	/**
@@ -282,7 +305,7 @@ class WPNA_Multisite_Admin {
 	 * @access public
 	 * @param  array $args Any additional arguments passed though from when
 	 *                     the field was registered.
-	 * @return null
+	 * @return void
 	 */
 	public function access_level_field_callback( $args ) {
 		$options = get_site_option( 'wpna_options' );
@@ -307,7 +330,7 @@ class WPNA_Multisite_Admin {
 	 * @access public
 	 * @param  array $args Any additional arguments passed though from when
 	 *                     the field was registered.
-	 * @return null
+	 * @return void
 	 */
 	public function inherit_id_field_callback( $args ) {
 		$options = get_site_option( 'wpna_options' );
@@ -322,12 +345,12 @@ class WPNA_Multisite_Admin {
 	 * Validates and cleans data from the multisite settings form.
 	 *
 	 * This method is registered when we called 'register_setting()'. Validates
-	 * the 'access_level' and 'inherit_id' fields
+	 * the 'access_level' and 'inherit_id' fields.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array $data The form data submitted for validation
+	 * @param  array $data The form data submitted for validation.
 	 * @return array
 	 */
 	public function validate_options_callback( $data ) {
@@ -335,7 +358,7 @@ class WPNA_Multisite_Admin {
 		$values = array();
 
 		if ( ! empty( $data['access_level'] ) ) {
-			$values['access_level'] = in_array( $data['access_level'], array( 'administrator', 'network_administrator' ) ) ? $data['access_level'] : 'administrator' ;
+			$values['access_level'] = in_array( $data['access_level'], array( 'administrator', 'network_administrator' ), true ) ? $data['access_level'] : 'administrator' ;
 		}
 
 		if ( ! empty( $data['inherit_id'] ) ) {
@@ -356,17 +379,19 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function save_options_callback() {
-		if ( empty( $_POST['wpna_save_options'] ) )
+		if ( empty( $_POST['wpna_save_options'] ) ) { // Input var okay.
 			return;
+		}
 
-		// Check user has the correct permissions
-		if ( ! is_super_admin() )
+		// Check user has the correct permissions.
+		if ( ! is_super_admin() ) {
 			return;
+		}
 
-		// Misleading name, validate nonce
+		// Misleading name, validate nonce.
 		check_admin_referer( $this->option_group_general . '-options' );
 
 		/**
@@ -377,12 +402,12 @@ class WPNA_Multisite_Admin {
 		 * @since 1.0.0
 		 * @var array The form data to validate.
 		 */
-		$values = apply_filters( 'sanitize_option_' . $this->option_group_general, $_POST['wpna_options'] );
+		$values = apply_filters( 'sanitize_option_' . $this->option_group_general, wp_unslash( $_POST['wpna_options'] ) );
 
-		// Save options
+		// Save options.
 		$updated = update_site_option( 'wpna_options', $values );
 
-		// Redirect back with a notice flag
+		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
 				array( 'page' => $this->page_slug, 'notice' => $updated ? 'wpna_multisite_options_success' : 'wpna_multisite_options_error' ),
@@ -399,7 +424,7 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function blog_reset_section_callback() {
 		esc_html_e( 'Here you can reset ALL Native Article settings for a particular blog to the same as the Inherit ID blog above.', 'wp-native-articles' );
@@ -416,7 +441,7 @@ class WPNA_Multisite_Admin {
 	 * @access public
 	 * @param  array $args Any additional arguments passed though from when
 	 *                     the field was registered.
-	 * @return null
+	 * @return void
 	 */
 	public function reset_blog_id_field_callback( $args ) {
 		?>
@@ -433,13 +458,14 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array $data The form data submitted for validation
+	 * @param  array $data The form data submitted for validation.
 	 * @return array
 	 */
 	public function validate_reset_callback( $data ) {
 
-		if ( ! empty( $data['id'] ) )
+		if ( ! empty( $data['id'] ) ) {
 			$data['id'] = absint( $data['id'] );
+		}
 
 		return $data;
 	}
@@ -455,18 +481,20 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function reset_blog_callback() {
-		if ( empty( $_POST['wpna_reset_blog'] ) )
+		if ( empty( $_POST['wpna_reset_blog'] ) ) { // Input var okay.
 			return;
+		}
 
-		// Make sure they're a super admin
-		if ( ! is_super_admin() )
+		// Make sure they're a super admin.
+		if ( ! is_super_admin() ) {
 			return;
+		}
 
-		// Misleading name, validate nonce
-		check_admin_referer( $this->option_group_reset . '-options');
+		// Misleading name, validate nonce.
+		check_admin_referer( $this->option_group_reset . '-options' );
 
 		/**
 		 * This filter is used to validate & santize the data. It is called by
@@ -476,24 +504,24 @@ class WPNA_Multisite_Admin {
 		 * @since 1.0.0
 		 * @var array The form data to validate.
 		 */
-		$values = apply_filters( 'sanitize_option_' . $this->option_group_reset, $_POST['reset_blog'] );
+		$values = apply_filters( 'sanitize_option_' . $this->option_group_reset, wp_unslash( $_POST['reset_blog'] ) );
 
-		// If no ID was passed set an error message
+		// If no ID was passed set an error message.
 		if ( empty( $values['id'] ) ) {
 			$notice = 'wpna_multisite_reset_error_missing_id';
 		} else {
-			// Get the ID of the blog to copy the options from
+			// Get the ID of the blog to copy the options from.
 			$options = get_site_option( 'wpna_options' );
 			$souce_blog_id = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
 
-			// Reset the blog options
+			// Reset the blog options.
 			$this->set_blog_defaults( $souce_blog_id, $values['id'] );
 
-			// Set the success notice
+			// Set the success notice.
 			$notice = 'wpna_multisite_reset_success';
 		}
 
-		// Redirect back with a notice flag
+		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
 				array( 'page' => $this->page_slug, 'notice' => $notice ),
@@ -514,13 +542,13 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param int    $blog_id The ID of the blog to set the options on
-	 * @param int    $user_id The current user ID
-	 * @param string $domain  The domain of the new blog
-	 * @param string $path    The path of the new blog
-	 * @param int    $site_id The new blog's parent site_id
-	 * @param array  $meta    Any other arguments passed through
-	 * @return null
+	 * @param int    $blog_id The ID of the blog to set the options on.
+	 * @param int    $user_id The current user ID.
+	 * @param string $domain  The domain of the new blog.
+	 * @param string $path    The path of the new blog.
+	 * @param int    $site_id The new blog's parent site_id.
+	 * @param array  $meta    Any other arguments passed through.
+	 * @return void
 	 */
 	public function new_blog_defaults( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
 		$options = get_site_option( 'wpna_options' );
@@ -536,9 +564,9 @@ class WPNA_Multisite_Admin {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  int $source_blog_id The ID of the blog to copy the options from
-	 * @param  int $target_blog_id The ID of the blog to copy the options to
-	 * @return null
+	 * @param  int $source_blog_id The ID of the blog to copy the options from.
+	 * @param  int $target_blog_id The ID of the blog to copy the options to.
+	 * @return void
 	 */
 	public function set_blog_defaults( $source_blog_id, $target_blog_id ) {
 		$options = get_blog_option( $source_blog_id, 'wpna_options' );
@@ -557,28 +585,27 @@ class WPNA_Multisite_Admin {
 	 * @global $submenu Submenus on the current blog.
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function admin_page_capability() {
 		$options = get_site_option( 'wpna_options' );
 
-		// Default to administrator
+		// Default to administrator.
 		$access_level = 'manage_options';
 
 		if ( ! empty( $options['access_level'] ) ) {
-			//
-			if ( 'network_administrator' == $options['access_level'] ) {
+			if ( 'network_administrator' === $options['access_level'] ) {
 				$access_level = 'manage_network_options';
 			}
 		}
 
-		// Hide the menu if the current user can't access it
+		// Hide the menu if the current user can't access it.
 		if ( ! current_user_can( $access_level ) ) {
 
 			global $submenu;
 
-			// Remove the menu item
-			remove_menu_page('wpna_general');
+			// Remove the menu item.
+			remove_menu_page( 'wpna_general' );
 
 			// Still need to update cap requirements even when hidden
 			// Cycle through the menu and set the new capabilities.
@@ -587,7 +614,6 @@ class WPNA_Multisite_Admin {
 					$submenu['wpna_general'][ $position ][1] = $access_level;
 				}
 			}
-
 		}
 
 	}
