@@ -1,11 +1,11 @@
 <?php
-
 /**
  * Handles uninstalling the plugin
  *
  * When the plugin is removed make sure it cleans up after itself.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
 // If uninstall not called from WordPress, then exit.
@@ -25,17 +25,17 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 global $wpdb;
 
-// Delete from the base site
+// Delete from the base site.
 $wpdb->delete( $wpdb->base_prefix . 'options', array( 'option_name' => 'wpna_options' ) );
 
-// Check if it's a multisite install or not
+// Check if it's a multisite install or not.
 if ( is_multisite() ) {
 
-	// Get an array of IDs for every site
+	// Get an array of IDs for every site.
 	$sites = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}", 0 );
 
-	// Delete from the global network options
-	delete_site_option('wpna_options');
+	// Delete from the global network options.
+	delete_site_option( 'wpna_options' );
 
 	/**
 	 * Delete from everysite in the network.
@@ -47,8 +47,7 @@ if ( is_multisite() ) {
 			$wpdb->delete( $wpdb->base_prefix . intval( $site_id ) . '_options', array( 'option_name' => 'wpna_options' ) );
 		}
 	}
-
 }
 
-// Flush the rewrite rules to clear any endpoints
+// Flush the rewrite rules to clear any endpoints.
 flush_rewrite_rules();
