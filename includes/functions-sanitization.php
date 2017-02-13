@@ -1,14 +1,16 @@
 <?php
-
 /**
  * Helper functions for sanitization
  *
  * @author OzTheGreat
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 
@@ -21,12 +23,12 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  array  $values {
+	 * @param array $values {
 	 *     Array of values to sanitize
 	 *     e.g.
 	 *         'fbia_app_id' => '000000000000'
-	 * }
-	 * @return array  The values passed merged into the global values.
+	 * }.
+	 * @return array The values passed merged into the global values.
 	 */
 	function wpna_sanitize_options( $values ) {
 		$wpna_options = (array) wpna_get_options();
@@ -48,7 +50,7 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 
 		}
 
-		// Merge them in with any existing options
+		// Merge them in with any existing options.
 		$options = array_merge( $wpna_options, $sanitized_values );
 
 		return $options;
@@ -69,7 +71,7 @@ if ( ! function_exists( 'wpna_switchval' ) ) :
 	 * @return string       Either on / off.
 	 */
 	function wpna_switchval( $value ) {
-		return 'on' == $value ? 'on' : 'off';
+		return 'on' === $value ? 'on' : 'off';
 	}
 endif;
 
@@ -106,7 +108,7 @@ if ( ! function_exists( 'wpna_switch_to_boolean' ) ) :
 	 * @return bool  on == true / off == false.
 	 */
 	function wpna_switch_to_boolean( $value ) {
-		return 'on' == $value ? true : false;
+		return 'on' === $value ? true : false;
 	}
 endif;
 
@@ -120,12 +122,12 @@ if ( ! function_exists( 'wpna_valid_date' ) ) :
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param  string  $date A date string in Y-m-d format
-	 * @return boolean       Whether the date is valid or not
+	 * @param  string $date A date string in Y-m-d format.
+	 * @return boolean      Whether the date is valid or not.
 	 */
 	function wpna_valid_date( $date ) {
 		list( $day, $month, $year ) = sscanf( $date, '%04d-%02d-%02d' );
 		$dt = new DateTime( "$year-$month-$day" );
-		return $dt !== false && ! array_sum( $dt->getLastErrors() );
+		return false !== $dt && ! array_sum( $dt->getLastErrors() );
 	}
 endif;
