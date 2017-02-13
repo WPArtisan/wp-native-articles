@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The activator class for the plugin.
  *
@@ -8,11 +7,17 @@
  *
  * @author OzTheGreat
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
+/**
+ * Activator class.
+ */
 class WPNA_Activator {
 
 	/**
@@ -23,7 +28,7 @@ class WPNA_Activator {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function run() {
 		self::flush_rewrite_rules();
@@ -40,7 +45,7 @@ class WPNA_Activator {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function flush_rewrite_rules() {
 		flush_rewrite_rules();
@@ -55,10 +60,10 @@ class WPNA_Activator {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function add_default_options() {
-		if ( false == get_option( 'wpna_options' ) ) {
+		if ( false === get_option( 'wpna_options' ) ) {
 
 			$default_options = array(
 				'fbia_enable'            => 'on',
@@ -83,7 +88,7 @@ class WPNA_Activator {
 				'fbia_enviroment'        => 'development',
 			);
 
-			// Add in the default options
+			// Add in the default options.
 			add_option( 'wpna_options', $default_options );
 
 		}
@@ -99,12 +104,12 @@ class WPNA_Activator {
 	 * @since 1.0.3
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function add_default_site_options() {
-		// They may deactivate / re-activate. Let's try not to be annoying
+		// They may deactivate / re-activate. Let's try not to be annoying.
 		if ( ! get_site_option( 'wpna_activation_time' ) ) {
-			add_site_option( 'wpna_activation_time', date("c") );
+			add_site_option( 'wpna_activation_time', date( 'c' ) );
 			// When to provide prompts for plugin ratings, in days.
 			add_site_option( 'wpna_rating_prompts', array( 7, 30, 90 ) );
 		}
