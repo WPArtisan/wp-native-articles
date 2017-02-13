@@ -7,7 +7,9 @@
  * a template of the same name in your theme folder.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
+
 ?>
 <!doctype html>
 <html lang="<?php echo esc_attr( get_bloginfo( 'language' ) ); ?>" prefix="op: http://media.facebook.com/op#">
@@ -28,7 +30,7 @@
 				<?php
 				/**
 				 * The main cover for the article.
-				 * Can be an image or video and can have a caption
+				 * Can be an image or video and can have a caption.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
@@ -44,7 +46,7 @@
 
 				<?php
 				/**
-				 * The main title for the article. Has to be in <h1> tags
+				 * The main title for the article. Has to be in <h1> tags.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
@@ -53,8 +55,8 @@
 
 				<?php
 				/**
-				 * The secondary title for the article. In <h2> tags
-				 * Optional
+				 * The secondary title for the article. In <h2> tags.
+				 * Optional.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
@@ -65,8 +67,8 @@
 
 				<?php
 				/**
-				 * The kicker for the article
-				 * Optional
+				 * The kicker for the article.
+				 * Optional.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
@@ -75,14 +77,14 @@
 					<h3 class="op-kicker"><?php echo esc_html( $post->get_the_kicker() ); ?></h3>
 				<?php endif; ?>
 
-				<?php // The date and time when your article was originally published ?>
+				<?php // The date and time when your article was originally published. ?>
 				<time class="op-published" datetime="<?php echo esc_attr( $post->get_publish_date_iso() ); ?>"><?php echo esc_html( $post->get_publish_date() ); ?></time>
 
-				<?php // The date and time when your article was last updated ?>
+				<?php // The date and time when your article was last updated. ?>
 				<time class="op-modified" datetime="<?php echo esc_attr( $post->get_modified_date_iso() ); ?>"><?php echo esc_html( $post->get_modified_date() ); ?></time>
 
 				<?php
-				// The authors of your article
+				// The authors of your article.
 				$authors = $post->get_authors();
 				if ( ! empty( $authors ) ) : ?>
 					<?php foreach ( (array) $authors as $author ) : ?>
@@ -94,25 +96,26 @@
 				<?php endif; ?>
 
 				<?php
-				// Ad code for the article
+				// Ad code for the article.
 				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
 					<?php echo $post->get_ads(); ?>
 				<?php endif; ?>
 
 				<?php
-				// Sponsored code for the article
+				// Sponsored code for the article.
 				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_sponsored' ) ) ) : ?>
 					<?php
-					// The authors of your article
+					// The authors of your article.
 					$authors = $post->get_authors();
 					if ( ! empty( $authors ) ) : ?>
 						<ul class="op-sponsors">
 						<?php foreach ( (array) $authors as $author ) : ?>
 							<?php if ( $fb_url = get_the_author_meta( 'facebook', $author->ID ) ) : ?>
 								<?php
-								// If it's not already a URL make it one
-								if ( filter_var( $fb_url, FILTER_VALIDATE_URL ) === FALSE )
+								// If it's not already a URL make it one.
+								if ( false === filter_var( $fb_url, FILTER_VALIDATE_URL ) ) {
 									$fb_url = 'https://www.facebook.com/' . ltrim( $fb_url, '/' );
+								}
 								?>
 								<li><a href="<?php echo esc_url( $fb_url ); ?>" rel="facebook"></a></li>
 							<?php endif;?>
@@ -123,7 +126,7 @@
 
 				<?php
 					/**
-					 * Use this action to output any further elements in the article header
+					 * Use this action to output any further elements in the article header.
 					 *
 					 * @since 1.0.0
 					 * @param WP_Post $post The current post.
@@ -134,32 +137,32 @@
 			</header>
 
 			<?php
-				// Article body
+				// Article body.
 				echo $post->get_the_content();
 			?>
 
 			<?php
-				// Article analytics code
+				// Article analytics code.
 				echo $post->get_analytics();
 			?>
 
 			<footer>
 
-				<?php // First aside block is for article credits ?>
+				<?php // First aside block is for article credits. ?>
 				<?php if ( $post->get_credits() ) : ?>
 					<aside>
 						<?php echo esc_html( $post->get_credits() ); ?>
 					</aside>
 				<?php endif; ?>
 
-				<?php // Copyright follows credits ?>
+				<?php // Copyright follows credits. ?>
 				<?php if ( $post->get_copyright() ) : ?>
 					<small><?php echo esc_html( $post->get_copyright() ); ?></small>
 				<?php endif; ?>
 
 				<?php
 					/**
-					 * We can define up to 3 related articles at the bottom of an article
+					 * Can define up to 3 related articles at the bottom of an article.
 					 */
 					$related_articles_loop = $post->get_related_articles();
 				?>
@@ -171,7 +174,7 @@
 							<?php
 							/**
 							 * Filter any attributes applied to the <li> element
-							 * of the related articles. e.g. sponsored
+							 * of the related articles. e.g. sponsored.
 							 *
 							 * @since 1.0.0
 							 * @param $attrs List of attributes to add

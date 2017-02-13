@@ -9,8 +9,11 @@
  * in your theme folder.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
+
 ?>
+
 <?php
 	// Has to be done like this otherwise WP plugin repository hooks parse it as PHP and fail it.
 	echo sprintf( '<?xml version="1.0" encoding="%s"?>', esc_attr( get_option( 'blog_charset' ) ) );
@@ -19,7 +22,7 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 	<channel>
 		<title><?php bloginfo_rss( 'name' ); ?></title>
-		<link><?php bloginfo_rss('url') ?></link>
+		<link><?php bloginfo_rss( 'url' ) ?></link>
 		<description><?php bloginfo_rss( 'description' ) ?></description>
 
 		<?php
@@ -45,7 +48,7 @@
 					 */
 					$post = new WPNA_Facebook_Post( get_the_ID() );
 
-					// Load in the item template
+					// Load in the item template.
 					include wpna_locate_template( 'wpna-feed-item' );
 				?>
 
@@ -53,7 +56,7 @@
 
 			<?php
 				/**
-				 * lastBuildDate is the last time the feed was updated.
+				 * `lastBuildDate` is the last time the feed was updated.
 				 * For all intensive purposes this will be the same as the
 				 * most recent post's modification date in the query.
 				 *
@@ -62,10 +65,10 @@
 				 */
 				global $posts;
 
-				// Pluck all dates from the posts
+				// Pluck all dates from the posts.
 				$post_dates = wp_list_pluck( $posts, 'post_modified' );
 
-				// Order dates by desc
+				// Order dates by desc.
 				arsort( $post_dates );
 
 				/**

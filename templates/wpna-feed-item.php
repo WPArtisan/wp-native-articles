@@ -8,8 +8,11 @@
  * template of the same name in your theme folder.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
+
 ?>
+
 <item>
 	<title><?php echo esc_html( $post->get_the_title() ); ?></title>
 	<link><?php echo esc_url( $post->get_permalink() ); ?></link>
@@ -22,7 +25,7 @@
 	<modDate><?php echo esc_html( $post->get_modified_date_iso() ); ?></modDate>
 
 	<?php
-	// Get the authors
+	// Get the authors.
 	$authors = $post->get_authors();
 	if ( ! empty( $authors ) ) : ?>
 		<?php foreach ( (array) $authors as $author ) : ?>

@@ -3,11 +3,13 @@
  * Facebook Content parsing class.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
-
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * This handles the formatting of the post content for Facebook
@@ -27,10 +29,10 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function __construct() {
-		// Used to store the shortcode & oEmbed content
+		// Used to store the shortcode & oEmbed content.
 		$GLOBALS['_shortcode_content'] = array();
 
 		$this->hooks();
@@ -42,7 +44,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
 		add_action( 'the_post', array( $this, 'content_hooks' ), 10, 1 );
@@ -58,11 +60,11 @@ class WPNA_Facebook_Content_Parser {
 	 * @link https://developers.facebook.com/docs/instant-articles/reference
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function content_hooks() {
 
-		// We can help clean up the content before WP gets to it
+		// We can help clean up the content before WP gets to it.
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_shortcodes' ), 5, 1 );
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_oembeds' ), 5, 1 );
 
@@ -99,16 +101,16 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function setup_wrap_shortcodes( $content ) {
 		global $shortcode_tags, $_shortcode_tags;
 
-		// Let's make a back-up of the shortcodes
+		// Let's make a back-up of the shortcodes.
 		$_shortcode_tags = $shortcode_tags;
 
-		// Add any shortcode tags that we shouldn't touch here
+		// Add any shortcode tags that we shouldn't touch here.
 		$disabled_tags = array( 'gallery', 'caption', 'wp_caption' );
 
 		/**
@@ -121,10 +123,10 @@ class WPNA_Facebook_Content_Parser {
 		$disabled_tags = apply_filters( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', $disabled_tags, $content );
 
 		foreach ( $shortcode_tags as $tag => $cb ) {
-			if ( in_array( $tag, $disabled_tags ) ) {
+			if ( in_array( $tag, $disabled_tags, true ) ) {
 				continue;
 			}
-			// Overwrite the callback function
+			// Overwrite the callback function.
 			$shortcode_tags[ $tag ] = array( $this, 'wrap_shortcode' );
 		}
 
@@ -140,28 +142,28 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array  $attr    Shortcode attributes
-	 * @param  string $content The post content
-	 * @param  string $tag
+	 * @param  array  $attr    Shortcode attributes.
+	 * @param  string $content The content of the post.
+	 * @param  string $tag     Tag used for the shortcode.
 	 * @return string
 	 */
 	public function wrap_shortcode( $attr, $content = null, $tag ) {
 		global $_shortcode_tags, $_shortcode_content;
 
-		// Generate a unique (enough) key for this shortcode
+		// Generate a unique (enough) key for this shortcode.
 		$shortcode_key = mt_rand();
 
 		$content = call_user_func( $_shortcode_tags[ $tag ], $attr, $content, $tag );
 
-		// Wrap it in an iframe if it isn't already
-		if ( '<iframe' != substr( $content, 0, 7 ) ) {
+		// Wrap it in an iframe if it isn't already.
+		if ( '<iframe' !== substr( $content, 0, 7 ) ) {
 			$content = '<iframe>' . $content . '</iframe>';
 		}
 
-		// Store the shortocde content in the global array
+		// Store the shortocde content in the global array.
 		$_shortcode_content[ $shortcode_key ] = $content;
 
-		// Return the unique key wrapped in a figure element
+		// Return the unique key wrapped in a figure element.
 		return '<figure class="op-interactive">' . $shortcode_key . '</figure>';
 	}
 
@@ -174,7 +176,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function setup_wrap_oembeds( $content ) {
@@ -192,19 +194,19 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string  $cache
-	 * @param  string  $url
-	 * @param  array   $attr
-	 * @param  int     $post_ID
+	 * @param string $cache Cached HTML for the embed.
+	 * @param string $url The Oembed URl.
+	 * @param array  $attr Atributes for the embed.
+	 * @param int    $post_id ID for the post.
 	 * @return string
 	 */
-	public function wrap_oembed( $cache, $url, $attr, $post_ID ) {
+	public function wrap_oembed( $cache, $url, $attr, $post_id ) {
 		global $_shortcode_content;
 
 		$shortcode_key = mt_rand();
 
-		// Wrap it in an iframe if it isn't already
-		if ( '<iframe' != substr( $cache, 0, 7 ) ) {
+		// Wrap it in an iframe if it isn't already.
+		if ( '<iframe' !== substr( $cache, 0, 7 ) ) {
 			$cache = '<iframe>' . $cache . '</iframe>';
 		}
 
@@ -221,7 +223,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function convert_headings( $content ) {
@@ -236,13 +238,13 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function strip_elements( $content ) {
 		$allowed_tags = array(
 			// Mentioned in the FB IA docs
-			// and thus are explicitly allowed
+			// and thus are explicitly allowed.
 			'<h1>',
 			'<h2>',
 			'<cite>',
@@ -276,12 +278,12 @@ class WPNA_Facebook_Content_Parser {
 			'<th>',
 			'<tr>',
 
-			// Unsure about these but seems likley
+			// Unsure about these but seems likley.
 			'<acronym>',
 			'<b>',
 			'<br>',
 			'<hr>',
-			'<i>'
+			'<i>',
 		);
 
 		return strip_tags( $content, implode( '', $allowed_tags ) );
@@ -295,37 +297,36 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return DOMDocument
 	 */
-	public function unique_images( DOMDocument $DOMDocument ) {
+	public function unique_images( DOMDocument $dom_document ) {
 		$found_images = array();
 
-		foreach ( $images = $DOMDocument->getElementsByTagName('img') as $image ) {
+		foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $image ) {
 
 			// If the image has been used before remove it.
-			if ( in_array( $image->getAttribute( 'src' ), $found_images ) ) {
+			if ( in_array( $image->getAttribute( 'src' ), $found_images, true ) ) {
 
 				$element_to_remove = $image;
 
-				// If the image has a caption we also wish to remove that
-				if ( 'div' == $image->parentNode->nodeName && false !== strpos( $image->parentNode->getAttribute('class'), 'wp-caption' ) ) {
+				// If the image has a caption we also wish to remove that.
+				if ( 'div' === $image->parentNode->nodeName && false !== strpos( $image->parentNode->getAttribute( 'class' ), 'wp-caption' ) ) {
 					$element_to_remove = $image->parentNode;
 				}
 
-				// Remove the element
+				// Remove the element.
 				$element_to_remove->parentNode->removeChild( $element_to_remove );
 
 			} else {
 
-				// Add it to the found images array
+				// Add it to the found images array.
 				$found_images[] = $image->getAttribute( 'src' );
 
 			}
-
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -338,40 +339,40 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return string
 	 */
-	public function featured_images( DOMDocument $DOMDocument ) {
+	public function featured_images( DOMDocument $dom_document ) {
 		global $post;
-		// Setup the featured image regex if the post has one
+		// Setup the featured image regex if the post has one.
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
-			$featured_image_path = parse_url( $image[0], PHP_URL_PATH );
+			$featured_image_path = wp_parse_url( $image[0], PHP_URL_PATH );
 			$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
 			$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
 			$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-			// Get all images
-			foreach ( $images = $DOMDocument->getElementsByTagName('img') as $element ) {
-				// Check if the src is the same as the featured image
-				if ( preg_match( $regex, $element->getAttribute('src') ) ) {
+			// Get all images.
+			foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $element ) {
+				// Check if the src is the same as the featured image.
+				if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
 
-					// Get the parent node
-					$parentNode = $element->parentNode;
+					// Get the parent node.
+					$parent_node = $element->parentNode;
 
-					// If the image has a caption remove that as well
-					if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
-						$element = $parentNode;
-						$parentNode = $parentNode->parentNode;
+					// If the image has a caption remove that as well.
+					if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
+						$element = $parent_node;
+						$parent_node = $parent_node->parentNode;
 					}
 
-					// Remove the element
-					$parentNode->removeChild( $element );
+					// Remove the element.
+					$parent_node->removeChild( $element );
 				}
 			}
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -384,35 +385,36 @@ class WPNA_Facebook_Content_Parser {
 	 * performant methods.
 	 *
 	 * @access public
-	 * @return null
+	 * @param DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return DOMDocument
 	 */
-	public function images_exist( DOMDocument $DOMDocument ) {
-		// Find all images and loop through them
-		foreach ( $images = $DOMDocument->getElementsByTagName('img') as $element ) {
+	public function images_exist( DOMDocument $dom_document ) {
+		// Find all images and loop through them.
+		foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $element ) {
 
-			// This is obviously less than ideal as it can be slow
-			$response = wp_remote_head( $element->getAttribute('src') );
+			// This is obviously less than ideal as it can be slow.
+			$response = wp_remote_head( $element->getAttribute( 'src' ) );
 			$response_code = wp_remote_retrieve_response_code( $response );
 
-			// The image doesn't exist, remove it
-			if ( 200 != $response_code ) {
+			// The image doesn't exist, remove it.
+			if ( 200 !== $response_code ) {
 
-				// Get the parent node
-				$parentNode = $element->parentNode;
+				// Get the parent node.
+				$parent_node = $element->parentNode;
 
-				// If the image has a caption remove that as well
-				if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
-					$element = $parentNode;
-					$parentNode = $parentNode->parentNode;
+				// If the image has a caption remove that as well.
+				if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
+					$element = $parent_node;
+					$parent_node = $parent_node->parentNode;
 				}
 
-				// Remove the element
-				$parentNode->removeChild( $element );
+				// Remove the element.
+				$parent_node->removeChild( $element );
 
 			}
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -423,35 +425,39 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function wrap_images( DOMDocument $DOMDocument ) {
+	public function wrap_images( DOMDocument $dom_document ) {
 
-		// The blank elements to create the new image with
-		$fragment_template_base = $DOMDocument->createDocumentFragment();
-		$figure_template_base = $DOMDocument->createElement('figure');
-		$image_template_base = $DOMDocument->createElement('img');
+		// The blank elements to create the new image with.
+		$fragment_template_base = $dom_document->createDocumentFragment();
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$image_template_base = $dom_document->createElement( 'img' );
 
-		// If they've enabled Likes or Comments on images
+		// If they've enabled Likes or Comments on images.
 		$figure_attr = array();
 
-		// Check the post for an overide options else use global
-		if ( ! $image_likes = get_post_meta( get_the_ID(), 'fbna_image_likes', true ) )
-			$image_likes = wpna_get_option('fbna_image_likes');
+		// Check the post for an overide options else use global.
+		if ( ! $image_likes = get_post_meta( get_the_ID(), 'fbna_image_likes', true ) ) {
+			$image_likes = wpna_get_option( 'fbna_image_likes' );
+		}
 
-		if ( wpna_switch_to_boolean( $image_likes ) )
+		if ( wpna_switch_to_boolean( $image_likes ) ) {
 			$figure_attr[] = 'fb:likes';
+		}
 
-		if ( ! $image_comments = get_post_meta( get_the_ID(), 'fbna_image_comments', true ) )
-			$image_comments = wpna_get_option('fbna_image_comments');
+		if ( ! $image_comments = get_post_meta( get_the_ID(), 'fbna_image_comments', true ) ) {
+			$image_comments = wpna_get_option( 'fbna_image_comments' );
+		}
 
-		if ( wpna_switch_to_boolean( $image_comments ) )
+		if ( wpna_switch_to_boolean( $image_comments ) ) {
 			$figure_attr[] = 'fb:comments';
+		}
 
-		foreach ( $DOMDocument->getElementsByTagName('img') as $image ) {
+		foreach ( $dom_document->getElementsByTagName( 'img' ) as $image ) {
 
-			// Marginally faster than creating everytime
+			// Marginally faster than creating everytime.
 			$fragment_template = clone $fragment_template_base;
 			$figure_template = clone $figure_template_base;
 			$image_template = clone $image_template_base;
@@ -464,10 +470,11 @@ class WPNA_Facebook_Content_Parser {
 			 */
 			$figure_attr = apply_filters( 'wpna_facebook_article_image_figure_attr', $figure_attr );
 
-			if ( ! empty( $figure_attr ) )
+			if ( ! empty( $figure_attr ) ) {
 				$figure_template->setAttribute( 'data-feedback', implode( ', ', $figure_attr ) );
+			}
 
-			$image_source = $image->getAttribute('src');
+			$image_source = $image->getAttribute( 'src' );
 
 			// The recommended img size is 2048x2048.
 			// We ideally need to workout the image size and get the largest possible.
@@ -480,36 +487,39 @@ class WPNA_Facebook_Content_Parser {
 			}
 
 			if ( $attachment_id ) {
-				// Try and get a larger version
+				// Try and get a larger version.
 				$img_props = wp_get_attachment_image_src( $attachment_id, array( 2048, 2048 ) );
-				if ( is_array( $img_props ) )
+				if ( is_array( $img_props ) ) {
 					$image_source = $img_props[0];
+				}
 			}
 
-			// Create the new image element
+			// Create the new image element.
 			$image_template->setAttribute( 'src', $image_source );
 			$figure_template->appendChild( $image_template );
 			$fragment_template->appendChild( $figure_template );
 
-			// If the image has a caption we also wish to wrap that
-			if ( in_array( $image->parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $image->parentNode->getAttribute('class'), 'wp-caption' ) ) {
+			// If the image has a caption we also wish to wrap that.
+			if ( in_array( $image->parentNode->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $image->parentNode->getAttribute( 'class' ), 'wp-caption' ) ) {
 
-				// Images that have captions are wrapped, use the parent element
+				// Images that have captions are wrapped, use the parent element.
 				$image = $image->parentNode;
 
-				// Create a blank template
-				$figcaption_template = $DOMDocument->createElement('figcaption');
+				// Create a blank template.
+				$figcaption_template = $dom_document->createElement( 'figcaption' );
 
-				// If they've added theme support for HTML5 try that first
-				$caption = $image->getElementsByTagName('figcaption');
+				// If they've added theme support for HTML5 try that first.
+				$caption = $image->getElementsByTagName( 'figcaption' );
 
-				// If no HTML5 elements have been found try the default p elements
-				if ( 1 != $caption->length )
-					$caption = $image->getElementsByTagName('p');
+				// If no HTML5 elements have been found try the default p elements.
+				if ( 1 !== $caption->length ) {
+					$caption = $image->getElementsByTagName( 'p' );
+				}
 
-				// If we've found anything add the contents to the template
-				if ( 1 == $caption->length )
-					$figcaption_template->nodeValue = htmlspecialchars( $caption->item(0)->nodeValue );
+				// If we've found anything add the contents to the template.
+				if ( 1 === $caption->length ) {
+					$figcaption_template->nodeValue = htmlspecialchars( $caption->item( 0 )->nodeValue );
+				}
 
 				/**
 				 * Use this filter at add attributes to the image caption.
@@ -531,11 +541,11 @@ class WPNA_Facebook_Content_Parser {
 			 */
 			apply_filters( 'wpna_facebook_article_image_figure', $figure_template );
 
-			// Replace the element we found with the new one
+			// Replace the element we found with the new one.
 			$image->parentNode->replaceChild( $fragment_template, $image );
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -548,12 +558,12 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function move_elements( DOMDocument $DOMDocument ) {
+	public function move_elements( DOMDocument $dom_document ) {
 
-		// Elements to move
+		// Elements to move.
 		$elements_to_move = array( 'iframe', 'figure', 'img', 'table' );
 
 		/**
@@ -566,64 +576,64 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $elements_to_move as $element_to_move ) {
 
-			foreach ( $elements = $DOMDocument->getElementsByTagName( $element_to_move ) as $element ) {
+			foreach ( $elements = $dom_document->getElementsByTagName( $element_to_move ) as $element ) {
 
-				$parentNode = $element->parentNode;
+				$parent_node = $element->parentNode;
 
 				// If it's an image it has special rules.
-				if ( 'img' == $element_to_move ) {
-					// Take account of images wrapped in captions
-					if ( in_array( $parentNode->nodeName, array( 'div', 'figure' ) ) && false !== strpos( $parentNode->getAttribute('class'), 'wp-caption' ) ) {
-						$element = $parentNode;
-						$parentNode = $parentNode->parentNode;
+				if ( 'img' === $element_to_move ) {
+					// Take account of images wrapped in captions.
+					if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
+						$element = $parent_node;
+						$parent_node = $parent_node->parentNode;
 					}
 				}
 
-				// If it's already top level then let's not worry
-				if ( 'body' === $parentNode->nodeName )
+				// If it's already top level then let's not worry.
+				if ( 'body' === $parent_node->nodeName ) {
 					continue;
+				}
 
-				// Get the parent nearest to the body element
+				// Get the parent nearest to the body element.
 				// Keep track of how many elements deep the image is nested.
 				$parents = array();
-				while ( 'body' !== $parentNode->nodeName ) {
-					$parents[] = sprintf( "%s>", $parentNode->nodeName );
-					$parentNode = $parentNode->parentNode;
+				while ( 'body' !== $parent_node->nodeName ) {
+					$parents[] = sprintf( '%s>', $parent_node->nodeName );
+					$parent_node = $parent_node->parentNode;
 				}
 
 				// Construct the opening and closing tags for before and after the element.
 				$parents_closing_tags = '</' . implode( '</', $parents );
 				$parents_opening_tags = '<' . implode( '<', array_reverse( $parents ) );
 
-				// Get the string with which to replace the element with.
-				$replace_with = sprintf( "%s%s%s%s%s", $parents_closing_tags, PHP_EOL, $DOMDocument->saveXML( $element ), PHP_EOL, $parents_opening_tags );
+				// Get the string to replace the image element with.
+				$replace_with = sprintf( '%s%s%s%s%s', $parents_closing_tags, PHP_EOL, $dom_document->saveXML( $element ), PHP_EOL, $parents_opening_tags );
 
-				// Replace the image element with the new string that has opening and closing tags
-				$parent_node_html = str_replace( $DOMDocument->saveXML( $element ), $replace_with, $DOMDocument->saveXML( $parentNode ) );
+				// Replace the image element with the new opening and closing tags.
+				$parent_node_html = str_replace( $dom_document->saveXML( $element ), $replace_with, $dom_document->saveXML( $parent_node ) );
 
 				// To replace the current parent we need to load the new node
-				// fragment into a new instance of DOMDocument
+				// fragment into a new instance of DOMDocument.
 				$libxml_previous_state = libxml_use_internal_errors( true );
-				$DOMDocument_temp = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
+				$dom_document_temp = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
 
-				// Make sure it's the correct encoding
+				// Make sure it's the correct encoding.
 				if ( function_exists( 'mb_convert_encoding' ) ) {
 					$parent_node_html = mb_convert_encoding( $parent_node_html, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
 				}
 
-				$DOMDocument_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
+				$dom_document_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
-				$body_temp = $DOMDocument_temp->getElementsByTagName( 'body' )->item( 0 );
-				$importedNode = $DOMDocument->importNode( $body_temp, TRUE );
+				$body_temp = $dom_document_temp->getElementsByTagName( 'body' )->item( 0 );
+				$imported_node = $dom_document->importNode( $body_temp, true );
 
-				// Now replace the existing element with the new element in the real DOMDocument
-				$parentNode->parentNode->replaceChild( $importedNode, $parentNode );
+				// Now replace the existing element with the new element in the real DOMDocument.
+				$parent_node->parentNode->replaceChild( $imported_node, $parent_node );
 			}
-
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -634,15 +644,15 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return DOMDocument
 	 */
-	public function wrap_elements( DOMDocument $DOMDocument ) {
+	public function wrap_elements( DOMDocument $dom_document ) {
 
-		$figure_template_base = $DOMDocument->createElement('figure');
-		$figure_template_base->setAttribute('class', 'op-interactive');
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$figure_template_base->setAttribute( 'class', 'op-interactive' );
 
-		// The elements to wrap
+		// The elements to wrap.
 		$elements_to_wrap = array( 'iframe', 'table' );
 
 		/**
@@ -655,8 +665,8 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $elements_to_wrap as $element_to_wrap ) {
 
-			foreach ( $elements = $DOMDocument->getElementsByTagName( $element_to_wrap ) as $element ) {
-				if ( 'figure' != $element->parentNode->tagName ) {
+			foreach ( $elements = $dom_document->getElementsByTagName( $element_to_wrap ) as $element ) {
+				if ( 'figure' !== $element->parentNode->tagName ) {
 
 					$figure_template = clone $figure_template_base;
 					$element->parentNode->replaceChild( $figure_template, $element );
@@ -664,10 +674,9 @@ class WPNA_Facebook_Content_Parser {
 
 				}
 			}
-
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -678,22 +687,21 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return DOMDocument
 	 */
-	public function remove_attributes( DOMDocument $DOMDocument ) {
+	public function remove_attributes( DOMDocument $dom_document ) {
 
-		foreach ( $DOMDocument->getElementsByTagName('*') as $node ) {
+		foreach ( $dom_document->getElementsByTagName( '*' ) as $node ) {
 
-			if ( $node instanceof DOMElement && ! in_array( $node->tagName, array( 'figure' ) ) ) {
-				$node->removeAttribute('style');
-				$node->removeAttribute('class');
-				$node->removeAttribute('id');
+			if ( $node instanceof DOMElement && ! in_array( $node->tagName, array( 'figure' ), true ) ) {
+				$node->removeAttribute( 'style' );
+				$node->removeAttribute( 'class' );
+				$node->removeAttribute( 'id' );
 			}
-
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -704,22 +712,22 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return DOMDocument
 	 */
-	public function wrap_text( DOMDocument $DOMDocument ) {
-		$body = $DOMDocument->getElementsByTagName( 'body' )->item( 0 );
-		$p_template_base = $DOMDocument->createElement('p');
+	public function wrap_text( DOMDocument $dom_document ) {
+		$body = $dom_document->getElementsByTagName( 'body' )->item( 0 );
+		$p_template_base = $dom_document->createElement( 'p' );
 
 		foreach ( $body->childNodes as $node ) {
-			if ( '#text' == $node->nodeName && '' != trim( $node->nodeValue ) ) {
+			if ( '#text' === $node->nodeName && '' !== trim( $node->nodeValue ) ) {
 				$p_template = clone $p_template_base;
 				$node->parentNode->replaceChild( $p_template, $node );
 				$p_template->appendChild( $node );
 			}
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -728,37 +736,36 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  DOMDocument $DOMDocument
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function remove_empty_elements( DOMDocument $DOMDocument ) {
+	public function remove_empty_elements( DOMDocument $dom_document ) {
 
-		// Holds the empty nodes that will need removing
+		// Holds the empty nodes that will need removing.
 		$nodes_to_remove = array();
 
-		foreach ( $DOMDocument->getElementsByTagName('*') as $node ) {
+		foreach ( $dom_document->getElementsByTagName( '*' ) as $node ) {
 
-			// Ensure there's no empty paragraphs
+			// Ensure there's no empty paragraphs.
 			$trimmed_content = trim( $node->textContent );
 
-			// If the node is completely empty queue it for removal
+			// If the node is completely empty queue it for removal.
 			if (
-				! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ) ) &&
+				! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ), true ) &&
 				empty( $trimmed_content )
 			) {
 				$nodes_to_remove[] = $node;
 			}
-
 		}
 
 		// Remove all the empty nodes we found.
 		// WARNING :: Don't attempt to do this inline in the loop above,
-		// it won't work for all nodes
+		// it won't work for all nodes.
 		foreach ( $nodes_to_remove as $node ) {
 			$node->parentNode->removeChild( $node );
 		}
 
-		return $DOMDocument;
+		return $dom_document;
 	}
 
 	/**
@@ -770,7 +777,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function remove_shortcode_wrapper( $content ) {
@@ -790,7 +797,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function remove_oembed_wrapper( $content ) {
@@ -808,7 +815,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @since 0.0.1
 	 *
 	 * @access public
-	 * @param  string $content
+	 * @param  string $content The content of the post.
 	 * @return string
 	 */
 	public function restore_embeds( $content ) {
