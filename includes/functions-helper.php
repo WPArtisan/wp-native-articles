@@ -1,14 +1,16 @@
 <?php
-
 /**
  * General helper functions for the plugin
  *
  * @author OzTheGreat
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! function_exists( 'wpna_get_option' ) ) :
 
@@ -31,15 +33,16 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 	function wpna_get_option( $name, $default = false ) {
 		global $wpna_options;
 
-		// Setup the default value
+		// Setup the default value.
 		$value = $default;
 
-		// Check if it exists in the global options array
-		if ( ! empty( $wpna_options[ $name ] ) )
+		// Check if it exists in the global options array.
+		if ( ! empty( $wpna_options[ $name ] ) ) {
 			$value = $wpna_options[ $name ];
+		}
 
 		/**
-		 * Filter all the option values before they're returned
+		 * Filter all the option values before they're returned.
 		 *
 		 * @since 1.0.0
 		 *
@@ -50,7 +53,7 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 		$option = apply_filters( 'wpna_get_option', $value, $name, $default );
 
 		/**
-		 * Filter a specific option value before it's returned
+		 * Filter a specific option value before it's returned.
 		 *
 		 * @since 1.0.0
 		 *
@@ -83,11 +86,12 @@ if ( ! function_exists( 'wpna_get_options' ) ) :
 	function wpna_get_options() {
 		global $wpna_options;
 
-		if ( ! $wpna_options )
+		if ( ! $wpna_options ) {
 			$wpna_options = get_option( 'wpna_options' );
+		}
 
 		/**
-		 * Filter all the option values before they're returned
+		 * Filter all the option values before they're returned.
 		 *
 		 * @since 1.0.0
 		 *
@@ -123,15 +127,15 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 		$post_option_name = '_wpna_' . $name;
 
 		if ( $post_meta = get_post_meta( $post_id, $post_option_name, true ) ) {
-			// Get the post specific option
+			// Get the post specific option.
 			$value = $post_meta;
 		} else {
-			// Check if it exists in the global options array
+			// Check if it exists in the global options array.
 			$value = wpna_get_option( $name, $default );
 		}
 
 		/**
-		 * Filter all the option values before they're returned
+		 * Filter all the option values before they're returned.
 		 *
 		 * @since 1.0.0
 		 *
@@ -143,7 +147,7 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 		$option = apply_filters( 'wpna_get_post_option', $value, $name, $default, $post_id );
 
 		/**
-		 * Filter a specific option value before it's returned
+		 * Filter a specific option value before it's returned.
 		 *
 		 * @since 1.0.0
 		 *
@@ -168,7 +172,7 @@ if ( ! function_exists( 'boolval' ) ) :
 	 *
 	 * @since 1.0.6
 	 *
-	 * @param  mixed $value
+	 * @param  mixed $value The value to turn to bool.
 	 * @return boolean
 	 */
 	function boolval( $value ) {
@@ -194,20 +198,21 @@ if ( ! function_exists( 'wpna_locate_template' ) ) :
 	 */
 	function wpna_locate_template( $name ) {
 
-		// Check if there's an extension or not
-		$name .= '.php' !== substr( $name, -4 ) ? '.php' : '' ;
+		// Check if there's an extension or not.
+		$name .= '.php' !== substr( $name, -4 ) ? '.php' : '';
 
-		// locate_template() returns the path to file
-		// if either the child theme or the parent theme have overridden the template
-		if ( $overridden_template = locate_template( $name ) )
+		// locate_template() returns the path to file.
+		// if either the child theme or the parent theme have overridden the template.
+		if ( $overridden_template = locate_template( $name ) ) {
 			return $overridden_template;
+		}
 
 		// If neither the child nor parent theme have overridden the template,
-		// we load the template from the 'templates' sub-directory of the directory this file is in
+		// we load the template from the 'templates' sub-directory of the directory this file is in.
 		$template_path = WPNA_BASE_PATH . '/templates/' . $name;
 
 		/**
-		 * Alter the path for a template file
+		 * Alter the path for a template file.
 		 *
 		 * @since 1.0.0
 		 *
@@ -220,7 +225,6 @@ if ( ! function_exists( 'wpna_locate_template' ) ) :
 	}
 
 endif;
-
 
 if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 
@@ -241,19 +245,22 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 
 		$attachment_id = null;
 
-		// Strip off any resizing params
+		// Strip off any resizing params.
 		$url = preg_replace( '/-\d+x\d+(?=\.(jpg|jpeg|png|gif)$)/i', '', $url );
 
-		// Let's check the cache
-		if ( $attachment_id = wp_cache_get( md5( $url ), 'wpna' ) )
+		// Let's check the cache.
+		if ( $attachment_id = wp_cache_get( md5( $url ), 'wpna' ) ) {
 			return $attachment_id;
+		}
 
-		// This will be quickest as it's cached
-		if ( ! $attachment_id && function_exists( 'wpcom_vip_attachment_url_to_postid' ) )
+		// This will be quickest as it's cached.
+		if ( ! $attachment_id && function_exists( 'wpcom_vip_attachment_url_to_postid' ) ) {
 			$attachment_id = wpcom_vip_attachment_url_to_postid( $url );
+		}
 
-		// Only came in in 4.0 so let's be a bit careful
+		// Only came in in 4.0 so let's be a bit careful.
 		if ( ! $attachment_id && function_exists( 'attachment_url_to_postid' ) ) {
+			// @codingStandardsIgnoreLine. This is a 3x fallback function, not expected to be used.
 			$attachment_id = attachment_url_to_postid( $url );
 		}
 
@@ -262,8 +269,9 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 
 			$dir = wp_upload_dir();
 
-			if ( strpos( $url, $dir['baseurl'] . '/' ) )
+			if ( strpos( $url, $dir['baseurl'] . '/' ) ) {
 				return null;
+			}
 
 			$file = basename( $url );
 
@@ -273,13 +281,15 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 				'post_type'              => 'attachment',
 				'post_status'            => 'inherit',
 				'fields'                 => 'ids',
+				// 4x fallback function.
+				// @codingStandardsIgnoreLine.
 				'meta_query'             => array(
 					array(
 						'value'   => $file,
 						'compare' => 'LIKE',
 						'key'     => '_wp_attachment_metadata',
 					),
-				)
+				),
 			);
 
 			$query = new WP_Query( $query_args );
@@ -293,15 +303,12 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 					$original_file       = basename( $meta['file'] );
 					$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
 
-					if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
+					if ( $original_file === $file || in_array( $file, $cropped_image_files, true ) ) {
 						$attachment_id = $post_id;
 						break;
 					}
-
 				}
-
 			}
-
 		}
 
 		/**
@@ -310,11 +317,11 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 		 * @since 1.0.0
 		 *
 		 * @param int|null $attachment_id The ID if it's found or null if not.
-		 * @param string   $url               The URL we were trying to find the ID for
+		 * @param string   $url           The URL we were trying to find the ID for.
 		 */
 		$attachment_id = apply_filters( 'wpna_get_attachment_id_from_src', $attachment_id, $url );
 
-		// Cache the result
+		// Cache the result.
 		wp_cache_set( md5( $url ), $attachment_id, 'wpna' );
 
 		return $attachment_id;
@@ -331,9 +338,9 @@ if ( ! function_exists( 'wpna_load_textdomain' ) ) :
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return null
+	 * @return void
 	 */
 	function wpna_load_textdomain() {
 		load_plugin_textdomain( 'wp-native-articles', false, WPNA_BASE_PATH . '/languages' );
 	}
-endif;
+endif; // __isPremium
