@@ -3,19 +3,21 @@
  * Admin class
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
-
- /**
-  * Main admin class for the plugin.
-  *
-  * Sets up all menus, settings, pages and dashboards.
-  *
-  * @since  1.0.0
-  */
+/**
+ * Main admin class for the plugin.
+ *
+ * Sets up all menus, settings, pages and dashboards.
+ *
+ * @since  1.0.0
+ */
 class WPNA_Admin extends WPNA_Admin_Base {
 
 	/**
@@ -27,7 +29,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @access public
 	 * @var string
 	 */
-	public $page_slug = 'wpna_facebook';
+	public $page_slug;
 
 	/**
 	 * Hooks registered in this class.
@@ -38,16 +40,18 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @todo Change meta box hook
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
-		add_action( 'admin_menu',                         array( $this, 'add_menu_items' ), 10, 0 );
-		add_action( 'admin_init',                         array( $this, 'rating_notice' ), 10, 0 );
+			// Done like this so the source parser can compile the seperate versions.
+			$this->page_slug = 'wpna_facebook';
+		
+		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
+		add_action( 'admin_init',            array( $this, 'rating_notice' ), 10, 0 );
 
-		// These actions are only applied if Instant Articles is enabled
-		if ( wpna_switch_to_boolean( wpna_get_option('fbia_enable') ) ) {
+		// These actions are only applied if Instant Articles is enabled.
+		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
 			add_action( 'wp_ajax_wpna-dismiss-notice', array( $this, 'ajax_dismiss_notice' ), 10, 0 );
-
 			add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );
 			add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
@@ -64,11 +68,11 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_menu_items() {
 
-		// Add the top level page
+		// Add the top level page.
 		$page_slug = add_menu_page(
 			esc_html__( 'Native Articles', 'wp-native-articles' ),
 			esc_html__( 'Native Articles', 'wp-native-articles' ),
@@ -97,12 +101,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $hook The current page hook
-	 * @return null
+	 * @param  string $hook The current page hook.
+	 * @return void
 	 */
 	public function scripts( $hook ) {
-		// Edit post and New post pages
-		if ( in_array( $hook, array( 'post.php', 'post-new.php') ) ) {
+		// Edit post and New post pages.
+		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 			wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', dirname( __FILE__ ) ), array( 'jquery-ui-tabs' ), WPNA_VERSION, true );
 		}
 
@@ -123,12 +127,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @todo Check for SCRIPT_DEBUG
 	 *
 	 * @access public
-	 * @param  string $hook
-	 * @return null
+	 * @param  string $hook Current Page ID.
+	 * @return void
 	 */
 	public function styles( $hook ) {
-		// Edit post and New post pages
-		if ( in_array( $hook, array( 'post.php', 'post-new.php') ) ) {
+		// Edit post and New post pages.
+		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', dirname( __FILE__ ) ), '0.6.0', true );
 			wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', dirname( __FILE__ ) ), '0.0.1' );
 		}
@@ -144,7 +148,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_post_meta_box() {
 		add_action( 'add_meta_boxes', array( $this, 'add_post_meta_box' ) );
@@ -159,7 +163,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_post_meta_box() {
 		add_meta_box(
@@ -183,8 +187,8 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @todo Change to function?
 	 *
 	 * @access public
-	 * @param  $post  WP_Post The current post object being edited
-	 * @return null
+	 * @param  WP_Post $post The current post object being edited.
+	 * @return void
 	 */
 	public function post_meta_box_callback( $post ) {
 
@@ -253,13 +257,14 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.3
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function rating_notice() {
 
-		// We only want admins
-		if ( ! current_user_can( 'manage_options' ) )
+		// We only want admins.
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
+		}
 
 		$activation_time = get_site_option( 'wpna_activation_time' );
 		$prompts = (array) get_site_option( 'wpna_rating_prompts' );
@@ -267,7 +272,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		// Sort the prompts to ensure they're in order.
 		sort( $prompts, SORT_NUMERIC );
 
-		// If any of the prompts are within the activation time then show the admin message
+		// If any of the prompts are within the activation time then show the admin message.
 		foreach ( $prompts as $prompt ) {
 			if ( strtotime( $activation_time ) < strtotime( "-{$prompt} days" ) ) {
 				add_action( 'admin_notices', array( $this, 'rating_notice_callback' ), 10, 0 );
@@ -284,16 +289,16 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.3
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function rating_notice_callback() {
 		?>
 			<div class="wpna-notice notice notice-info is-dismissible">
-				<p><?php _e( "Hey, we noticed you've been using WP Native Articles for a little while now – that’s brilliant! Could you please do me a BIG favor and give it a 5-star rating on WordPress? It really helps us spread the word and boosts our motivation.", 'wp-native-articles' ); ?></p>
+				<p><?php esc_html_e( "Hey, we noticed you've been using WP Native Articles for a little while now – that’s brilliant! Could you please do me a BIG favor and give it a 5-star rating on WordPress? It really helps us spread the word and boosts our motivation.", 'wp-native-articles' ); ?></p>
 				<p>- Edward</p>
-				<p><a href="https://wordpress.org/support/plugin/wp-native-articles/reviews/" target="_blank"><?php _e( 'Sure, you deserve it', 'wp-native-articles' ); ?></a></p>
-				<p><a href="#" class="wpna-dismiss" data-notice="rating-permanent"><?php _e( 'I already have', 'wp-native-articles' ); ?></a></p>
-				<p><a href="#" class="wpna-dismiss" data-notice="rating-temporary"><?php _e( "Nope, not right now", 'wp-native-articles' ); ?></a></p>
+				<p><a href="https://wordpress.org/support/plugin/wp-native-articles/reviews/" target="_blank"><?php esc_html_e( 'Sure, you deserve it', 'wp-native-articles' ); ?></a></p>
+				<p><a href="#" class="wpna-dismiss" data-notice="rating-permanent"><?php esc_html_e( 'I already have', 'wp-native-articles' ); ?></a></p>
+				<p><a href="#" class="wpna-dismiss" data-notice="rating-temporary"><?php esc_html_e( 'Nope, not right now', 'wp-native-articles' ); ?></a></p>
 			</div>
 
 		<?php
@@ -308,43 +313,46 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @since 1.0.3
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function ajax_dismiss_notice() {
 
-		// Check it's an AJAX request
-		if ( ! defined('DOING_AJAX') || ! DOING_AJAX )
+		// Check it's an AJAX request.
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
 			wp_die();
+		}
 
-		// Check the nonce is valid
+		// Check the nonce is valid.
 		check_ajax_referer( 'wpna_notices_ajax_nonce' );
 
-		// We only want admins
-		if ( ! current_user_can( 'manage_options' ) )
+		// We only want admins.
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die();
+		}
 
-		// If the notice isn't set then do nothing
-		if ( empty( $_POST['notice'] ) )
+		// If the notice isn't set then do nothing.
+		if ( empty( $_POST['notice'] ) ) { // Input var okay.
 			wp_die();
+		}
 
-		switch ( $_POST['notice'] ) {
+		switch ( $_POST['notice'] ) { // Input var okay.
 
-			// They've already rated the app, kill all rating prompts
+			// They've already rated the app, kill all rating prompts.
 			case 'rating-permanent':
 				delete_site_option( 'wpna_rating_prompts' );
 			break;
 
 			// They don't want to be bugged anymore at the moment.
-			// Remove the current interval prompt
+			// Remove the current interval prompt.
 			case 'rating-temporary':
 				$prompts = (array) get_site_option( 'wpna_rating_prompts' );
 
-				// 1 or fewer intervals and just remove the whole option
+				// 1 or fewer intervals and just remove the whole option.
 				if ( count( $prompts ) <= 1 ) {
 					delete_site_option( 'wpna_rating_prompts' );
 
 				} else {
-					// Sort the array and remove the lowest interval
+					// Sort the array and remove the lowest interval.
 					sort( $prompts, SORT_NUMERIC );
 					array_shift( $prompts );
 					update_site_option( 'wpna_rating_prompts', $prompts );
@@ -357,7 +365,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 			break;
 		}
 
-		// Kill the response properly
+		// Kill the response properly.
 		wp_die();
 
 	}
