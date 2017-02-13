@@ -3,10 +3,13 @@
  * Facebook feed admin class.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Sets up the Facebook Instant Article RSS Feed.
@@ -37,7 +40,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
 		add_action( 'admin_init',                              array( $this, 'setup_settings' ), 10, 0 );
@@ -48,10 +51,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 
 		// A custom endpoint is added with the permalinks API so we need to
 		// flush the rewrite rules to clean it up and remove it.
+
 		add_action( 'load-toplevel_page_wpna_facebook', array( $this, 'flush_rewrite_rules' ), 10, 0 );
 
-		// These actions are only applied if Instant Articles is enabled
-		if ( wpna_switch_to_boolean( wpna_get_option('fbia_enable') ) ) {
+
+		// These actions are only applied if Instant Articles is enabled.
+		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
 			add_action( 'init',                                array( $this, 'add_feed' ), 10, 0 );
 			add_action( 'wpna_facebook_pre_feed',              array( $this, 'feed_authentication' ), 10, 0 );
 			add_action( 'wpna_facebook_pre_feed',              array( $this, 'nocache' ), 10, 0 );
@@ -62,7 +67,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			add_filter( 'pre_get_posts',                       array( $this, 'feed_query' ), 10, 1 );
 		}
 
-		// Form sanitization filters
+		// Form sanitization filters.
 		add_filter( 'wpna_sanitize_option-fbia_feed_slug',                    'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option-fbia_posts_per_feed',               'absint', 10, 1 );
 		add_filter( 'wpna_sanitize_option-fbia_article_caching',              'boolval', 10, 1 );
@@ -71,7 +76,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		add_filter( 'wpna_sanitize_option-fbia_feed_authentication_username', 'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option-fbia_feed_authentication_password', 'wp_hash_password', 10, 1 );
 
-		// Set a default feed slug value
+		// Set a default feed slug value.
 		add_filter( 'wpna_get_option_fbia_feed_slug',          array( $this, 'default_feed_slug' ), 10, 3 );
 	}
 
@@ -90,11 +95,11 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_settings() {
 
-		// Group name. Used for nonces etc
+		// Group name. Used for nonces etc.
 		$option_group = 'wpna_facebook-feed';
 
 		register_setting( $option_group, 'wpna_options', 'wpna_sanitize_options' );
@@ -103,7 +108,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			'wpna_facebook-feed_section_1',
 			esc_html__( 'RSS Feed', 'wp-native-articles' ),
 			array( $this, 'section_1_callback' ),
-			$option_group // This needs to be unique to this tab + Match the one called in do_settings_sections
+			$option_group // This needs to be unique to this tab + Match the one called in do_settings_sections.
 		);
 
 		add_settings_field(
@@ -170,7 +175,8 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Uses the tabs helper class.
 	 *
 	 * @access public
-	 * @return null
+	 * @param object $tabs Tab helper class.
+	 * @return void
 	 */
 	public function setup_tabs( $tabs ) {
 		$tabs->register_tab(
@@ -191,7 +197,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_tab_callback() {
 		?>
@@ -209,10 +215,10 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function section_1_callback() {
-		$feed_slug = wpna_get_option( 'fbia_feed_slug' );;
+		$feed_slug = wpna_get_option( 'fbia_feed_slug' );
 		?>
 		<p>
 			<?php esc_html_e( 'These settings apply to the RSS feed of Instant Articles.', 'wp-native-articles' ); ?>
@@ -234,11 +240,11 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_slug_callback() {
 		?>
-		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option('fbia_feed_slug', 'facebook-instant-articles' ) ); ?>" />
+		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_slug', 'facebook-instant-articles' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The endpoint of the Instant Articles Feed.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
@@ -252,11 +258,11 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function posts_per_feed_callback() {
 		?>
-		<input type="number" min="0" step="1" name="wpna_options[fbia_posts_per_feed]" id="fbia_posts_per_feed" class="regular-text" value="<?php echo intval( wpna_get_option('fbia_posts_per_feed') ); ?>" />
+		<input type="number" min="0" step="1" name="wpna_options[fbia_posts_per_feed]" id="fbia_posts_per_feed" class="regular-text" value="<?php echo intval( wpna_get_option( 'fbia_posts_per_feed' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'Limit the maximum amount of articles in the feed.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
@@ -269,13 +275,13 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function article_caching_callback() {
 		?>
 		<label for="fbia_article_caching">
 			<input type="hidden" name="wpna_options[fbia_article_caching]" value="0">
-			<input type="checkbox" name="wpna_options[fbia_article_caching]" id="fbia_article_caching" class="" value="true"<?php checked( (bool) wpna_get_option('fbia_article_caching') ); ?> />
+			<input type="checkbox" name="wpna_options[fbia_article_caching]" id="fbia_article_caching" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_article_caching' ) ); ?> />
 			<?php esc_html_e( 'Cache the content of articles in the feed.', 'wp-native-articles' ); ?>
 		</label>
 		<?php
@@ -289,13 +295,13 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function modified_only_callback() {
 		?>
 		<label for="fbia_modified_only">
 			<input type="hidden" name="wpna_options[fbia_modified_only]" value="0">
-			<input type="checkbox" name="wpna_options[fbia_modified_only]" id="fbia_modified_only" class="" value="true"<?php checked( (bool) wpna_get_option('fbia_modified_only') ); ?> />
+			<input type="checkbox" name="wpna_options[fbia_modified_only]" id="fbia_modified_only" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_modified_only' ) ); ?> />
 			<?php esc_html_e( 'Only show recently modified posts in the feed.', 'wp-native-articles' ); ?>
 		</label>
 		<?php
@@ -304,18 +310,18 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	/**
 	 * Outputs the HTML for the 'fbia_feed_authentication' settings field.
 	 *
-	 * Enables basic authentication for the feed
+	 * Enables basic authentication for the feed.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_authentication_callback() {
 		?>
 		<label for="fbia_feed_authentication">
 			<input type="hidden" name="wpna_options[fbia_feed_authentication]" value="0">
-			<input type="checkbox" name="wpna_options[fbia_feed_authentication]" id="fbia_feed_authentication" class="" value="true"<?php checked( (bool) wpna_get_option('fbia_feed_authentication') ); ?> />
+			<input type="checkbox" name="wpna_options[fbia_feed_authentication]" id="fbia_feed_authentication" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_feed_authentication' ) ); ?> />
 			<?php esc_html_e( 'Enable Basic Authentication for the RSS feed.', 'wp-native-articles' ); ?>
 		</label>
 		<?php
@@ -329,11 +335,11 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_authentication_username_callback() {
 		?>
-		<input type="text" name="wpna_options[fbia_feed_authentication_username]" id="fbia_feed_authentication_username" class="regular-text" value="<?php echo esc_html( wpna_get_option('fbia_feed_authentication_username' ) ); ?>" />
+		<input type="text" name="wpna_options[fbia_feed_authentication_username]" id="fbia_feed_authentication_username" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_authentication_username' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The username for the feed authentication.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
@@ -347,7 +353,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_authentication_password_callback() {
 		?>
@@ -364,7 +370,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_feed() {
 
@@ -377,26 +383,25 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * Caches the main feed query.
 	 *
 	 * Our main feed query is very expensive. This runs before the feed query is
-	 * called, checks if it has alraedy been cached in transients and if so
+	 * called, checks if it has already been cached in transients and if so
 	 * makes sure no query runs.
 	 *
 	 * @since 1.0.0
-	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/
+	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/.
 	 *
 	 * @access public
-	 * @param  array    $request
-	 * @param  WP_Query $query
+	 * @param  array    $request Posts to get for the feed.
+	 * @param  WP_Query $query   WordPress feed query.
 	 * @return array
 	 */
-	public function pre_feed_query_cache( $request, $query ){
+	public function pre_feed_query_cache( $request, $query ) {
 
 		$feed_slug = wpna_get_option( 'fbia_feed_slug' );
 
-		if ( $query->is_feed( $feed_slug ) && $query->is_main_query() && wpna_get_option('fbia_article_caching') ) {
-
-			if ( get_transient( 'wpna_facebook_feed_posts' ) )
+		if ( $query->is_feed( $feed_slug ) && $query->is_main_query() && wpna_get_option( 'fbia_article_caching' ) ) {
+			if ( get_transient( 'wpna_facebook_feed_posts' ) ) {
 				$request = null;
-
+			}
 		}
 
 		return $request;
@@ -411,25 +416,24 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * updated it is also flushed.
 	 *
 	 * @since 1.0.0
-	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/
+	 * @link https://www.reddit.com/r/Wordpress/comments/19crcn/best_practice_for_hijacking_main_loop_and_caching/.
 	 *
 	 * @access public
-	 * @param  array    $posts
-	 * @param  WP_Query $query
+	 * @param  array    $posts Posts found by the query.
+	 * @param  WP_Query $query WordPress feed query.
 	 * @return array
 	 */
-	public function post_feed_query_cache( $posts, $query ){
+	public function post_feed_query_cache( $posts, $query ) {
 
 		$feed_slug = wpna_get_option( 'fbia_feed_slug' );
 
-		if ( $query->is_feed( $feed_slug ) && $query->is_main_query() && wpna_get_option('fbia_article_caching') ) {
+		if ( $query->is_feed( $feed_slug ) && $query->is_main_query() && wpna_get_option( 'fbia_article_caching' ) ) {
 
 			if ( $cached_posts = get_transient( 'wpna_facebook_feed_posts' ) ) {
 				$posts = $cached_posts;
 			} else {
 				set_transient( 'wpna_facebook_feed_posts', $posts, HOUR_IN_SECONDS );
 			}
-
 		}
 
 		return $posts;
@@ -443,8 +447,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  int  $post_id
-	 * @return null
+	 * @return void
 	 */
 	public function flush_feed_query_cache() {
 		delete_transient( 'wpna_facebook_feed_posts' );
@@ -459,7 +462,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  WP_Query $query
+	 * @param  WP_Query $query WordPress feed query.
 	 * @return WP_Query
 	 */
 	public function feed_query( $query ) {
@@ -469,14 +472,14 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 
 		if ( $query->is_feed( $feed_slug ) && $query->is_main_query() ) {
 
-			// Try and filter out any empty posts
+			// Try and filter out any empty posts.
 			add_filter( 'posts_where', array( $this, 'filter_empty_posts' ), 10, 1 );
 
 			$query->set( 'orderby', 'modified' );
-			$query->set( 'posts_per_page', intval( wpna_get_option('fbia_posts_per_feed', 10 ) ) );
-			$query->set( 'posts_per_rss', intval( wpna_get_option('fbia_posts_per_feed', 10 ) ) );
+			$query->set( 'posts_per_page', intval( wpna_get_option( 'fbia_posts_per_feed', 10 ) ) );
+			$query->set( 'posts_per_rss', intval( wpna_get_option( 'fbia_posts_per_feed', 10 ) ) );
 
-			if ( wpna_get_option('fbia_modified_only' ) ) {
+			if ( wpna_get_option( 'fbia_modified_only' ) ) {
 				$query->set( 'date_query', array(
 					array(
 						'column' => 'post_modified',
@@ -484,7 +487,6 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 					),
 				) );
 			}
-
 		}
 
 		return $query;
@@ -499,7 +501,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  string $where
+	 * @param  string $where SQL WHERE query.
 	 * @return string
 	 */
 	public function filter_empty_posts( $where = '' ) {
@@ -516,7 +518,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_callback() {
 		/**
@@ -526,7 +528,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		 */
 		do_action( 'wpna_facebook_pre_feed' );
 
-		// Load in the main feed template
+		// Load in the main feed template.
 		include wpna_locate_template( 'wpna-feed' );
 
 		/**
@@ -568,15 +570,13 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array $headers The current feed headers.
-	 * @param  WP    $wp      WordPress environment setup class.
-	 * @return null
+	 * @return void
 	 */
 	public function nocache() {
 
-		if ( ! wpna_get_option('fbia_article_caching') ) {
-			// WordPress has a handy nocache function for headers
-			// @link https://codex.wordpress.org/Function_Reference/nocache_headers
+		if ( ! wpna_get_option( 'fbia_article_caching' ) ) {
+			// WordPress has a handy nocache function for headers.
+			// @link https://codex.wordpress.org/Function_Reference/nocache_headers.
 			nocache_headers();
 		}
 
@@ -591,34 +591,35 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function feed_authentication() {
 
-		// If feed authentication is enabled
-		if ( wpna_get_option('fbia_feed_authentication') ) {
+		// If feed authentication is enabled.
+		if ( wpna_get_option( 'fbia_feed_authentication' ) ) {
 
-			// Feed username & password to use
-			$username = wpna_get_option('fbia_feed_authentication_username');
-			$password = wpna_get_option('fbia_feed_authentication_password');
+			// Feed username & password to use.
+			$username = wpna_get_option( 'fbia_feed_authentication_username' );
+			$password = wpna_get_option( 'fbia_feed_authentication_password' );
 
 			// Check user & password is set. If not trigger basic auth.
 			if (
-				! isset( $_SERVER['PHP_AUTH_USER'] ) ||
-				! isset( $_SERVER['PHP_AUTH_PW'] ) ||
-				$username != $_SERVER['PHP_AUTH_USER'] ||
-				! wp_check_password( $_SERVER['PHP_AUTH_PW'], $password )
+				! isset( $_SERVER['PHP_AUTH_USER'] ) || // Input var okay.
+				! isset( $_SERVER['PHP_AUTH_PW'] ) || // Input var okay.
+				$username !== $_SERVER['PHP_AUTH_USER'] || // Input var okay.
+				// Doesn't need sanitizing or could interfere with strong passwords. @codingStandardsIgnoreLine
+				! wp_check_password( wp_unslash( $_SERVER['PHP_AUTH_PW'] ), $password )
 			) {
 
-				// Set the 401 status header
+				// Set the 401 status header.
 				if ( ! headers_sent() ) {
 					header( 'WWW-Authenticate: Basic' );
 				}
 
-				// Die to stop content showing
+				// Die to stop content showing.
 				wp_die(
-					__( 'Authentication is required to view this feed.', 'wp-native-articles' ),
-					__( 'Authentication Error', 'wp-native-articles' ),
+					esc_html__( 'Authentication is required to view this feed.', 'wp-native-articles' ),
+					esc_html__( 'Authentication Error', 'wp-native-articles' ),
 					401
 				);
 			}
@@ -631,10 +632,10 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return null
+	 * @return void
 	 */
 	public function flush_rewrite_rules() {
-		if ( isset( $_GET['tab'] ) && 'feed' == $_GET['tab'] ) {
+		if ( isset( $_GET['tab'] ) && 'feed' === $_GET['tab'] ) { // Input var okay.
 			flush_rewrite_rules();
 		}
 	}
