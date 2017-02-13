@@ -585,7 +585,7 @@ class WPNA_Facebook_Post {
 			'ignore_sticky_posts'    => true, // Turn off sticky posts.
 			'order'                  => 'DESC',
 			'orderby'                => 'date',
-			'no_found_rows'          => true, // Turn of pagination, we don't need it.
+			'no_found_rows'          => true, // Turn off pagination, we don't need it.
 			'update_post_term_cache' => false,
 			'update_post_meta_cache' => false,
 			'cache_results'          => false,
