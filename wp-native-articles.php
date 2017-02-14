@@ -4,32 +4,26 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.0.8
+ * Version: 1.0.9
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
  */
 
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) )
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
+}
 
 // Define the current version.
-if ( ! defined( 'WPNA_VERSION' ) )
-	define( 'WPNA_VERSION', '1.0.8' );
+if ( ! defined( 'WPNA_VERSION' ) ) {
+	define( 'WPNA_VERSION', '1.0.9' );
+}
 
 // Define the plugin base path.
-if ( ! defined( 'WPNA_BASE_PATH' ) )
+if ( ! defined( 'WPNA_BASE_PATH' ) ) {
 	define( 'WPNA_BASE_PATH', dirname( __FILE__ ) );
-
-// Define the URL to check for updates.
-if ( ! defined( 'WPNA_STORE_URL' ) )
-	define( 'WPNA_STORE_URL', 'https://wp-native-articles.com' );
-
-// Define the item name.
-if ( ! defined( 'WPNA_ITEM_NAME' ) )
-	define( 'WPNA_ITEM_NAME', 'WP Native Articles' );
-
+}
 
 if ( ! function_exists( 'wpna_initialise' ) ) :
 
@@ -62,7 +56,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		register_deactivation_hook( __FILE__, array( 'WPNA_Deactivator', 'run' ) );
 
 		/**
-		 * Global functions and helper files.
+		 * Global functions and helper files
 		 */
 
 		// Load the helper class.
@@ -77,9 +71,8 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 
 		// Load the sanitization class.
 		require WPNA_BASE_PATH . '/includes/functions-sanitization.php';
-
 		/**
-		 * Classes that register hooks and do stuff.
+		 * Classes that register hooks and do stuff
 		 */
 
 		// Load the admin tabs helper class.
@@ -116,16 +109,17 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		$wpna_admin = new WPNA_Admin();
 
 		// Load the support admin section.
-		if ( ! class_exists( 'WPNA_Admin_Support' ) ) {
-			require WPNA_BASE_PATH . '/includes/class-admin-support.php';
-		}
-		$wpna_support_admin = new WPNA_Admin_Support();
-
-		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Premium' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-premium.php';
 		}
 		$wpna_premium_admin = new WPNA_Admin_Premium();
+
+
+		// Load the support admin section.
+		if ( ! class_exists( 'WPNA_Admin_Support' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-admin-support.php';
+		}
+		$wpna_support_admin = new WPNA_Admin_Support();
 
 		// Load Facebook Instant Articles functionality.
 		if ( ! class_exists( 'WPNA_Admin_Facebook' ) ) {
@@ -145,7 +139,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		$wpna_facebook_content = new WPNA_Facebook_Content_Parser();
 
 		/**
-		 * Third party compatibility functions.
+		 * Third party compatibility functions
 		 */
 
 		include WPNA_BASE_PATH . '/includes/compat/playbuzz.php';
@@ -153,10 +147,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/co-authors-plus.php';
 		include WPNA_BASE_PATH . '/includes/compat/infogram.php';
 
-		/**
-		 * Load the plugin text domain. For i18n.
-		 */
-
+		// Load the plugin text domain. For i18n.
 		add_action( 'init', 'wpna_load_textdomain', 10, 0 );
 
 	}
@@ -165,7 +156,6 @@ endif;
 
 // Kick everything off.
 wpna_initialise();
-
 
 /**
  * Disables the current plugin and shows a die message.
@@ -197,3 +187,4 @@ function wpna_disable_pro_plugin_check() {
 // activation hook and admin_init (incase it was activated in an obscure manner).
 register_activation_hook( __FILE__, 'wpna_disable_pro_plugin_check' );
 add_action( 'admin_init', 'wpna_disable_pro_plugin_check', 1, 0 );
+
