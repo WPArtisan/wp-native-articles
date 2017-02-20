@@ -83,8 +83,10 @@ class WPNA_Multisite_Admin {
 		add_action( 'wpmu_new_blog',           array( $this, 'new_blog_defaults' ), 10, 6 );
 		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'save_options_callback' ), 10, 1 );
 		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'reset_blog_callback' ), 10, 1 );
-
 		add_filter( 'admin_menu',              array( $this, 'admin_page_capability' ), 999, 0 );
+
+		add_filter( 'sanitize_option_wpna_multisite-reset', 'absint', 10, 1 );
+		add_filter( 'sanitize_option_wpna_license_key', 'sanitize_text_field', 10, 1 );
 	}
 
 	/**
@@ -159,11 +161,13 @@ class WPNA_Multisite_Admin {
 	 * @return void
 	 */
 	public function notices() {
-		if ( empty( $_REQUEST['notice'] ) ) { // Input var okay.
+		$notice = filter_input( INPUT_GET, 'notice', FILTER_SANITIZE_STRING );
+
+		if ( ! $notice ) {
 			return;
 		}
 
-		switch ( $_REQUEST['notice'] ) { // Input var okay.
+		switch ( $notice ) {
 			case 'wpna_multisite_options_success':
 				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_options_success', esc_html__( 'Multisite settings updated successfully.', 'wp-native-articles' ), 'updated' );
 				break;
@@ -197,7 +201,13 @@ class WPNA_Multisite_Admin {
 				break;
 
 			case 'wpna_multisite_activate_license_error':
-				$message = ! empty( $_REQUEST['message'] ) ? esc_html( urldecode( wp_unslash( $_REQUEST['message'] ) ) ) : esc_html__( 'Error: Your license could not be activated. Please try again.', 'wp-native-articles' ); // Input var okay.
+				if ( $message = filter_input( INPUT_GET, 'message', FILTER_SANITIZE_STRING ) ) {
+					// Make sure it's correctly escaped.
+					$message = esc_html( rawurldecode( $message ) );
+				} else {
+					$message = esc_html__( 'Error: Your license could not be activated. Please try again.', 'wp-native-articles' );
+				}
+
 				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_activate_license_error', $message, 'error' );
 				break;
 
@@ -209,7 +219,7 @@ class WPNA_Multisite_Admin {
 				 * @since 1.0.0
 				 * @param string The notice key.
 				 */
-				do_action( 'wpna_multisite_notices', wp_unslash( $_REQUEST['notice'] ) ); // Input var okay.
+				do_action( 'wpna_multisite_notices', $notice );
 
 				break;
 		}
@@ -382,7 +392,10 @@ class WPNA_Multisite_Admin {
 	 * @return void
 	 */
 	public function save_options_callback() {
-		if ( empty( $_POST['wpna_save_options'] ) ) { // Input var okay.
+		// Check if we want to save the options.
+		$save_options = filter_input( INPUT_POST, 'wpna_save_options', FILTER_SANITIZE_STRING );
+
+		if ( ! $save_options ) {
 			return;
 		}
 
@@ -394,6 +407,9 @@ class WPNA_Multisite_Admin {
 		// Misleading name, validate nonce.
 		check_admin_referer( $this->option_group_general . '-options' );
 
+		// Grab the data from $_POST.
+		$unfiltered_input = filter_input( INPUT_POST, 'wpna_options', FILTER_UNSAFE_RAW );
+
 		/**
 		 * This filter is used to validate & santize the data. It is called by
 		 * the settings API and the validation function registered with the
@@ -402,7 +418,7 @@ class WPNA_Multisite_Admin {
 		 * @since 1.0.0
 		 * @var array The form data to validate.
 		 */
-		$values = apply_filters( 'sanitize_option_' . $this->option_group_general, wp_unslash( $_POST['wpna_options'] ) );
+		$values = apply_filters( 'sanitize_option_' . $this->option_group_general, wp_unslash( $unfiltered_input ) );
 
 		// Save options.
 		$updated = update_site_option( 'wpna_options', $values );
@@ -484,7 +500,10 @@ class WPNA_Multisite_Admin {
 	 * @return void
 	 */
 	public function reset_blog_callback() {
-		if ( empty( $_POST['wpna_reset_blog'] ) ) { // Input var okay.
+		// Check if we want to reset the blog.
+		$reset_blog = filter_input( INPUT_POST, 'wpna_reset_blog', FILTER_SANITIZE_STRING );
+
+		if ( ! $reset_blog ) {
 			return;
 		}
 
@@ -496,6 +515,9 @@ class WPNA_Multisite_Admin {
 		// Misleading name, validate nonce.
 		check_admin_referer( $this->option_group_reset . '-options' );
 
+		// Grab the data from $_POST and check it's an int.
+		$unfiltered_input = filter_input( INPUT_POST, 'reset_blog', FILTER_VALIDATE_INT );
+
 		/**
 		 * This filter is used to validate & santize the data. It is called by
 		 * the settings API and the validation function registered with the
@@ -504,7 +526,7 @@ class WPNA_Multisite_Admin {
 		 * @since 1.0.0
 		 * @var array The form data to validate.
 		 */
-		$values = apply_filters( 'sanitize_option_' . $this->option_group_reset, wp_unslash( $_POST['reset_blog'] ) );
+		$values = apply_filters( 'sanitize_option_' . $this->option_group_reset, $unfiltered_input );
 
 		// If no ID was passed set an error message.
 		if ( empty( $values['id'] ) ) {
@@ -553,7 +575,7 @@ class WPNA_Multisite_Admin {
 	public function new_blog_defaults( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
 		$options = get_site_option( 'wpna_options' );
 		$souce_blog_id = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
-		$this->set_blog_defaults( $souce_blog_id, $blog_id );
+		$this->set_blog_defaults( absint( $souce_blog_id ), absint( $blog_id ) );
 	}
 
 	/**

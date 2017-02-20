@@ -343,4 +343,4 @@ if ( ! function_exists( 'wpna_load_textdomain' ) ) :
 	function wpna_load_textdomain() {
 		load_plugin_textdomain( 'wp-native-articles', false, WPNA_BASE_PATH . '/languages' );
 	}
-endif; // __isPremium
+endif;

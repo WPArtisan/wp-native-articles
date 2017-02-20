@@ -43,9 +43,9 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @return void
 	 */
 	public function hooks() {
-			// Done like this so the source parser can compile the seperate versions.
-			$this->page_slug = 'wpna_facebook';
-		
+		// Done like this so the source parser can compile the seperate versions.
+		$this->page_slug = 'wpna_facebook';
+
 		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'admin_init',            array( $this, 'rating_notice' ), 10, 0 );
 
@@ -330,12 +330,14 @@ class WPNA_Admin extends WPNA_Admin_Base {
 			wp_die();
 		}
 
+		$notice = filter_input( INPUT_POST, 'notice', FILTER_SANITIZE_STRING );
+
 		// If the notice isn't set then do nothing.
-		if ( empty( $_POST['notice'] ) ) { // Input var okay.
+		if ( ! $notice ) {
 			wp_die();
 		}
 
-		switch ( $_POST['notice'] ) { // Input var okay.
+		switch ( $notice ) {
 
 			// They've already rated the app, kill all rating prompts.
 			case 'rating-permanent':

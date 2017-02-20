@@ -38,7 +38,10 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 		foreach ( $values as $key => $value ) {
 
 			/**
-			 * Sanitize the an options value
+			 * DEPRECATED.
+			 *
+			 * The old sanitization hook.
+			 * apply_filters_deprecated() was only introduced in 4.6.
 			 *
 			 * @since 1.0.0
 			 *
@@ -46,7 +49,21 @@ if ( ! function_exists( 'wpna_sanitize_options' ) ) :
 			 * @param string $key    The option name.
 			 * @param array  $values All options.
 			 */
-			$sanitized_values[ $key ] = apply_filters( 'wpna_sanitize_option-' . $key, $value, $key, $values );
+			if ( function_exists( 'apply_filters_deprecated' ) ) {
+				// @codingStandardsIgnoreLine.
+				$sanitized_values[ $key ] = apply_filters_deprecated( 'wpna_sanitize_option-' . $key, array( $value, $key, $values ), '1.1.0', 'wpna_sanitize_option_' . $key );
+			}
+
+			/**
+			 * Sanitize the an options value
+			 *
+			 * @since 1.1.0
+			 *
+			 * @param mixed  $value  The value to sanitize.
+			 * @param string $key    The option name.
+			 * @param array  $values All options.
+			 */
+			$sanitized_values[ $key ] = apply_filters( 'wpna_sanitize_option_' . $key, $value, $key, $values );
 
 		}
 

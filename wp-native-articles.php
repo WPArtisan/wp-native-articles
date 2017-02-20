@@ -114,7 +114,6 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$wpna_premium_admin = new WPNA_Admin_Premium();
 
-
 		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Support' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-support.php';
@@ -131,7 +130,6 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook-feed.php';
 		}
 		$wpna_facebook_feed = new WPNA_Admin_Facebook_Feed();
-
 		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';

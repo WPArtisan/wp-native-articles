@@ -237,7 +237,21 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'User Operating System', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo isset( $_SERVER['HTTP_USER_AGENT'] ) ? esc_html( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) ) : esc_html__( 'Unavailable', 'wp-native-articles' ); // Input var okay. ?></td>
+					<td class="value">
+						<?php
+						$user_agent = null;
+						// Get the memcached sever. PHP bug with INPUT_SERVER so default to global.
+						// @codingStandardsIgnoreStart
+						if ( filter_has_var( INPUT_SERVER, 'HTTP_USER_AGENT' ) ) {
+							$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING );
+						} elseif ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) { // Input var okay.
+							$user_agent = filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ), FILTER_SANITIZE_STRING ); // Input var okay.
+						}
+						// @codingStandardsIgnoreEnd
+
+						echo $user_agent ? esc_html( $user_agent ) : '';
+						?>
+					</td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'PHP Version', 'wp-native-articles' ) ?>:</td>
@@ -358,6 +372,8 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		}
 
 		// WP Themes.
+		// Nothing worth doing about the lack of snake_case.
+		// @codingStandardsIgnoreStart
 		$all_themes = wp_get_themes();
 		foreach ( $all_themes as $theme_string => $theme_data ) {
 			$info['themes'][ $theme_string ] = array(
@@ -373,6 +389,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 				'active'      => wp_get_theme() === $theme_data->Name,
 			);
 		}
+		// @codingStandardsIgnoreEnd
 
 		// WP Security.
 		$info['wp_native_articles'] = array(
@@ -399,27 +416,36 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 
 		// Memcache.
 		if ( class_exists( 'Memcache' ) ) {
-			$server = 'localhost';
-			if ( ! empty( $_REQUEST['server'] ) ) {
-				$server = wp_unslash( $_REQUEST['server'] );
+
+			// Get the memcached sever. PHP bug with INPUT_SERVER so default to global.
+			if ( filter_has_var( INPUT_SERVER, 'server' ) ) {
+				$server = filter_input( INPUT_SERVER, 'server', FILTER_SANITIZE_STRING );
+			} elseif ( isset( $_SERVER['server'] ) ) { // Input var okay.
+				$server = filter_var( wp_unslash( $_SERVER['server'] ), FILTER_SANITIZE_STRING ); // Input var okay.
+			} else {
+				$server = 'localhost';
 			}
-				$memcache = new Memcache;
-				$is_memcache_available = @$memcache->connect( $server );
-			if ( $is_memcache_available ) {
-				$info['memcached'] = array(
-					'version' => $memcache->getVersion(),
-				);
+
+			$memcache = new Memcache;
+			try {
+				$is_memcache_available = $memcache->connect( $server );
+
+				if ( $is_memcache_available ) {
+					$info['memcached'] = array(
+						'version' => $memcache->getVersion(),
+					);
+				}
+			} catch ( Exception $e ) {
+				if ( WP_DEBUG ) {
+					// @codingStandardsIgnoreLine
+					trigger_error( esc_html( $e->getMessage() ) );
+				}
 			}
 		}
 
 		// Webserver.
 		$info['server'] = array(
 			'apache' => function_exists( 'apache_get_version' ) ? apache_get_version() : 'false',
-		);
-
-		// Browser etc.
-		$info['user'] = array(
-			'browser' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '', // Input var okay.
 		);
 
 		return $info;
@@ -437,6 +463,9 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 */
 	public function parse_phpinfo() {
 		ob_start();
+		// For the moment ignore this, but we may revisit it and decide if it's needed.
+		// @todo. Investigate if this is still needed.
+		// @codingStandardsIgnoreLine
 		phpinfo( INFO_GENERAL | INFO_CONFIGURATION | INFO_MODULES );
 
 		$pi = preg_replace(
@@ -514,7 +543,16 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 */
 	public function get_mysql_version() {
 		global $wpdb;
-		return $wpdb->get_var( 'select version() as mysqlversion' );
+
+		if ( ! $mysql_version = wp_cache_get( 'wpna_mysqlversion' ) ) {
+			return $mysql_version;
+		}
+
+		$mysql_version = $wpdb->get_var( 'select version() as mysqlversion' ); // db call ok.
+
+		wp_cache_set( 'wpna_mysqlversion', $mysql_version );
+
+		return $mysql_version;
 	}
 
 }

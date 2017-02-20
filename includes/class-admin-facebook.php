@@ -67,27 +67,27 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		// Form sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
-		add_filter( 'wpna_sanitize_option-fbia_enable',            'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_authorise_id',      'absint', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_style',             'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_sponsored',         'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_image_likes',       'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_image_comments',    'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_credits',           'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_copyright',         'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_enable_ads',        'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_enable',            'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_authorise_id',      'absint', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_style',             'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_sponsored',         'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_image_likes',       'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_image_comments',    'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_credits',           'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_copyright',         'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_enable_ads',        'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
 
 		// Post meta sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
-		add_filter( 'wpna_sanitize_post_meta-fbia_style',             'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_sponsored',         'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_image_likes',       'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_image_comments',    'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_credits',           'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_copyright',         'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_enable_ads',        'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta-fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_style',             'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_sponsored',         'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_image_likes',       'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_image_comments',    'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_credits',           'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_copyright',         'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_enable_ads',        'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
 
 	}
 
@@ -815,15 +815,21 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			return;
 		}
 
+		// Get the nonce.
+		$nonce = filter_input( INPUT_POST, '_wpna_nonce', FILTER_SANITIZE_STRING );
+
 		// Verify that the input is coming from the proper form.
 		// Since an nonce will only include alpha-numeric characters, we use sanitize_key() to sanitize it.
 		// Automatically strips out any quotes or slashes so unslash isn't needed.
-		if ( ! isset( $_POST['_wpna_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['_wpna_nonce'] ), 'wpna_save_post_meta-' . $post_id ) ) { // Input var okay.
+		if ( ! $nonce || ! wp_verify_nonce( sanitize_key( $nonce ), 'wpna_save_post_meta-' . $post_id ) ) {
 			return;
 		}
 
+		// Get the post type.
+		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
+
 		// Make sure the user has permissions to post.
-		if ( ! empty( $_POST['post_type'] ) && 'post' === $_POST['post_type'] && ! current_user_can( 'edit_post', $post_id ) ) { // Input var okay.
+		if ( ! $post_type && 'post' === $post_type && ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
@@ -862,6 +868,23 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		foreach ( $values as $key => $value ) {
 
 			/**
+			 * DEPRECATED.
+			 *
+			 * The old sanitization hook.
+			 * apply_filters_deprecated() was only introduced in 4.6.
+			 *
+			 * @since 1.0.0
+			 *
+			 * @param mixed  $value  The value to sanitize.
+			 * @param string $key    The option name.
+			 * @param array  $values All options.
+			 */
+			if ( function_exists( 'apply_filters_deprecated' ) ) {
+				// @codingStandardsIgnoreLine.
+				$sanitized_values[ $key ] = apply_filters_deprecated( 'wpna_sanitize_post_meta-' . $key, array( $value, $key, $values ), '1.1.0', 'wpna_sanitize_post_meta_' . $key );
+			}
+
+			/**
 			 * Use filters to allow sanitizing of individual options.
 			 *
 			 * All sanitization hooks should be registerd in the hooks() method.
@@ -872,7 +895,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			 * @param string $key    The options name
 			 * @param array  $values All options
 			 */
-			$sanitized_values[ $key ] = apply_filters( 'wpna_sanitize_post_meta-' . $key, $value, $key, $values );
+			$sanitized_values[ $key ] = apply_filters( 'wpna_sanitize_post_meta_' . $key, $value, $key, $values );
 
 		}
 

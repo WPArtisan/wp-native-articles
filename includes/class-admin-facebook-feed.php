@@ -48,12 +48,9 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		add_action( 'update_option_wpna_options',              array( $this, 'flush_feed_query_cache' ), 10, 0 );
 		add_action( 'add_option_wpna_options',                 array( $this, 'flush_feed_query_cache' ), 10, 0 );
 		add_action( 'save_post',                               array( $this, 'flush_feed_query_cache' ), 10, 0 );
-
 		// A custom endpoint is added with the permalinks API so we need to
 		// flush the rewrite rules to clean it up and remove it.
-
 		add_action( 'load-toplevel_page_wpna_facebook', array( $this, 'flush_rewrite_rules' ), 10, 0 );
-
 
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
@@ -68,13 +65,13 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		}
 
 		// Form sanitization filters.
-		add_filter( 'wpna_sanitize_option-fbia_feed_slug',                    'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_posts_per_feed',               'absint', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_article_caching',              'boolval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_modified_only',                'boolval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_feed_authentication',          'boolval', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_feed_authentication_username', 'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option-fbia_feed_authentication_password', 'wp_hash_password', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_feed_slug',                    'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_posts_per_feed',               'absint', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_article_caching',              'boolval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_modified_only',                'boolval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_feed_authentication',          'boolval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_feed_authentication_username', 'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_feed_authentication_password', 'wp_hash_password', 10, 1 );
 
 		// Set a default feed slug value.
 		add_filter( 'wpna_get_option_fbia_feed_slug',          array( $this, 'default_feed_slug' ), 10, 3 );
@@ -635,7 +632,9 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 * @return void
 	 */
 	public function flush_rewrite_rules() {
-		if ( isset( $_GET['tab'] ) && 'feed' === $_GET['tab'] ) { // Input var okay.
+		$tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+
+		if ( $tab && 'feed' === $tab ) {
 			flush_rewrite_rules();
 		}
 	}

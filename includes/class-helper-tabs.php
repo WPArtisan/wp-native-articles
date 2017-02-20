@@ -90,12 +90,20 @@ class WPNA_Helper_Tabs {
 	 */
 	public function active_tab() {
 		// Check $_GET first.
-		if ( ! empty( $_GET['tab'] ) && ! empty( $this->tabs[ $_GET['tab'] ] ) )
-			return $_GET['tab'];
+		$tab = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_STRING );
+
+		// If it exists and is valid, return it.
+		if ( $tab && ! empty( $this->tabs[ $tab ] ) ) {
+			return $tab;
+		}
 
 		// Check $_POST next.
-		if ( ! empty( $_POST['tab'] ) && ! empty( $this->tabs[ $_POST['tab'] ] ) )
-			return $_POST['tab'];
+		$tab = filter_input( INPUT_POST, 'tab', FILTER_SANITIZE_STRING );
+
+		// If it exists and is valid, return it.
+		if ( $tab && ! empty( $this->tabs[ $tab ] ) ) {
+			return $tab;
+		}
 
 		// Work out if a default has been set.
 		foreach ( $this->tabs as $key => $params ) {

@@ -46,6 +46,8 @@ class WPNA_Facebook_Post {
 
 	/**
 	 * Returns the post ID.
+	 * Method name mirrors the WP one, ignore from PHPCS.
+	 * @codingStandardsIgnoreStart
 	 *
 	 * @since 1.0.0
 	 *
@@ -53,6 +55,7 @@ class WPNA_Facebook_Post {
 	 * @return int
 	 */
 	public function get_the_ID() {
+		// codingStandardsIgnoreEnd
 		return $this->post_id;
 	}
 

@@ -3,10 +3,13 @@
  * Admin setup for Premium page.
  *
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Extends the Admin Base and adds the Premium page.
@@ -34,7 +37,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
 		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 15, 0 );
@@ -48,14 +51,14 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_menu_items() {
 		$page_hook = add_submenu_page(
-			'wpna_facebook', // Parent page slug
+			'wpna_facebook', // Parent page slug.
 			esc_html__( 'WP Native Article Premium', 'wp-native-articles' ),
 			'<span style="color:#f18500">' . esc_html__( 'Premium', 'wp-native-articles' ) . '</span>',
-			'manage_options', // Debug cotains potentially sensitive information
+			'manage_options',
 			$this->page_slug,
 			array( $this, 'output_callback' )
 		);
@@ -66,7 +69,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 * Custom action for adding more menu items.
 		 *
 		 * @since 1.0.0
-		 * @param string $page_hook The Unique hook of the newly registered page
+		 * @param string $page_hook The Unique hook of the newly registered page.
 		 */
 		do_action( 'wpna_admin_premium_menu_items', $page_hook );
 	}
@@ -81,7 +84,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return nul
+	 * @return void
 	 */
 	public function output_callback() {
 		?>
@@ -215,7 +218,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_meta_boxes() {
 		$screen = get_current_screen();
@@ -236,7 +239,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 */
 		do_action( 'add_meta_boxes', $screen->id );
 
-		// Add screen option: user can choose between 1 or 2 columns (default 2)
+		// Add screen option: user can choose between 1 or 2 columns (default 2).
 		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
 	}
 

@@ -93,7 +93,7 @@ class WPNA_Facebook_Content_Parser {
 	 * anticipate them, this ensures they're always wrapped in <figure> tags.
 	 *
 	 * Hijacks the global array of shortcodes and funtions. Replaces the functions
-	 * with a custom  method that wraps the the shortcode before calling the
+	 * with a custom method that wraps the shortcode before calling the
 	 * function.
 	 *
 	 * Though technically a filter this is being used more like an action.
@@ -160,7 +160,7 @@ class WPNA_Facebook_Content_Parser {
 			$content = '<iframe>' . $content . '</iframe>';
 		}
 
-		// Store the shortocde content in the global array.
+		// Store the shortocde content in the global array so it can be replaced later.
 		$_shortcode_content[ $shortcode_key ] = $content;
 
 		// Return the unique key wrapped in a figure element.
@@ -775,6 +775,7 @@ class WPNA_Facebook_Content_Parser {
 	 * Though technically a filter this is being used more like an action.
 	 *
 	 * @since 1.0.0
+	 * @todo Not overwrite the global array.
 	 *
 	 * @access public
 	 * @param  string $content The content of the post.
@@ -783,6 +784,7 @@ class WPNA_Facebook_Content_Parser {
 	public function remove_shortcode_wrapper( $content ) {
 		global $shortcode_tags, $_shortcode_tags;
 
+		// @codingStandardsIgnoreLine
 		$shortcode_tags = $_shortcode_tags;
 
 		return $content;
@@ -810,7 +812,7 @@ class WPNA_Facebook_Content_Parser {
 	 * Repalces embeds.
 	 *
 	 * Shortcodes and embeds were removed while we format the article.
-	 * This places the m back.
+	 * This places them back.
 	 *
 	 * @since 0.0.1
 	 *
