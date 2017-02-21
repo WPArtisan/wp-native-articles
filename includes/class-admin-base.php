@@ -3,10 +3,13 @@
  * Base admin class for easy extending.
  *
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * A base class for setting up new admin pages.
@@ -36,7 +39,7 @@ abstract class WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function __construct() {
 		$this->hooks();
@@ -51,7 +54,7 @@ abstract class WPNA_Admin_Base {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array  Optional. Query args to add to the URL. Default none
+	 * @param  array $params Optional. Query args to add to the URL. Default none.
 	 * @return string The full URL to the current admin page
 	 */
 	public function page_url( $params = array() ) {

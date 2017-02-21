@@ -1,11 +1,11 @@
 <?php
-
 /**
  * Handles uninstalling the plugin
  *
  * When the plugin is removed make sure it cleans up after itself.
  *
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
 // If uninstall not called from WordPress, then exit.
@@ -18,37 +18,34 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * site on the network including the network.
  *
  * Transients should clean themselves up.
- *
- * - Manual query incase of wp_is_large_network()
- * - Manual delete as delete_site_options calls switch_to_blog()
- *   which is really slow
  */
 global $wpdb;
 
-// Delete from the base site
-$wpdb->delete( $wpdb->base_prefix . 'options', array( 'option_name' => 'wpna_options' ) );
+// Delete from the global network options or main site if not multiesite.
+delete_site_option( 'wpna_options' );
 
-// Check if it's a multisite install or not
+// Check if it's a multisite install or not.
 if ( is_multisite() ) {
-
-	// Get an array of IDs for every site
-	$sites = $wpdb->get_col( "SELECT blog_id FROM {$wpdb->blogs}", 0 );
-
-	// Delete from the global network options
-	delete_site_option('wpna_options');
 
 	/**
 	 * Delete from everysite in the network.
+	 * get_sites was only added in 4.6.
 	 *
-	 * @todo Switch to background CRON
+	 * @todo Switch to background CRON.
+	 * @todo Do something about wp_is_large_network().
 	 */
-	if ( ! empty( $sites ) ) {
-		foreach ( $sites as $site_id ) {
-			$wpdb->delete( $wpdb->base_prefix . intval( $site_id ) . '_options', array( 'option_name' => 'wpna_options' ) );
+	if ( function_exists( 'get_sites' ) && class_exists( 'WP_Site_Query' ) ) {
+		$sites = get_sites();
+		foreach ( $sites as $site ) {
+			delete_blog_option( absint( $site->blog_id ), 'wpna_options' );
+		}
+	} elseif ( function_exists( 'wp_get_sites' ) ) {
+		$sites = wp_get_sites();
+		foreach ( $sites as $site ) {
+			delete_blog_option( absint( $site['blog_id'] ), 'wpna_options' );
 		}
 	}
-
 }
 
-// Flush the rewrite rules to clear any endpoints
+// Flush the rewrite rules to clear any endpoints.
 flush_rewrite_rules();

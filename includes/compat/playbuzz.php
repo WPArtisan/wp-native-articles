@@ -1,10 +1,12 @@
 <?php
-
 /**
- * Playbuzz compatibility
+ * Playbuzz compatibility. By default the Playbuzz plugin won't parse Playbuzz
+ * shortcode in a feed. The plugin does come with an option to enable it, this
+ * ensures it's enabled if it's on the feed.
  *
  * @link https://wordpress.org/plugins/playbuzz/
- * @since 1.0.0
+ * @since 1.0.0.
+ * @package wp-native-articles
  */
 
 add_filter( 'pre_option_playbuzz', 'wpna_enable_playbuzz', 10, 1 );
@@ -21,7 +23,7 @@ if ( ! function_exists( 'wpna_enable_playbuzz' ) ) :
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  array $playbuzz
+	 * @param  array $playbuzz Playbuzz plugin options.
 	 * @return array
 	 */
 	function wpna_enable_playbuzz( $playbuzz ) {

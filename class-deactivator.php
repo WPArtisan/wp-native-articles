@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The deactivator class for the plugin.
  *
@@ -8,14 +7,16 @@
  *
  * @author OzTheGreat
  * @since 1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
- *
- * @since 1.0.0
+ * Deactivator class.
  */
 class WPNA_Deactivator {
 
@@ -27,7 +28,7 @@ class WPNA_Deactivator {
 	 * should do upon deactivation.
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function run() {
 		self::flush_rewrite_rules();
@@ -42,7 +43,7 @@ class WPNA_Deactivator {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public static function flush_rewrite_rules() {
 		flush_rewrite_rules();

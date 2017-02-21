@@ -3,10 +3,13 @@
  * Admin setup for Support.
  *
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Extends the Admin Base and adds the Support page and related content.
@@ -34,7 +37,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function hooks() {
 		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 15, 0 );
@@ -48,14 +51,14 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function add_menu_items() {
 		$page_hook = add_submenu_page(
-			'wpna_facebook', // Parent page slug
+			'wpna_facebook', // Parent page slug.
 			esc_html__( 'Support', 'wp-native-articles' ),
 			esc_html__( 'Support', 'wp-native-articles' ),
-			'manage_options', // Debug cotains potentially sensitive information
+			'manage_options', // Debug cotains potentially sensitive information.
 			$this->page_slug,
 			array( $this, 'output_callback' )
 		);
@@ -67,7 +70,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 * Custom action for adding more menu items.
 		 *
 		 * @since 1.0.0
-		 * @param string $page_hook The Unique hook of the newly registered page
+		 * @param string $page_hook The Unique hook of the newly registered page.
 		 */
 		do_action( 'wpna_admin_support_menu_items', $page_hook );
 	}
@@ -82,7 +85,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return nul
+	 * @return void
 	 */
 	public function output_callback() {
 		?>
@@ -109,7 +112,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_tabs() {
 		$this->tabs = new WPNA_Helper_Tabs();
@@ -135,7 +138,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 *
 		 * @since 1.0.0
 		 * @param WPNA_Helper_Tabs $this->tabs Instance of the tabs helper. Used
-		 *                                     to register new tabs.
+		 * to register new tabs.
 		 */
 		do_action( 'wpna_admin_support_tabs', $this->tabs );
 	}
@@ -148,7 +151,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function setup_meta_boxes() {
 		$screen = get_current_screen();
@@ -169,7 +172,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 */
 		do_action( 'add_meta_boxes', $screen->id );
 
-		// Add screen option: user can choose between 1 or 2 columns (default 2)
+		// Add screen option: user can choose between 1 or 2 columns (default 2).
 		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
 	}
 
@@ -181,7 +184,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function general_tab_callback() {
 		$allowed_html = array( 'a' => array( 'href' => array(), 'target' => array() ) );
@@ -209,7 +212,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @return null
+	 * @return void
 	 */
 	public function debug_tab_callback() {
 		?>
@@ -226,54 +229,73 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Site URL', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php bloginfo( 'url', __( 'Unavailable', 'wp-native-articles' ) ); ?></td>
+					<td class="value"><?php bloginfo( 'url', esc_html__( 'Unavailable', 'wp-native-articles' ) ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Active Theme', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo wp_get_theme(); ?></td>
+					<td class="value"><?php echo esc_html( wp_get_theme() ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'User Operating System', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : __( 'Unavailable', 'wp-native-articles' ) ;?></td>
+					<td class="value">
+						<?php
+						$user_agent = null;
+						// Get the memcached sever. PHP bug with INPUT_SERVER so default to global.
+						// @codingStandardsIgnoreStart
+						if ( filter_has_var( INPUT_SERVER, 'HTTP_USER_AGENT' ) ) {
+							$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING );
+						} elseif ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) { // Input var okay.
+							$user_agent = filter_var( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ), FILTER_SANITIZE_STRING ); // Input var okay.
+						}
+						// @codingStandardsIgnoreEnd
+
+						echo $user_agent ? esc_html( $user_agent ) : '';
+						?>
+					</td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'PHP Version', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo function_exists('phpversion') ? phpversion() : __( 'Unavailable', 'wp-native-articles' ) ;?></td>
+					<td class="value"><?php echo function_exists( 'phpversion' ) ? esc_html( phpversion() ) : esc_html__( 'Unavailable', 'wp-native-articles' ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'MySql Version', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo $this->get_mysql_version(); ?></td>
+					<td class="value"><?php echo esc_html( $this->get_mysql_version() ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Memory Limit', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo WP_MEMORY_LIMIT; ?></td>
+					<td class="value"><?php echo esc_html( WP_MEMORY_LIMIT ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Upload Max Filesize', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo ini_get('upload_max_filesize'); ?></td>
+					<td class="value"><?php echo esc_html( ini_get( 'upload_max_filesize' ) ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Post Max Size', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo ini_get('post_max_size'); ?></td>
+					<td class="value"><?php echo esc_html( ini_get( 'post_max_size' ) ); ?></td>
 				</tr>
 				<tr>
 					<td class="param"><?php esc_html_e( 'Max Execution Time', 'wp-native-articles' ) ?>:</td>
-					<td class="value"><?php echo sprintf( '%s %s', ini_get('max_execution_time'), esc_html__( 'seconds', 'wp-native-articles' ) ); ?></td>
+					<td class="value"><?php echo esc_html( sprintf( '%s %s', ini_get( 'max_execution_time' ), esc_html__( 'seconds', 'wp-native-articles' ) ) ); ?></td>
 				</tr>
 			</tbody>
 		</table>
 
 		<h2><?php esc_html_e( 'Full Debug Information', 'wp-native-articles' ); ?></h2>
 		<pre class="debug_output" style="height: 300px; width: 80%; border: 1px solid #dcdcdc; padding: 15px; overflow: scroll;">
-			<?php foreach ( $debug_info = $this->get_debug_information() as $section => $details ) :?>
+			<?php foreach ( $debug_info = $this->get_debug_information() as $section => $details ) : ?>
 				<table border="0" cellpadding="3" width="600">
 					<tbody>
 						<h2><?php echo esc_html( $section ); ?></h2>
 						<?php foreach ( $details as $constant => $values ) : ?>
 							<tr>
 								<td class="param"><?php echo esc_html( $constant ); ?></td>
-								<?php $values = is_array( $values ) ? sprintf( "%s", print_r( $values, true ) ) : esc_html( $values ) ; ?>
-								<td class="value"><?php echo $values; ?></td>
+								<td class="value">
+									<?php
+									foreach ( (array) $values as $value ) {
+										echo esc_html( $value );
+									}
+									?>
+								</td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -310,7 +332,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	public function get_debug_information() {
 		$info = array();
 
-		// Constants
+		// Constants.
 		$info['wordpress'] = array(
 			'versions'                    => get_bloginfo( 'version' ),
 			'url'                         => get_bloginfo( 'url' ),
@@ -338,18 +360,20 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 			'STYLESHEETPATH'              => STYLESHEETPATH,
 		);
 
-		// WordPress Plugin details -->
+		// WordPress Plugin details.
 		$info['plugins'] = get_plugins();
 		foreach ( $info['plugins'] as $plugin_string => $plugin_data ) {
 			$info['plugins'][ $plugin_string ]['active'] = is_plugin_active( $plugin_string );
 		}
 
-		// WordPress MU Plugins
+		// WordPress MU Plugins.
 		if ( is_multisite() ) {
 			$info['mu_plugins'] = get_mu_plugins();
 		}
 
-		// WP Themes
+		// WP Themes.
+		// Nothing worth doing about the lack of snake_case.
+		// @codingStandardsIgnoreStart
 		$all_themes = wp_get_themes();
 		foreach ( $all_themes as $theme_string => $theme_data ) {
 			$info['themes'][ $theme_string ] = array(
@@ -362,55 +386,66 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 				'Template'    => $theme_data->Template,
 				'Status'      => $theme_data->Status,
 				'TextDomain'  => $theme_data->TextDomain,
-				'active'      => wp_get_theme() == $theme_data->Name
+				'active'      => wp_get_theme() === $theme_data->Name,
 			);
 		}
+		// @codingStandardsIgnoreEnd
 
-		// WP Security
+		// WP Security.
 		$info['wp_native_articles'] = array(
 			'settings' => wpna_get_options(),
 		);
 
-		// PHP
+		// PHP.
 		if (
-			! function_exists('ob_start') ||
-			! function_exists('phpinfo') ||
-			! function_exists('ob_get_contents') ||
-			! function_exists('ob_end_clean') ||
-			! function_exists('preg_replace')
+			! function_exists( 'ob_start' ) ||
+			! function_exists( 'phpinfo' ) ||
+			! function_exists( 'ob_get_contents' ) ||
+			! function_exists( 'ob_end_clean' ) ||
+			! function_exists( 'preg_replace' )
 		) {
 			$info['php'] = array( '' => esc_html__( 'This information is not available.', 'wp-native-articles' ) );
 		} else {
 			$info['php'] = $this->parse_phpinfo();
 		}
 
-		// MySql
+		// MySql.
 		$info['mysql'] = array(
 			'version' => $this->get_mysql_version(),
 		);
 
-		if ( class_exists('Memcache') ) {
-			$server = 'localhost';
-			if ( ! empty( $_REQUEST['server'] ) ) {
-				$server = $_REQUEST['server'];
+		// Memcache.
+		if ( class_exists( 'Memcache' ) ) {
+
+			// Get the memcached sever. PHP bug with INPUT_SERVER so default to global.
+			if ( filter_has_var( INPUT_SERVER, 'server' ) ) {
+				$server = filter_input( INPUT_SERVER, 'server', FILTER_SANITIZE_STRING );
+			} elseif ( isset( $_SERVER['server'] ) ) { // Input var okay.
+				$server = filter_var( wp_unslash( $_SERVER['server'] ), FILTER_SANITIZE_STRING ); // Input var okay.
+			} else {
+				$server = 'localhost';
 			}
-				$memcache = new Memcache;
-				$is_memcache_available = @$memcache->connect( $server );
-			if ( $is_memcache_available ) {
-				$info['memcached'] = array(
-					'version' => $memcache->getVersion(),
-				);
+
+			$memcache = new Memcache;
+			try {
+				$is_memcache_available = $memcache->connect( $server );
+
+				if ( $is_memcache_available ) {
+					$info['memcached'] = array(
+						'version' => $memcache->getVersion(),
+					);
+				}
+			} catch ( Exception $e ) {
+				if ( WP_DEBUG ) {
+					// @codingStandardsIgnoreLine
+					trigger_error( esc_html( $e->getMessage() ) );
+				}
 			}
 		}
 
-		// Webserver
+		// Webserver.
 		$info['server'] = array(
-			'apache' => function_exists('apache_get_version') ? apache_get_version() : 'false',
-		);
-
-		// Browser etc
-		$info['user'] = array(
-			'browser' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '',
+			'apache' => function_exists( 'apache_get_version' ) ? apache_get_version() : 'false',
 		);
 
 		return $info;
@@ -428,24 +463,51 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 */
 	public function parse_phpinfo() {
 		ob_start();
-		phpinfo(INFO_GENERAL|INFO_CONFIGURATION|INFO_MODULES);
+		// For the moment ignore this, but we may revisit it and decide if it's needed.
+		// @todo. Investigate if this is still needed.
+		// @codingStandardsIgnoreLine
+		phpinfo( INFO_GENERAL | INFO_CONFIGURATION | INFO_MODULES );
 
 		$pi = preg_replace(
-			array('#^.*<body>(.*)</body>.*$#ms', '#<h2>PHP License</h2>.*$#ms',
-			'#<h1>Configuration</h1>#',  "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
-			"#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
-			  '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a>'
-			  .'<h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
-			  '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
-			  '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
-			  "# +#", '#<tr>#', '#</tr>#'),
-			array('$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
-			  '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
-			  "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
-			  '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
-			  '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
-			  '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'),
-			  ob_get_clean()
+			array(
+				'#^.*<body>(.*)</body>.*$#ms',
+				'#<h2>PHP License</h2>.*$#ms',
+				'#<h1>Configuration</h1>#',
+				"#\r?\n#",
+				'#</(h1|h2|h3|tr)>#',
+				'# +<#',
+				"#[ \t]+#",
+				'#&nbsp;#',
+				'#  +#',
+				'# class=".*?"#',
+				'%&#039;%',
+				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a><h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
+				'#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
+				'#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
+				'# +#',
+				'#<tr>#',
+				'#</tr>#',
+			),
+			array(
+				'$1',
+				'',
+				'',
+				'',
+				'</$1>' . "\n",
+				'<',
+				' ',
+				' ',
+				' ',
+				'',
+				' ',
+				'<h2>PHP Configuration</h2>\n<tr><td>PHP Version</td><td>$2</td></tr>\n<tr><td>PHP Egg</td><td>$1</td></tr>',
+				'<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
+				'<tr><td>Zend Engine</td><td>$2</td></tr>\n<tr><td>Zend Egg</td><td>$1</td></tr>',
+				' ',
+				'%S%',
+				'%E%',
+			),
+			ob_get_clean()
 		);
 
 		$sections = explode( '<h2>', strip_tags( $pi, '<h2><th><td>' ) );
@@ -456,11 +518,15 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 			$n = substr( $section, 0, strpos( $section, '</h2>' ) );
 			preg_match_all(
 				'#%S%(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?(?:<td>(.*?)</td>)?%E%#',
-				$section, $askapache, PREG_SET_ORDER );
+				$section,
+				$askapache,
+				PREG_SET_ORDER
+			);
 
 			foreach ( $askapache as $m ) {
-				if ( isset( $m[2] ) )
+				if ( isset( $m[2] ) ) {
 					$pi[ $n ][ $m[1] ] = $m[2];
+				}
 			}
 		}
 
@@ -477,7 +543,16 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 */
 	public function get_mysql_version() {
 		global $wpdb;
-		return $wpdb->get_var('select version() as mysqlversion');
+
+		if ( ! $mysql_version = wp_cache_get( 'wpna_mysqlversion' ) ) {
+			return $mysql_version;
+		}
+
+		$mysql_version = $wpdb->get_var( 'select version() as mysqlversion' ); // db call ok.
+
+		wp_cache_set( 'wpna_mysqlversion', $mysql_version );
+
+		return $mysql_version;
 	}
 
 }

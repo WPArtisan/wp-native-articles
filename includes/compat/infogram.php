@@ -1,4 +1,12 @@
 <?php
+/**
+ * The Infogram embed returned by the plugin doesn't work in Instant Articles.
+ * This overrides the default shortcode callback function and uses the default
+ * Infrogram async script that does.
+ *
+ * @since 1.0.8
+ * @package wp-native-articles
+ */
 
 add_filter( 'wpna_facebook_article_pre_the_content_filter', 'wpna_setup_infogram', 4, 1 );
 
@@ -7,7 +15,7 @@ add_filter( 'wpna_facebook_article_pre_the_content_filter', 'wpna_setup_infogram
  * If it does, unregister it and re-register the wpna one.
  * This is a filter not an action so return the content.
  *
- * @param  string $content
+ * @param  string $content The post content.
  * @return string
  */
 function wpna_setup_infogram( $content ) {
@@ -37,13 +45,13 @@ function wpna_infogram_embed( $atts ) {
 			'id'     => '',
 			'prefix' => '',
 			'format' => 'interactive',
-		), $atts, 'id' );
+	), $atts, 'id' );
 
-	if ( empty( $atts['id'] ) ){
+	if ( empty( $atts['id'] ) ) {
 		return esc_html_e( 'id is required', 'wp-native-articles' );
 	}
 
-	// Embed an image
+	// Embed an image.
 	if ( ! empty( $atts['format'] ) && 'image' === $atts['format'] ) {
 		$format = 'image';
 	} else {

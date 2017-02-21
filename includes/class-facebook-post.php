@@ -3,10 +3,13 @@
  * Post class for Facebook Instant Articles.
  *
  * @since  1.0.0
+ * @package wp-native-articles
  */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Post class for Facebook Instant Articles.
@@ -34,6 +37,7 @@ class WPNA_Facebook_Post {
 	 * @since 1.0.0
 	 *
 	 * @access public
+	 * @param int $id ID of the post to parse.
 	 * @return null
 	 */
 	public function __construct( $id ) {
@@ -42,6 +46,8 @@ class WPNA_Facebook_Post {
 
 	/**
 	 * Returns the post ID.
+	 * Method name mirrors the WP one, ignore from PHPCS.
+	 * @codingStandardsIgnoreStart
 	 *
 	 * @since 1.0.0
 	 *
@@ -49,6 +55,7 @@ class WPNA_Facebook_Post {
 	 * @return int
 	 */
 	public function get_the_ID() {
+		// codingStandardsIgnoreEnd
 		return $this->post_id;
 	}
 
@@ -174,12 +181,12 @@ class WPNA_Facebook_Post {
 			$attachment_id = get_post_thumbnail_id( $this->get_the_ID() );
 
 			// The recommended img size is 2048x2048.
-			// Try and get the closest size to that
+			// Try and get the closest size to that.
 			$img_props = wp_get_attachment_image_src( $attachment_id, array( 2048, 2048 ) );
 
 			if ( is_array( $img_props ) ) {
 
-				// Create a handy array of info
+				// Create a handy array of info.
 				$image = array(
 					'url'             => $img_props[0],
 					'width'           => $img_props[1],
@@ -188,12 +195,11 @@ class WPNA_Facebook_Post {
 					'caption'         => null,
 				);
 
-				// Add the caption in if there is one
-				if ( $attachment = get_post( $attachment_id ) && ! empty( $attachment->excerpt ) )
+				// Add the caption in if there is one.
+				if ( $attachment = get_post( $attachment_id ) && ! empty( $attachment->excerpt ) ) {
 					$image['caption'] = $attachment->excerpt;
-
+				}
 			}
-
 		}
 
 		/**
@@ -244,7 +250,7 @@ class WPNA_Facebook_Post {
 	public function get_the_excerpt() {
 		$post = get_post( $this->get_the_ID() );
 
-		// Make sure no “read more” link is added
+		// Make sure no “read more” link is added.
 		add_filter( 'excerpt_more', '__return_empty_string', 999 );
 
 		/**
@@ -278,7 +284,7 @@ class WPNA_Facebook_Post {
 		$publish_date = get_the_date( 'c', $this->get_the_ID() );
 
 		/**
-		 * Filter the publish date ISO format
+		 * Filter the publish date ISO format.
 		 *
 		 * @since 1.0.0
 		 * @param string $publish_date The publish date of the article in ISO 8601 format.
@@ -311,7 +317,7 @@ class WPNA_Facebook_Post {
 	}
 
 	/**
-	 * Returns the modified date of the post in ISO 8601 format
+	 * Returns the modified date of the post in ISO 8601 format.
 	 *
 	 * @access public
 	 * @return string
@@ -320,7 +326,7 @@ class WPNA_Facebook_Post {
 		$modified_date = get_the_modified_date( 'c', $this->get_the_ID() );
 
 		/**
-		 * Filter the modified date ISO format
+		 * Filter the modified date ISO format.
 		 *
 		 * @since 1.0.0
 		 * @param string $modified_date The modified date of the article in iso format.
@@ -342,7 +348,7 @@ class WPNA_Facebook_Post {
 		$modified_date = get_the_modified_date( get_option( 'date_format' ), $this->get_the_ID() );
 
 		/**
-		 * Filter the modified date
+		 * Filter the modified date.
 		 *
 		 * @since 1.0.0
 		 * @param string $modified_date The modified date of the article in display format.
@@ -364,9 +370,10 @@ class WPNA_Facebook_Post {
 	public function get_authors() {
 		$authors = array();
 
-		// Sometimes authors don't exist but are still assigned to posts
-		if ( $author = get_userdata( get_the_author_meta('ID') ) )
+		// Sometimes authors don't exist but are still assigned to posts.
+		if ( $author = get_userdata( get_the_author_meta( 'ID' ) ) ) {
 			$authors[] = $author;
+		}
 
 		/**
 		 * Apply a filter to the post authors.
@@ -395,8 +402,8 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_the_content() {
 
-		// Pull from cache if it's allowed
-		if ( wpna_get_option('fbia_article_caching') && $content = $this->get_cache( $this->get_the_ID() ) ) {
+		// Pull from cache if it's allowed.
+		if ( wpna_get_option( 'fbia_article_caching' ) && $content = $this->get_cache( $this->get_the_ID() ) ) {
 			return $content;
 		}
 
@@ -408,30 +415,36 @@ class WPNA_Facebook_Post {
 		 * The transformer class uses this to wrap shortcodes before they're parsed.
 		 *
 		 * @since 1.0.0
-		 * @param string $content The post content
+		 * @param string $content The post content.
 		 */
 		$content = apply_filters( 'wpna_facebook_article_pre_the_content_filter', $content );
 
-		// We don't need these filters
-		if ( has_filter( 'the_content', 'prepend_attachment' ) )
+		// We don't need these filters.
+		if ( has_filter( 'the_content', 'prepend_attachment' ) ) {
 			remove_filter( 'the_content', 'prepend_attachment' );
+		}
 
-		// Or these ones
-		if ( has_filter( 'the_content', 'wp_make_content_images_responsive' ) )
+		// Or these ones.
+		if ( has_filter( 'the_content', 'wp_make_content_images_responsive' ) ) {
 			remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+		}
 
-		// We need these though
-		if ( ! has_filter( 'the_content', 'wptexturize' ) )
+		// We need these though.
+		if ( ! has_filter( 'the_content', 'wptexturize' ) ) {
 			add_filter( 'the_content', 'wptexturize', 10, 1 );
+		}
 
-		if ( ! has_filter( 'the_content', 'convert_smilies' ) )
+		if ( ! has_filter( 'the_content', 'convert_smilies' ) ) {
 			add_filter( 'the_content', 'convert_smilies', 10, 1 );
+		}
 
-		if ( ! has_filter( 'the_content', 'wpautop' ) )
+		if ( ! has_filter( 'the_content', 'wpautop' ) ) {
 			add_filter( 'the_content', 'wpautop', 10, 1 );
+		}
 
-		if ( ! has_filter( 'the_content', 'shortcode_unautop' ) )
+		if ( ! has_filter( 'the_content', 'shortcode_unautop' ) ) {
 			add_filter( 'the_content', 'shortcode_unautop', 10, 1 );
+		}
 
 		$content = apply_filters( 'the_content', $content );
 		$content = str_replace( ']]>', ']]&gt;', $content );
@@ -446,11 +459,11 @@ class WPNA_Facebook_Post {
 		 */
 		$content = apply_filters( 'wpna_facebook_article_after_the_content_filter', $content );
 
-		// We'd like to use DOMDocument at this point
+		// We'd like to use DOMDocument at this point.
 		if ( class_exists( 'DOMDocument' ) ) {
 
 			$libxml_previous_state = libxml_use_internal_errors( true );
-			$DOMDocument = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
+			$dom_document = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
 
 			if ( function_exists( 'mb_convert_encoding' ) ) {
 				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
@@ -458,7 +471,7 @@ class WPNA_Facebook_Post {
 
 			$content = str_ireplace( array( '<body>', '</body>', '<html>', '</html>' ), '', $content );
 
-			$DOMDocument->loadHTML( '<!doctype html><html><body>' . $content . '</body></html>' );
+			$dom_document->loadHTML( '<!doctype html><html><body>' . $content . '</body></html>' );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
@@ -469,23 +482,23 @@ class WPNA_Facebook_Post {
 			 * and make it instant article compatible.
 			 *
 			 * @since 1.0.0
-			 * @param DOMDocument $DOMDocument
+			 * @param DOMDocument $dom_document
 			 */
-			$DOMDocument = apply_filters( 'wpna_facebook_article_content_transform', $DOMDocument );
+			$dom_document = apply_filters( 'wpna_facebook_article_content_transform', $dom_document );
 
-			// Get just the body content
-			$body = $DOMDocument->getElementsByTagName( 'body' )->item( 0 );
+			// Get just the body content.
+			$body = $dom_document->getElementsByTagName( 'body' )->item( 0 );
 
-			$content = $DOMDocument->saveXML( $body );
+			$content = $dom_document->saveXML( $body );
 		}
 
 		/**
-		 * Run a final string filter just incase
+		 * Run a final string filter just incase.
 		 *
-		 * The transformer class uses this to clean up after itself
+		 * The transformer class uses this to clean up after itself.
 		 *
 		 * @since 1.0.0
-		 * @param string $content The post content
+		 * @param string $content The post content.
 		 */
 		$content = apply_filters( 'wpna_facebook_article_content_after_transform', $content );
 
@@ -561,21 +574,21 @@ class WPNA_Facebook_Post {
 	 */
 	public function get_related_articles() {
 
-		// Get the categories of the post
-		// get_the_category() is cached, wp_get_the_category() is not
+		// Get the categories of the post.
+		// get_the_category() is cached, wp_get_the_category() is not.
 		$post_categories = get_the_category( $this->get_the_ID() );
 		$post_categories_ids = wp_list_pluck( $post_categories, 'term_id' );
 
-		// Nothing fancy here. Just get the four latest posts
-		// that are in any of the same categories
+		// Nothing fancy here. Just get the four latest posts.
+		// that are in any of the same categories.
 		$query_args = array(
 			'category__in'           => $post_categories_ids,
 			'post__not_in'           => array( $this->get_the_ID() ),
-			'posts_per_page'         => 4, // FB uses 4 related articles
-			'ignore_sticky_posts'    => true, // Turn off sticky posts
+			'posts_per_page'         => 4, // FB uses 4 related articles.
+			'ignore_sticky_posts'    => true, // Turn off sticky posts.
 			'order'                  => 'DESC',
 			'orderby'                => 'date',
-			'no_found_rows'          => true, // Turn of pagination, we don't need it
+			'no_found_rows'          => true, // Turn off pagination, we don't need it.
 			'update_post_term_cache' => false,
 			'update_post_meta_cache' => false,
 			'cache_results'          => false,
@@ -614,7 +627,7 @@ class WPNA_Facebook_Post {
 		$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
 
 		// If it's not wrapped it in an iFrame then ensure it is.
-		if ( '<iframe>' != substr( $analytics_code, 0, 8 ) ) {
+		if ( '<iframe>' !== substr( $analytics_code, 0, 8 ) ) {
 			$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
 		}
 
@@ -644,7 +657,7 @@ class WPNA_Facebook_Post {
 	 * @return string
 	 */
 	public function get_ads() {
-		// Make sure there's ad codes before we output it
+		// Make sure there's ad codes before we output it.
 		$ad_code = wpna_get_post_option( get_the_ID(), 'fbia_ad_code' );
 
 		/**
@@ -664,7 +677,7 @@ class WPNA_Facebook_Post {
 	 * @since 1.0.0
 	 *
 	 * @access public
-	 * @param  int $id The ID of the post to retrieve the cache for,
+	 * @param  int $id The ID of the post to retrieve the cache for.
 	 * @return string
 	 */
 	public function get_cache( $id ) {
@@ -681,7 +694,7 @@ class WPNA_Facebook_Post {
 	 *
 	 * @access public
 	 * @param int    $id      The ID of the post to set the cache for.
-	 * @param string $content The content to save in cache,
+	 * @param string $content The content to save in cache.
 	 * @return boolean
 	 */
 	public function set_cache( $id, $content ) {
