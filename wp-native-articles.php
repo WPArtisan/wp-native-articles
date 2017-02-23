@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// if ( __is( 'source' ) ) {
+	// Only want this in the source package.
+	define( 'WPA_SG_PACKAGE', 'free' );
+	include 'vendor/autoload.php';
+// }
+
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
 	define( 'WPNA_VERSION', '1.0.9' );
