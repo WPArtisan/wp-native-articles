@@ -148,3 +148,81 @@ if ( ! function_exists( 'wpna_valid_date' ) ) :
 		return false !== $dt && ! array_sum( $dt->getLastErrors() );
 	}
 endif;
+
+if ( ! function_exists( 'wpna_validate_font_size' ) ) :
+
+	/**
+	 * Validates a font size.
+	 *
+	 * Checks that the passed variable exactly matches one of the ones
+	 * it should be.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param  string $variable The variable to check.
+	 * @return mixed
+	 */
+	function wpna_validate_font_size( $variable ) {
+		// Get the font sizes.
+		$font_sizes = wpna_get_font_sizes();
+
+		// Check it exists as expected.
+		if ( in_array( $variable, $font_sizes, true ) ) {
+			return $variable;
+		} else {
+			return null;
+		}
+	}
+endif;
+
+if ( ! function_exists( 'wpna_validate_vertical_alignment' ) ) :
+
+	/**
+	 * Validates a vertical alignment.
+	 *
+	 * Checks that the passed variable exactly matches one of the ones
+	 * it should be.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param  string $variable The variable to check.
+	 * @return mixed
+	 */
+	function wpna_validate_vertical_alignment( $variable ) {
+		// Get the alignments.
+		$alignments = wpna_get_vertical_alignments();
+
+		// Check it exists as expected.
+		if ( in_array( $variable, $alignments, true ) ) {
+			return $variable;
+		} else {
+			return null;
+		}
+	}
+endif;
+
+if ( ! function_exists( 'wpna_validate_horizontal_alignment' ) ) :
+
+	/**
+	 * Validates a horizontal alignment.
+	 *
+	 * Checks that the passed variable exactly matches one of the ones
+	 * it should be.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param  string $variable The variable to check.
+	 * @return mixed
+	 */
+	function wpna_validate_horizontal_alignment( $variable ) {
+		// Get the alignments.
+		$alignments = wpna_get_horizontal_alignments();
+
+		// Check it exists as expected.
+		if ( in_array( $variable, $alignments, true ) ) {
+			return $variable;
+		} else {
+			return null;
+		}
+	}
+endif;

@@ -435,24 +435,40 @@ class WPNA_Facebook_Content_Parser {
 		$figure_template_base = $dom_document->createElement( 'figure' );
 		$image_template_base = $dom_document->createElement( 'img' );
 
-		// If they've enabled Likes or Comments on images.
+		// If enabled Likes or Comments on images has been enabled.
 		$figure_attr = array();
 
-		// Check the post for an overide options else use global.
-		if ( ! $image_likes = get_post_meta( get_the_ID(), 'fbna_image_likes', true ) ) {
-			$image_likes = wpna_get_option( 'fbna_image_likes' );
-		}
+		// Image likes. Check for post override then use global.
+		$image_likes = wpna_get_post_option( get_the_ID(), 'fbna_image_likes' );
 
 		if ( wpna_switch_to_boolean( $image_likes ) ) {
 			$figure_attr[] = 'fb:likes';
 		}
 
-		if ( ! $image_comments = get_post_meta( get_the_ID(), 'fbna_image_comments', true ) ) {
-			$image_comments = wpna_get_option( 'fbna_image_comments' );
-		}
+		// Image comments. Check for post override then use global.
+		$image_comments = wpna_get_post_option( get_the_ID(), 'fbna_image_comments' );
 
 		if ( wpna_switch_to_boolean( $image_comments ) ) {
 			$figure_attr[] = 'fb:comments';
+		}
+
+		// Get the caption options.
+		$caption_settings = array_filter( array(
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_font_size', null ),
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_vertical_position', null ),
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_horizontal_position', null ),
+		) );
+
+		// Whether to use the caption title.
+		$caption_title_enabled = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_caption_title' ) );
+
+		// Get the caption title options.
+		if ( $caption_title_enabled ) {
+			$caption_title_settings = array_filter( array(
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_font_size', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_vertical_position', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_horizontal_position', null ),
+			) );
 		}
 
 		foreach ( $dom_document->getElementsByTagName( 'img' ) as $image ) {
@@ -489,6 +505,7 @@ class WPNA_Facebook_Content_Parser {
 			if ( $attachment_id ) {
 				// Try and get a larger version.
 				$img_props = wp_get_attachment_image_src( $attachment_id, array( 2048, 2048 ) );
+
 				if ( is_array( $img_props ) ) {
 					$image_source = $img_props[0];
 				}
@@ -508,7 +525,7 @@ class WPNA_Facebook_Content_Parser {
 				// Create a blank template.
 				$figcaption_template = $dom_document->createElement( 'figcaption' );
 
-				// If they've added theme support for HTML5 try that first.
+				// If theme support for HTML5 has been added try that first.
 				$caption = $image->getElementsByTagName( 'figcaption' );
 
 				// If no HTML5 elements have been found try the default p elements.
@@ -516,13 +533,48 @@ class WPNA_Facebook_Content_Parser {
 					$caption = $image->getElementsByTagName( 'p' );
 				}
 
-				// If we've found anything add the contents to the template.
+				// If caption title is enabled and exists.
+				if ( $caption_title_enabled && $caption_title = get_the_title( $attachment_id ) ) {
+
+					// Create a blank title template.
+					$figcaption_title_template = $dom_document->createElement( 'h1' );
+
+					// Set the caption title settings.
+					if ( ! empty( $caption_title_settings ) ) {
+						$figcaption_title_template->setAttribute( 'class', implode( ', ', array_filter( $caption_title_settings ) ) );
+					}
+
+					// Set the caption title.
+					$figcaption_title_template->nodeValue = htmlspecialchars( $caption_title );
+
+					/**
+					 * Use this filter to add attributes to the image caption title.
+					 *
+					 * @since 1.1.0
+					 * @param DOMDocumentFragment $figcaption_template
+					 * @param DOMDocumentFragment $caption_title_settings
+					 */
+					apply_filters( 'wpna_facebook_article_image_figurecaption_title', $figcaption_title_template, $caption_title_settings );
+
+					// Add the title to the caption template.
+					$figcaption_template->appendChild( $figcaption_title_template );
+				}
+
+				// If a caption has been found add it to the template.
 				if ( 1 === $caption->length ) {
-					$figcaption_template->nodeValue = htmlspecialchars( $caption->item( 0 )->nodeValue );
+					// Create a textnode template with the caption content.
+					$figcaption_text_template = $dom_document->createTextNode( htmlspecialchars( $caption->item( 0 )->nodeValue ) );
+					// Append it to the caption template (doesn't override the titel if it's set).
+					$figcaption_template->appendChild( $figcaption_text_template );
+				}
+
+				// Set the caption settings, position, size etc.
+				if ( ! empty( $caption_settings ) ) {
+					$figcaption_template->setAttribute( 'class', implode( ', ', array_filter( $caption_settings ) ) );
 				}
 
 				/**
-				 * Use this filter at add attributes to the image caption.
+				 * Use this filter add custom attributes to the image caption.
 				 *
 				 * @since 1.0.0
 				 * @param DOMDocumentFragment $figcaption_template
@@ -530,11 +582,10 @@ class WPNA_Facebook_Content_Parser {
 				apply_filters( 'wpna_facebook_article_image_figurecaption', $figcaption_template );
 
 				$figure_template->appendChild( $figcaption_template );
-
 			}
 
 			/**
-			 * Add a filter allowing people alter the figure_template
+			 * Add a filter allowing people alter the figure_template.
 			 *
 			 * @since 1.0.0
 			 * @param DOMDocumentFragment $figure_template
@@ -694,7 +745,7 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $dom_document->getElementsByTagName( '*' ) as $node ) {
 
-			if ( $node instanceof DOMElement && ! in_array( $node->tagName, array( 'figure' ), true ) ) {
+			if ( $node instanceof DOMElement && ! in_array( $node->tagName, array( 'figure', 'figcaption' ), true ) ) {
 				$node->removeAttribute( 'style' );
 				$node->removeAttribute( 'class' );
 				$node->removeAttribute( 'id' );

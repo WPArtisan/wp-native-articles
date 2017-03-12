@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.7.2
-Stable tag: 1.0.8
+Tested up to: 4.7.3
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,7 +53,7 @@ solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wor
 
 Features planned for the near future.
 
-* Image options manager
+* Image options manager - done
 * Embed manager (ads, related articles, anything)
 * WP Comments
 * Advanced stats & weekly roundup
@@ -115,13 +115,21 @@ through the WordPress support forum found on the Plugin download page.
 
 == Screenshots ==
 
-1. Default options page.
-2. Default options page (cont).
-3. Feed specific options.
-4. Post options overrides box.
-5. Multisite options page.
+1. Global options.
+2. Global styling options.
+3. RSS Feed options.
+4. Post options overrides.
+5. Post styling overrides.
+6. Multisite options page.
 
 == Changelog ==
+
+= 1.1.0 =
+* Feature. Image title & caption styling options. Global + post override
+* Feature. Now 100% WordPress & WordPress VIP standards compatible
+* Feature. Overridden templates can now be in a folder rather than top-level
+* Fix. Post tabs not aligning
+* WordPress 4.7.3 compatibility
 
 = 1.0.8 =
 * Fix Infogram embeds

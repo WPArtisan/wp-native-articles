@@ -336,7 +336,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 */
 	public function feed_authentication_username_callback() {
 		?>
-		<input type="text" name="wpna_options[fbia_feed_authentication_username]" id="fbia_feed_authentication_username" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_authentication_username' ) ); ?>" />
+		<input type="text" autocomplete="off" name="wpna_options[fbia_feed_authentication_username]" id="fbia_feed_authentication_username" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_authentication_username' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The username for the feed authentication.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
@@ -354,7 +354,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 */
 	public function feed_authentication_password_callback() {
 		?>
-		<input type="password" name="wpna_options[fbia_feed_authentication_password]" id="fbia_feed_authentication_password" class="regular-text" value="****************" />
+		<input type="password" autocomplete="off" name="wpna_options[fbia_feed_authentication_password]" id="fbia_feed_authentication_password" class="regular-text" value="****************" />
 		<p class="description"><?php esc_html_e( 'The password for the feed authentication.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
@@ -472,7 +472,15 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			// Try and filter out any empty posts.
 			add_filter( 'posts_where', array( $this, 'filter_empty_posts' ), 10, 1 );
 
-			$query->set( 'orderby', 'modified' );
+			// Should help speed up the query a bit.
+			$query->set( 'ignore_sticky_posts', true );
+			$query->set( 'no_found_rows', true );
+			$query->set( 'update_post_term_cache', false );
+			$query->set( 'update_post_meta_cache', false );
+
+			// Set the feed query params.
+			$query->set( 'order', 'DESC' );
+			$query->set( 'orderby', 'post_modified' );
 			$query->set( 'posts_per_page', intval( wpna_get_option( 'fbia_posts_per_feed', 10 ) ) );
 			$query->set( 'posts_per_rss', intval( wpna_get_option( 'fbia_posts_per_feed', 10 ) ) );
 

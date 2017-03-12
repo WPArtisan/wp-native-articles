@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.0.9
+ * Version: 1.1.0
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -15,15 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// if ( __is( 'source' ) ) {
-	// Only want this in the source package.
-	define( 'WPA_SG_PACKAGE', 'free' );
-	include 'vendor/autoload.php';
-// }
-
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.0.9' );
+	define( 'WPNA_VERSION', '1.1.0' );
 }
 
 // Define the plugin base path.
@@ -75,8 +69,11 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		 */
 		$GLOBALS['wpna_options'] = wpna_get_options();
 
-		// Load the sanitization class.
+		// Load the sanitization function.
 		require WPNA_BASE_PATH . '/includes/functions-sanitization.php';
+
+		// Load the variable functions.
+		require WPNA_BASE_PATH . '/includes/functions-variables.php';
 		/**
 		 * Classes that register hooks and do stuff
 		 */
@@ -131,6 +128,11 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook.php';
 		}
 		$wpna_facebook_admin = new WPNA_Admin_Facebook();
+
+		if ( ! class_exists( 'WPNA_Admin_Facebook_Styling' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-admin-facebook-styling.php';
+		}
+		$wpna_facebook_styling = new WPNA_Admin_Facebook_Styling();
 
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Feed' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook-feed.php';

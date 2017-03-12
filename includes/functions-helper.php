@@ -201,9 +201,26 @@ if ( ! function_exists( 'wpna_locate_template' ) ) :
 		// Check if there's an extension or not.
 		$name .= '.php' !== substr( $name, -4 ) ? '.php' : '';
 
+		/**
+		 * If override all WPNA templates shpuld be inside a directory in any
+		 * themes. This allows you to filter the name of that diectory.
+		 *
+		 * @since 1.1.0
+		 * @var string The name of the directory to check in.
+		 */
+		$template_override_directory = apply_filters( 'wpna_template_override_directory', 'wp-native-articles' );
+
+		/**
+		 * The old way of overriding templates was to put them at the top level
+		 * inside a theme, they should really have been inside a folder.
+		 *
+		 * We now check both. No point thowing an error as it would get lost.
+		 */
+		$files_to_check = array( $name, "$template_override_directory/$name" );
+
 		// locate_template() returns the path to file.
-		// if either the child theme or the parent theme have overridden the template.
-		if ( $overridden_template = locate_template( $name ) ) {
+		// If either the child theme or the parent theme have overridden the template.
+		if ( $overridden_template = locate_template( $files_to_check ) ) {
 			return $overridden_template;
 		}
 

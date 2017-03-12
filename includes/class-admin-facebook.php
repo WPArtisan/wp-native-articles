@@ -50,10 +50,10 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * @return void
 	 */
 	public function hooks() {
-		add_action( 'admin_init',                 array( $this, 'setup_settings' ), 10, 0 );
-		add_action( 'wpna_admin_menu_items',      array( $this, 'add_menu_items' ), 10, 0 );
-		add_action( 'save_post',                  array( $this, 'flush_content_cache' ), 10, 1 );
-		add_action( 'save_post',                  array( $this, 'save_post_meta' ), 10, 3 );
+		add_action( 'admin_init',            array( $this, 'setup_settings' ), 10, 0 );
+		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 10, 0 );
+		add_action( 'save_post',             array( $this, 'flush_content_cache' ), 10, 1 );
+		add_action( 'save_post',             array( $this, 'save_post_meta' ), 10, 3 );
 
 		// After the Facebook options are updated flush the permalink rules.
 		add_action( 'update_option_wpna_options', 'flush_rewrite_rules', 10, 0 );

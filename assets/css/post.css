@@ -15,15 +15,17 @@
 	background: none;
 }
 
+.wpna-tabs.ui-tabs .ui-tabs-nav {
+	display: flex;
+}
+
 .wpna-tabs.ui-tabs .ui-tabs-nav li {
 	display: inherit;
-	margin-bottom: 0px;
 	list-style: none;
-	float: none;
 	top: inherit;
 	margin: 0px;
-	border-bottom-width: 0;
 	padding: 0;
+	border-bottom-width: 0;
 	white-space: nowrap;
 	color: inherit;
 }
