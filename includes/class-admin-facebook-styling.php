@@ -41,10 +41,11 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 	 * @return void
 	 */
 	public function hooks() {
+		add_action( 'admin_init',               array( $this, 'setup_settings' ), 10, 0 );
+		add_action( 'wpna_admin_facebook_tabs', array( $this, 'setup_tabs' ), 10, 1 );
+
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
-			add_action( 'admin_init',               array( $this, 'setup_settings' ), 10, 0 );
-			add_action( 'wpna_admin_facebook_tabs', array( $this, 'setup_tabs' ), 10, 1 );
 			add_action( 'save_post',                array( $this, 'save_post_meta' ), 10, 3 );
 
 			add_filter( 'wpna_post_meta_box_content_tabs', array( $this, 'post_meta_box_styling_settings' ), 10, 1 );
