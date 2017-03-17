@@ -240,7 +240,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 					<td class="value">
 						<?php
 						$user_agent = null;
-						// Get the memcached sever. PHP bug with INPUT_SERVER so default to global.
+						// Get the user agent. PHP bug with INPUT_SERVER so default to global if not found.
 						// @codingStandardsIgnoreStart
 						if ( filter_has_var( INPUT_SERVER, 'HTTP_USER_AGENT' ) ) {
 							$user_agent = filter_input( INPUT_SERVER, 'HTTP_USER_AGENT', FILTER_SANITIZE_STRING );

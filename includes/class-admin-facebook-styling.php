@@ -259,6 +259,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_title', $values, wpna_get_option( 'fbia_caption_title' ) ); ?>
 			<?php esc_html_e( 'Show the attachment title.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_title' );
+		?>
+
 		<?php
 	}
 
@@ -282,6 +288,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_title_font_size', $font_sizes, wpna_get_option( 'fbia_caption_title_font_size' ) ); ?>
 			<?php esc_html_e( 'Default font size to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_title_font_size' );
+		?>
+
 		<?php
 	}
 
@@ -305,6 +317,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_title_vertical_position', $positions, wpna_get_option( 'fbia_caption_title_vertical_position' ) ); ?>
 			<?php esc_html_e( 'Default vertical position to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_title_vertical_position' );
+		?>
+
 		<?php
 	}
 
@@ -328,6 +346,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_title_horizontal_position', $positions, wpna_get_option( 'fbia_caption_title_horizontal_position' ) ); ?>
 			<?php esc_html_e( 'Default horizontal position to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_title_horizontal_position' );
+		?>
+
 		<?php
 	}
 
@@ -351,6 +375,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_font_size', $font_sizes, wpna_get_option( 'fbia_caption_font_size' ) ); ?>
 			<?php esc_html_e( 'Default font size to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_font_size' );
+		?>
+
 		<?php
 	}
 
@@ -374,6 +404,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_vertical_position', $positions, wpna_get_option( 'fbia_caption_vertical_position' ) ); ?>
 			<?php esc_html_e( 'Default vertical position to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_vertical_position' );
+		?>
+
 		<?php
 	}
 
@@ -397,6 +433,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_horizontal_position', $positions, wpna_get_option( 'fbia_caption_horizontal_position' ) ); ?>
 			<?php esc_html_e( 'Default horizontal position to use for caption titles.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_horizontal_position' );
+		?>
+
 		<?php
 	}
 
@@ -420,6 +462,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_credit_vertical_position', $positions, wpna_get_option( 'fbia_caption_credit_vertical_position' ) ); ?>
 			<?php esc_html_e( 'Default vertical position to use for caption credits.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_credit_vertical_position' );
+		?>
+
 		<?php
 	}
 
@@ -443,6 +491,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php $this->generate_styling_select_element( 'fbia_caption_credit_horizontal_position', $positions, wpna_get_option( 'fbia_caption_credit_horizontal_position' ) ); ?>
 			<?php esc_html_e( 'Default horizontal position to use for caption credits.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_caption_credit_horizontal_position' );
+		?>
+
 		<?php
 	}
 
@@ -521,6 +575,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Attachment Title', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_title' );
+					?>
 				</div>
 			</fieldset>
 
@@ -528,6 +586,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Title Font Size', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_font_size', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'caption_title_font_size' );
+					?>
 				</div>
 			</fieldset>
 
@@ -535,6 +597,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Title Vertical Position', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_vertical_position', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_title_vertical_position' );
+					?>
 				</div>
 			</fieldset>
 
@@ -542,6 +608,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Title Horizontal Position', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_horizontal_position', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_title_horizontal_position' );
+					?>
 				</div>
 			</fieldset>
 
@@ -549,6 +619,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Font Size', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_font_size', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_font_size' );
+					?>
 				</div>
 			</fieldset>
 
@@ -556,6 +630,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Vertical Position', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_vertical_position', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_vertical_position' );
+					?>
 				</div>
 			</fieldset>
 
@@ -563,6 +641,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Horizontal Position', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_horizontal_position', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_caption_horizontal_position' );
+					?>
 				</div>
 			</fieldset>
 
@@ -575,6 +657,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 					<div class="pure-control-group">
 						<label for="fbia_sponsored"><?php esc_html_e( 'Credit Vertical Position', 'wp-native-articles' ); ?></label>
 						<?php $this->generate_styling_select_element( '_wpna_fbia_caption_credit_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_vertical_position', true ) ); ?>
+						<?php
+						// Show a notice if the option has been overridden.
+						wpna_post_option_overridden_notice( 'fbia_caption_credit_vertical_position' );
+						?>
 					</div>
 				</fieldset>
 
@@ -582,6 +668,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 					<div class="pure-control-group">
 						<label for="fbia_sponsored"><?php esc_html_e( 'Credit Horizontal Position', 'wp-native-articles' ); ?></label>
 						<?php $this->generate_styling_select_element( '_wpna_fbia_caption_credit_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_horizontal_position', true ) ); ?>
+						<?php
+						// Show a notice if the option has been overridden.
+						wpna_post_option_overridden_notice( 'fbia_caption_credit_horizontal_position' );
+						?>
 					</div>
 				</fieldset>
 
@@ -683,19 +773,31 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 		foreach ( $values as $key => $value ) {
 
-			/**
-			 * Use filters to allow sanitizing of individual options.
-			 *
-			 * All sanitization hooks should be registerd in the hooks() method.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param mixed  $value  The value to sanitize
-			 * @param string $key    The options name
-			 * @param array  $values All options
-			 */
-			$sanitized_values[ $key ] = apply_filters( 'wpna_sanitize_post_meta_' . $key, $value, $key, $values );
+			// Workout the correct filtername from the $key.
+			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
 
+			// Check if a filter exists.
+			if ( has_filter( $filter_name ) ) {
+
+				/**
+				 * Use filters to allow sanitizing of individual options.
+				 *
+				 * All sanitization hooks should be registerd in the hooks() method.
+				 *
+				 * @since 1.0.0
+				 *
+				 * @param mixed  $value  The value to sanitize
+				 * @param string $key    The options name
+				 * @param array  $values All options
+				 */
+				$sanitized_values[ $key ] = apply_filters( $filter_name, $value, $key, $values );
+			} else {
+				// If no filter was found then throw an error.
+				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+					// @codingStandardsIgnoreLine
+					trigger_error( esc_html( sprintf( 'Filter missing for `%s`', $filter_name ) ) );
+				}
+			}
 		}
 
 		// Delete any existing rows from the post.

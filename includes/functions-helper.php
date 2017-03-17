@@ -163,6 +163,92 @@ if ( ! function_exists( 'wpna_get_post_option' ) ) :
 
 endif;
 
+if ( ! function_exists( 'wpna_option_overridden_notice' ) ) :
+
+	/**
+	 * Checks to see if an option has been overridden.
+	 *
+	 * If an option value has been hooked into we display a warning saying
+	 * it has potentially been overridden.
+	 *
+	 * @param string $option The option to check.
+	 * @return void
+	 */
+	function wpna_option_overridden_notice( $option ) {
+		wpna_hook_overridden_notice( 'wpna_get_option_' . $option );
+	}
+endif;
+
+if ( ! function_exists( 'wpna_post_option_overridden_notice' ) ) :
+
+	/**
+	 * Checks to see if a post option has been overridden.
+	 *
+	 * If a post option value has been hooked into we display a warning saying
+	 * it has potentially been overridden.
+	 *
+	 * @param string $option The post option to check.
+	 * @return void
+	 */
+	function wpna_post_option_overridden_notice( $option ) {
+		wpna_hook_overridden_notice( 'wpna_get_post_option_' . $option );
+	}
+endif;
+
+if ( ! function_exists( 'wpna_hook_overridden_notice' ) ) :
+
+	/**
+	 * Checks to see if a particular hook has filters attached.
+	 *
+	 * If there are filters attached to the hook displays a warning message
+	 * saying it's potentially been overridden.
+	 *
+	 * @param string $option_hook The option hook to check.
+	 * @return void
+	 */
+	function wpna_hook_overridden_notice( $option_hook ) {
+		global $wp_filter;
+
+		if ( isset( $wp_filter[ $option_hook ] ) ) {
+
+			$hooked_callbacks = array();
+
+			foreach ( $wp_filter[ $option_hook ]->callbacks as $priority => $callbacks ) {
+				foreach ( $callbacks as $callback_id => $callback ) {
+					if ( is_array( $callback['function'] ) ) {
+						$hooked_callbacks[] = get_class( $callback['function'][0] ) . '::' . $callback['function'][1];
+					} else {
+						$hooked_callbacks[] = $callback['function'];
+					}
+				}
+			}
+
+			/**
+			 * Array for functions that might be changing the option value.
+			 *
+			 * @var array Hooked callbacks for this option.
+			 * @var string The option currently being checked.
+			 */
+			$hooked_callbacks = apply_filters( 'wpna_overridden_notice_callbacks', $hooked_callbacks, $option_hook );
+
+			if ( ! empty( $hooked_callbacks ) ) :
+			?>
+			<p>
+				<span class="label label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+				<i><b><?php esc_html_e( 'Functions are hooking into this option and might be changing the output', 'wp-native-articles' ); ?></b></i>
+			</p>
+			<?php if ( current_user_can( 'manage_options' ) ) : ?>
+				<p>
+					<code><?php echo implode( '</code> <code>', array_map( 'esc_html', $hooked_callbacks ) ); ?></code>
+				</p>
+			<?php endif; ?>
+
+			<?php
+			endif;
+		}
+	}
+endif;
+
 if ( ! function_exists( 'boolval' ) ) :
 
 	/**

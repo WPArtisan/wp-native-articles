@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.7.3
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,7 +124,11 @@ through the WordPress support forum found on the Plugin download page.
 
 == Changelog ==
 
-= 1.1.0 =
+= 1.1.3 =
+* Feature. Show warning if options have been overridden using hooks
+* Fix. Error sanitizing post options
+
+= 1.1.2 =
 * Feature. Image title & caption styling options. Global + post override
 * Feature. Now 100% WordPress & WordPress VIP standards compatible
 * Feature. Overridden templates can now be in a folder rather than top-level

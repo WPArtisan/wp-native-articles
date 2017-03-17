@@ -243,6 +243,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		?>
 		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_slug', 'facebook-instant-articles' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The endpoint of the Instant Articles Feed.', 'wp-native-articles' ); ?></p>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_feed_slug' );
+		?>
+
 		<?php
 	}
 
@@ -261,6 +267,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		?>
 		<input type="number" min="0" step="1" name="wpna_options[fbia_posts_per_feed]" id="fbia_posts_per_feed" class="regular-text" value="<?php echo intval( wpna_get_option( 'fbia_posts_per_feed' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'Limit the maximum amount of articles in the feed.', 'wp-native-articles' ); ?></p>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_posts_per_feed' );
+		?>
+
 		<?php
 	}
 
@@ -281,6 +293,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			<input type="checkbox" name="wpna_options[fbia_article_caching]" id="fbia_article_caching" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_article_caching' ) ); ?> />
 			<?php esc_html_e( 'Cache the content of articles in the feed.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_article_caching' );
+		?>
+
 		<?php
 	}
 
@@ -301,6 +319,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			<input type="checkbox" name="wpna_options[fbia_modified_only]" id="fbia_modified_only" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_modified_only' ) ); ?> />
 			<?php esc_html_e( 'Only show recently modified posts in the feed.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_modified_only' );
+		?>
+
 		<?php
 	}
 
@@ -321,6 +345,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			<input type="checkbox" name="wpna_options[fbia_feed_authentication]" id="fbia_feed_authentication" class="" value="true"<?php checked( (bool) wpna_get_option( 'fbia_feed_authentication' ) ); ?> />
 			<?php esc_html_e( 'Enable Basic Authentication for the RSS feed.', 'wp-native-articles' ); ?>
 		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_feed_authentication' );
+		?>
+
 		<?php
 	}
 
@@ -338,6 +368,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		?>
 		<input type="text" autocomplete="off" name="wpna_options[fbia_feed_authentication_username]" id="fbia_feed_authentication_username" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_authentication_username' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The username for the feed authentication.', 'wp-native-articles' ); ?></p>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_feed_authentication_username' );
+		?>
+
 		<?php
 	}
 
@@ -356,6 +392,12 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		?>
 		<input type="password" autocomplete="off" name="wpna_options[fbia_feed_authentication_password]" id="fbia_feed_authentication_password" class="regular-text" value="****************" />
 		<p class="description"><?php esc_html_e( 'The password for the feed authentication.', 'wp-native-articles' ); ?></p>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_feed_authentication_password' );
+		?>
+
 		<?php
 	}
 
@@ -475,8 +517,6 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			// Should help speed up the query a bit.
 			$query->set( 'ignore_sticky_posts', true );
 			$query->set( 'no_found_rows', true );
-			$query->set( 'update_post_term_cache', false );
-			$query->set( 'update_post_meta_cache', false );
 
 			// Set the feed query params.
 			$query->set( 'order', 'DESC' );

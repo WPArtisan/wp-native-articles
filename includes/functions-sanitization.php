@@ -129,6 +129,52 @@ if ( ! function_exists( 'wpna_switch_to_boolean' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'wpna_sanitize_unsafe_html' ) ) :
+
+	/**
+	 * Try and sanitize dangerous HTML.
+	 *
+	 * Some fields (analytics & ad code specifically) can really allow almost
+	 * all HTML including <script> and <iframe> tags. This tries to sanitize
+	 * this as much as possible.
+	 *
+	 * @since 1.1.3
+	 *
+	 * @param  string $value The HTML to sanitize.
+	 * @return string The sanitized HTML.
+	 */
+	function wpna_sanitize_unsafe_html( $value ) {
+		// Get the allowed HTML for kses.
+		$allowed_html = wp_kses_allowed_html( 'post' );
+
+		// Add the script tag in.
+		$allowed_html['script'] = array(
+			'type'   => true,
+			'src'    => true,
+			'height' => true,
+			'width'  => true,
+		);
+
+		// Add the iframe permission in.
+		$allowed_html['iframe'] = array(
+			'align'        => true,
+			'width'        => true,
+			'height'       => true,
+			'frameborder'  => true,
+			'name'         => true,
+			'src'          => true,
+			'id'           => true,
+			'class'        => true,
+			'style'        => true,
+			'scrolling'    => true,
+			'marginwidth'  => true,
+			'marginheight' => true,
+		);
+
+		return wp_kses( $value, $allowed_html );
+	}
+endif;
+
 if ( ! function_exists( 'wpna_valid_date' ) ) :
 
 	/**
