@@ -133,12 +133,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function styles( $hook ) {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', dirname( __FILE__ ) ), '0.6.0', true );
+			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', dirname( __FILE__ ) ), '0.6.1', true );
 			wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', dirname( __FILE__ ) ), WPNA_VERSION );
 		}
 
 		// Main plugin options page CSS.
-		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'native-articles_page_wpna_facebook' ), true ) ) {
+		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'native-articles_page_wpna_facebook', 'toplevel_page_wpna_facebook' ), true ) ) {
 			wp_enqueue_style( 'wpna-admin', plugins_url( '/assets/css/admin.css', dirname( __FILE__ ) ), WPNA_VERSION );
 		}
 

@@ -126,6 +126,7 @@ through the WordPress support forum found on the Plugin download page.
 
 = 1.1.3 =
 * Feature. Show warning if options have been overridden using hooks
+* Fix. Error blocking the Screen Options tab on the post page
 * Fix. Error sanitizing post options
 
 = 1.1.2 =
