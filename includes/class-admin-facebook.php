@@ -982,6 +982,12 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		foreach ( $values as $key => $value ) {
 
+			// If the value is empty then remove any post meta for this key.
+			// This means it will inherit the global defaults.
+			if ( empty( $value ) ) {
+				continue;
+			}
+
 			// Workout the correct filtername from the $key.
 			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
 
@@ -1026,14 +1032,25 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			}
 		}
 
-		// Delete any existing rows from the post.
-		foreach ( $sanitized_values as $key => $value ) {
-			delete_post_meta( $post->ID, $key );
-		}
-
 		// Only save the data that has actually been set.
 		// Otherwise we create unnecessary meta rows.
 		$sanitized_values = array_filter( $sanitized_values );
+
+		/**
+		 * Filter the values before they're saved.
+		 *
+		 * @since 1.1.4
+		 * @var array Postmeta to save for this post.
+		 */
+		$sanitized_values = apply_filters( 'wpna_sanitize_post_meta_facebook', $sanitized_values, $field_keys, $post );
+
+		// Work out which valeus haven't been set so they can be removed.
+		$remove_fields = array_diff( $field_keys, array_keys( $sanitized_values ) );
+
+		// Remove these fields. They will inherit the global values.
+		foreach ( $remove_fields as $meta_key ) {
+			delete_post_meta( $post_id, $meta_key );
+		}
 
 		// Save the new meta.
 		foreach ( $sanitized_values as $key => $value ) {

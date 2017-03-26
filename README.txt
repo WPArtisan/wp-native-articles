@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.7.3
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,8 +124,12 @@ through the WordPress support forum found on the Plugin download page.
 
 == Changelog ==
 
+= 1.1.4 =
+* Fix. Post settings sometimes global defaults when they shouldn't.
+
 = 1.1.3 =
 * Feature. Show warning if options have been overridden using hooks
+* Fix. Error blocking the Screen Options tab on the post page
 * Fix. Error sanitizing post options
 
 = 1.1.2 =
