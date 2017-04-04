@@ -623,16 +623,18 @@ class WPNA_Facebook_Post {
 		// Checks for post options, then global options then default.
 		$analytics_code = wpna_get_post_option( get_the_ID(), 'fbia_analytics', '' );
 
-		// It may or may not be wrapped in figure tags.
-		$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
+		if ( ! empty( $analytics_code ) ) {
+			// It may or may not be wrapped in figure tags.
+			$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
 
-		// If it's not wrapped it in an iFrame then ensure it is.
-		if ( '<iframe>' !== substr( $analytics_code, 0, 8 ) ) {
-			$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
+			// If it's not wrapped it in an iFrame then ensure it is.
+			if ( '<iframe>' !== substr( $analytics_code, 0, 8 ) ) {
+				$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
+			}
+
+			// Ensure it's wrapped in figure tags.
+			$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 		}
-
-		// Ensure it's wrapped in figure tags.
-		$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 
 		/**
 		 * Filter the analytics code for the article.

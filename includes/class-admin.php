@@ -49,6 +49,8 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'admin_init',            array( $this, 'rating_notice' ), 10, 0 );
 
+		add_filter( 'plugin_action_links_' . plugin_basename( WPNA_BASE_PATH . '/wp-native-articles.php' ), array( $this, 'add_plugin_action_links' ), 10, 1 );
+
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
 			add_action( 'wp_ajax_wpna-dismiss-notice', array( $this, 'ajax_dismiss_notice' ), 10, 0 );
@@ -57,6 +59,35 @@ class WPNA_Admin extends WPNA_Admin_Base {
 			add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
 			add_action( 'load-post-new.php',     array( $this, 'setup_post_meta_box' ), 10, 0 );
 		}
+	}
+
+	/**
+	 * Add extra links to the plugin action links.
+	 *
+	 * Adds a quick link to the settings page + a premium upgrade link
+	 * on the free version.
+	 *
+	 * @access public
+	 * @param array $links The current links for the plugin.
+	 * @return array
+	 */
+	public function add_plugin_action_links( $links ) {
+		if ( ! is_array( $links ) ) {
+			$links = array( $links );
+		}
+
+		// Construct the settings page link.
+		$settings_page_url = add_query_arg( array(
+			'page' => 'wpna_facebook',
+		), admin_url( 'admin.php' ) );
+
+		$mylinks = array();
+		$mylinks[] = sprintf( '<a style="color:#d54e21;" href="%s" target="_blank">%s</a>', esc_url( 'https://wp-native-articles.com?utm_source=fplugin&utm_medium=plugin-settings' ), __( 'Upgrade to Premium', 'wp-native-articles' ) );
+
+		$mylinks[] = sprintf( '<a href="%s">%s</a>', esc_url( $settings_page_url ), __( 'Settings', 'wp-native-articles' ) );
+
+		// Merge the arrays together and return.
+		return array_merge( $mylinks, $links );
 	}
 
 	/**
@@ -133,12 +164,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function styles( $hook ) {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', dirname( __FILE__ ) ), '0.6.0', true );
+			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', dirname( __FILE__ ) ), '0.6.1', true );
 			wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', dirname( __FILE__ ) ), WPNA_VERSION );
 		}
 
 		// Main plugin options page CSS.
-		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'native-articles_page_wpna_facebook' ), true ) ) {
+		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'native-articles_page_wpna_facebook', 'toplevel_page_wpna_facebook' ), true ) ) {
 			wp_enqueue_style( 'wpna-admin', plugins_url( '/assets/css/admin.css', dirname( __FILE__ ) ), WPNA_VERSION );
 		}
 

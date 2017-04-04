@@ -72,9 +72,6 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		add_filter( 'wpna_sanitize_option_fbia_feed_authentication',          'boolval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_feed_authentication_username', 'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_feed_authentication_password', 'wp_hash_password', 10, 1 );
-
-		// Set a default feed slug value.
-		add_filter( 'wpna_get_option_fbia_feed_slug',          array( $this, 'default_feed_slug' ), 10, 3 );
 	}
 
 	/**
@@ -241,7 +238,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 */
 	public function feed_slug_callback() {
 		?>
-		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_slug', 'facebook-instant-articles' ) ); ?>" />
+		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_slug' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'The endpoint of the Instant Articles Feed.', 'wp-native-articles' ); ?></p>
 
 		<?php
@@ -673,7 +670,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	}
 
 	/**
-	 * Flushs rewrite rules on the 'feed' tab.
+	 * Flushes rewrite rules on the 'feed' tab.
 	 *
 	 * @since 1.0.0
 	 *
@@ -685,26 +682,6 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		if ( $tab && 'feed' === $tab ) {
 			flush_rewrite_rules();
 		}
-	}
-
-	/**
-	 * Set a default feed slug value.
-	 *
-	 * If no feed slug value has been set return a defaut one.
-	 *
-	 * @since  1.0.0
-	 *
-	 * @param  string $value   Option value.
-	 * @param  string $name    Option name.
-	 * @param  string $default Default value passed.
-	 * @return string
-	 */
-	public function default_feed_slug( $value, $name, $default ) {
-		if ( empty( $value ) ) {
-			$value = 'facebook-instant-articles';
-		}
-
-		return $value;
 	}
 
 }
