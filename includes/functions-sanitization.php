@@ -189,9 +189,8 @@ if ( ! function_exists( 'wpna_valid_date' ) ) :
 	 * @return boolean      Whether the date is valid or not.
 	 */
 	function wpna_valid_date( $date ) {
-		list( $day, $month, $year ) = sscanf( $date, '%04d-%02d-%02d' );
-		$dt = new DateTime( "$year-$month-$day" );
-		return false !== $dt && ! array_sum( $dt->getLastErrors() );
+		list( $year, $month, $day ) = sscanf( $date, '%04d-%02d-%02d' );
+		return checkdate( $month, $day, $year );
 	}
 endif;
 

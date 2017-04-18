@@ -49,3 +49,9 @@ if ( is_multisite() ) {
 
 // Flush the rewrite rules to clear any endpoints.
 flush_rewrite_rules();
+
+// Cleanup Freemius, if it exists.
+if ( function_exists( 'wpna_fs' ) ) {
+	// Not like register_uninstall_hook(), you do NOT have to use a static function.
+	wpna_fs()->add_action( 'after_uninstall', 'wpna_fs_uninstall_cleanup' );
+}

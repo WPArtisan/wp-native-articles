@@ -51,7 +51,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 */
 	public function hooks() {
 		add_action( 'admin_init',            array( $this, 'setup_settings' ), 10, 0 );
-		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 10, 0 );
+		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 10, 2 );
 		add_action( 'save_post',             array( $this, 'flush_content_cache' ), 10, 1 );
 		add_action( 'save_post',             array( $this, 'save_post_meta' ), 10, 3 );
 
@@ -102,11 +102,13 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * @since 1.0.0
 	 *
 	 * @access public
+	 * @param string $parent_page_id   The unique id of the parent page.
+	 * @param string $parent_page_slug The unique slug of the parent page.
 	 * @return void
 	 */
-	public function add_menu_items() {
+	public function add_menu_items( $parent_page_id, $parent_page_slug ) {
 		$page_hook = add_submenu_page(
-			'wpna_general',  // Parent page slug.
+			$parent_page_slug,  // Parent page slug.
 			esc_html__( 'Facebook Instant Articles', 'wp-native-articles' ),
 			esc_html__( 'Facebook Instant Articles', 'wp-native-articles' ),
 			'manage_options',
@@ -121,9 +123,10 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		 * Custom action for adding more menu items.
 		 *
 		 * @since 1.0.0
-		 * @param string $page_hook The Unique hook of the newly registered page.
+		 * @param string $page_hook The unique ID for the menu page.
+		 * @param string $page_slug The unique slug for the menu page.
 		 */
-		do_action( 'wpna_admin_facebook_menu_items', $page_hook );
+		do_action( 'wpna_admin_facebook_menu_items', $page_hook, $this->page_slug );
 	}
 
 	/**
@@ -384,7 +387,38 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<?php esc_html_e( 'Use this section to set generic Instant Article settings.', 'wp-native-articles' ); ?>
 			<?php esc_html_e( 'They can all be overridden on a per article basis with the exception of the `Authorisation ID` field.', 'wp-native-articles' ); ?>
 		</p>
+
 		<?php
+		// Get all the default template paths for the plugin.
+		$default_templates = glob( WPNA_BASE_PATH . '/templates/*.php' );
+
+		$overriden_templates = array();
+
+		foreach ( $default_templates as $default_template ) {
+			// Get just the template name.
+			$template_name = basename( $default_template );
+			// Check if they've been overriden or not.
+			if ( wpna_locate_template( $template_name ) !== $default_template ) {
+				$overriden_templates[ $template_name ] = wpna_locate_template( $template_name );
+			}
+		}
+
+		// If any are being overriden show a warning message.
+		if ( ! empty( $overriden_templates ) ) : ?>
+			<hr />
+			<p>
+				<span class="label label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+				<i><b><?php esc_html_e( 'Templates being overriden', 'wp-native-articles' ); ?></b></i>
+			</p>
+
+			<p><?php esc_html_e( 'The following templates are being overridden. Well this is normally fine it could mean that some of the settings below are not being outputted or that the output is modified in some way.', 'wp-native-articles' ); ?></p>
+
+			<?php foreach ( $overriden_templates as $template_name => $new_location ) : ?>
+				<p><strong><?php echo esc_html( $template_name ); ?></strong> - <code><?php echo esc_html( strstr( $new_location, 'wp-content' ) ); ?></code></p>
+			<?php endforeach; ?>
+			<hr />
+		<?php endif;
+
 	}
 
 	/**
@@ -571,6 +605,21 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		?>
 		<input type="text" name="wpna_options[fbia_credits]" id="fbia_credits" class="regular-text" value="<?php echo esc_attr( wpna_get_option( 'fbia_credits' ) ); ?>">
 		<p class="description"><?php esc_html_e( 'Default credits applied to the bottom of every article', 'wp-native-articles' ); ?></p>
+		<p class="description">
+			<?php echo wp_kses(
+				__( 'Date placeholders prefixed by a <strong>%</strong> percent symbol can be used.', 'wp-native-articles' ),
+				array( 'strong' => array() )
+			);?>
+		</p>
+		<p class="description">
+			<?php echo sprintf(
+				wp_kses(
+					__( 'See the <a target="_blank" href="%s">Date Documentaion</a> for more information.', 'wp-native-articles' ),
+					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+				),
+				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )
+			);?>
+		</p>
 
 		<?php
 		// Show a notice if the option has been overridden.
@@ -595,6 +644,21 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		?>
 		<input type="text" name="wpna_options[fbia_copyright]" id="fbia_copyright" class="regular-text" value="<?php echo esc_attr( wpna_get_option( 'fbia_copyright' ) ); ?>">
 		<p class="description"><?php esc_html_e( 'Default copyright applied to the bottom of every article', 'wp-native-articles' ); ?></p>
+		<p class="description">
+			<?php echo wp_kses(
+				__( 'Date placeholders prefixed by a <strong>%</strong> percent symbol can be used.', 'wp-native-articles' ),
+				array( 'strong' => array() )
+			);?>
+		</p>
+		<p class="description">
+			<?php echo sprintf(
+				wp_kses(
+					__( 'See the <a target="_blank" href="%s">Date Documentaion</a> for more information.', 'wp-native-articles' ),
+					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+				),
+				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )
+			);?>
+		</p>
 
 		<?php
 		// Show a notice if the option has been overridden.
@@ -982,6 +1046,12 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		foreach ( $values as $key => $value ) {
 
+			// If the value is empty then remove any post meta for this key.
+			// This means it will inherit the global defaults.
+			if ( empty( $value ) ) {
+				continue;
+			}
+
 			// Workout the correct filtername from the $key.
 			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
 
@@ -1026,14 +1096,25 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			}
 		}
 
-		// Delete any existing rows from the post.
-		foreach ( $sanitized_values as $key => $value ) {
-			delete_post_meta( $post->ID, $key );
-		}
-
 		// Only save the data that has actually been set.
 		// Otherwise we create unnecessary meta rows.
 		$sanitized_values = array_filter( $sanitized_values );
+
+		/**
+		 * Filter the values before they're saved.
+		 *
+		 * @since 1.1.4
+		 * @var array Postmeta to save for this post.
+		 */
+		$sanitized_values = apply_filters( 'wpna_sanitize_post_meta_facebook', $sanitized_values, $field_keys, $post );
+
+		// Work out which valeus haven't been set so they can be removed.
+		$remove_fields = array_diff( $field_keys, array_keys( $sanitized_values ) );
+
+		// Remove these fields. They will inherit the global values.
+		foreach ( $remove_fields as $meta_key ) {
+			delete_post_meta( $post_id, $meta_key );
+		}
 
 		// Save the new meta.
 		foreach ( $sanitized_values as $key => $value ) {

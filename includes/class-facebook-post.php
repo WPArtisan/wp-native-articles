@@ -520,15 +520,19 @@ class WPNA_Facebook_Post {
 	public function get_credits() {
 
 		// Checks for post options, then global options then default.
-		$credits = wpna_get_post_option( get_the_ID(), 'fbia_credits', '' );
+		$original_credits = wpna_get_post_option( get_the_ID(), 'fbia_credits', '' );
+
+		// Parse the string for any date placeholders.
+		$credits = wpna_replace_date_placeholders( $original_credits );
 
 		/**
 		 * Filter the credits for each article.
 		 *
 		 * @since 1.0.0
 		 * @var string $credits The article credits.
+		 * @var string $original_credits The orignal, unparsed, article credits.
 		 */
-		$credits = apply_filters( 'wpna_facebook_article_content_credits', $credits );
+		$credits = apply_filters( 'wpna_facebook_article_content_credits', $credits, $original_credits );
 
 		return $credits;
 	}
@@ -546,15 +550,19 @@ class WPNA_Facebook_Post {
 	public function get_copyright() {
 
 		// Checks for post options, then global options then default.
-		$copyright = wpna_get_post_option( get_the_ID(), 'fbia_copyright', '' );
+		$original_copyright = wpna_get_post_option( get_the_ID(), 'fbia_copyright', '' );
+
+		// Parse the string for any date placeholders.
+		$copyright = wpna_replace_date_placeholders( $original_copyright );
 
 		/**
 		 * Filter the copyright for each article.
 		 *
 		 * @since 1.0.0
 		 * @var string $copyright The article copyright.
+		 * @var string $original_copyright The orignal, unparsed, article credits.
 		 */
-		$copyright = apply_filters( 'wpna_facebook_article_content_copyright', $copyright );
+		$copyright = apply_filters( 'wpna_facebook_article_content_copyright', $copyright, $original_copyright );
 
 		return $copyright;
 	}
@@ -623,16 +631,18 @@ class WPNA_Facebook_Post {
 		// Checks for post options, then global options then default.
 		$analytics_code = wpna_get_post_option( get_the_ID(), 'fbia_analytics', '' );
 
-		// It may or may not be wrapped in figure tags.
-		$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
+		if ( ! empty( $analytics_code ) ) {
+			// It may or may not be wrapped in figure tags.
+			$analytics_code = str_ireplace( array( '<figure class="op-tracker">', '</figure>' ), '', $analytics_code );
 
-		// If it's not wrapped it in an iFrame then ensure it is.
-		if ( '<iframe>' !== substr( $analytics_code, 0, 8 ) ) {
-			$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
+			// If it's not wrapped it in an iFrame then ensure it is.
+			if ( '<iframe>' !== substr( $analytics_code, 0, 8 ) ) {
+				$analytics_code = sprintf( '<iframe>%s</iframe>', $analytics_code );
+			}
+
+			// Ensure it's wrapped in figure tags.
+			$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 		}
-
-		// Ensure it's wrapped in figure tags.
-		$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 
 		/**
 		 * Filter the analytics code for the article.

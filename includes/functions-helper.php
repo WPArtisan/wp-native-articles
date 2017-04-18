@@ -447,3 +447,40 @@ if ( ! function_exists( 'wpna_load_textdomain' ) ) :
 		load_plugin_textdomain( 'wp-native-articles', false, WPNA_BASE_PATH . '/languages' );
 	}
 endif;
+
+if ( ! function_exists( 'wpna_replace_date_placeholders' ) ) :
+
+	/**
+	 * Replaces placeholders in a string with date variables.
+	 *
+	 * Can use any PHP date format placeholders as long as it's preceeded by %.
+	 * A double placeholder works as an escape e.g. %%Y parses literally.
+	 *
+	 * @since 1.1.6
+	 *
+	 * @param string $string The string to parse the date varaibles in.
+	 * @return The parsed string
+	 */
+	function wpna_replace_date_placeholders( $string ) {
+		// Grab all the placeholders.
+		preg_match_all( '/(?<!%)%([A-Za-z])|(?<=%%)([A-Za-z])/', $string, $matches );
+
+		// Cycle through them and setup the date params.
+		if ( ! empty( $matches[1] ) ) {
+			foreach ( $matches[1] as $match ) {
+				if ( ! empty( $match ) ) {
+					$string = str_replace( "%{$match}", date( $match ), $string );
+				}
+			}
+		}
+
+		// Cycle through the double escaped characters and repalce them.
+		if ( ! empty( $matches[2] ) ) {
+			foreach ( $matches[2] as $match ) {
+				$string = str_replace( "%%{$match}", "%{$match}", $string );
+			}
+		}
+
+		return $string;
+	}
+endif;

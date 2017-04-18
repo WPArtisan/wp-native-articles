@@ -40,7 +40,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @return void
 	 */
 	public function hooks() {
-		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 15, 0 );
+		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 15, 2 );
 	}
 
 	/**
@@ -51,11 +51,13 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @since 1.0.0
 	 *
 	 * @access public
+	 * @param string $parent_page_id   The unique id of the parent page.
+	 * @param string $parent_page_slug The unique slug of the parent page.
 	 * @return void
 	 */
-	public function add_menu_items() {
+	public function add_menu_items( $parent_page_id, $parent_page_slug ) {
 		$page_hook = add_submenu_page(
-			'wpna_facebook', // Parent page slug.
+			$parent_page_slug, // Parent page slug.
 			esc_html__( 'WP Native Article Premium', 'wp-native-articles' ),
 			'<span style="color:#f18500">' . esc_html__( 'Premium', 'wp-native-articles' ) . '</span>',
 			'manage_options',
@@ -69,9 +71,10 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		 * Custom action for adding more menu items.
 		 *
 		 * @since 1.0.0
-		 * @param string $page_hook The Unique hook of the newly registered page.
+		 * @param string $page_hook The unique ID for the menu page.
+		 * @param string $page_slug The unique slug for the menu page.
 		 */
-		do_action( 'wpna_admin_premium_menu_items', $page_hook );
+		do_action( 'wpna_admin_premium_menu_items', $page_hook, $this->page_slug );
 	}
 
 	/**

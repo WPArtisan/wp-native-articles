@@ -98,7 +98,10 @@
 				<?php
 				// Ad code for the article.
 				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
-					<?php echo wp_kses_post( $post->get_ads() ); ?>
+					<?php
+					// @codingStandardsIgnoreLine.
+					echo $post->get_ads();
+					?>
 				<?php endif; ?>
 
 				<?php
@@ -138,12 +141,14 @@
 
 			<?php
 				// Article body.
-				echo wp_kses_post( $post->get_the_content() );
+				// @codingStandardsIgnoreLine.
+				echo $post->get_the_content();
 			?>
 
 			<?php
 				// Article analytics code.
-				echo wp_kses_post( $post->get_analytics() );
+				// @codingStandardsIgnoreLine.
+				echo $post->get_analytics();
 			?>
 
 			<footer>

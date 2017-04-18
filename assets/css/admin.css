@@ -15,3 +15,29 @@
 .label-warning {
 	background: #f0ad4e;
 }
+
+.label-danger {
+	background: #d9534f;
+}
+
+.label-success {
+	background: #5cb85c;
+}
+
+.wpna-facebook-api-errors-table {
+	margin-top: 15px;
+	width: 80%;
+}
+
+.wpna-facebook-api-errors-table th {
+	font-weight: 600;
+	padding-bottom: 1rem;
+	padding-right: 1rem;
+	border-bottom: 1px solid rgba(0,0,0,.2);
+}
+
+.wpna-facebook-api-errors-table td {
+	font-weight: 400;
+	padding: 1rem 1rem 1rem 0;
+	border-bottom: 1px solid rgba(0,0,0,.2);
+}
