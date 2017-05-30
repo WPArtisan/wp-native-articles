@@ -207,16 +207,19 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		 * to be added to this screen.
 		 *
 		 * @since 1.0.0
+		 * @param string $screen->id The ID of the screen for the admin page.
+		 * @param null For compatibility.
 		 */
-		do_action( 'add_meta_boxes_' . $screen->id );
+		do_action( 'add_meta_boxes_' . $screen->id, null );
 
 		/**
 		* Trigger the add_meta_boxes hook to allow meta boxes to be added.
 		 *
 		 * @since 1.0.0
 		 * @param string $screen->id The ID of the screen for the admin page.
+		 * @param null For compatibility.
 		 */
-		do_action( 'add_meta_boxes', $screen->id );
+		do_action( 'add_meta_boxes', $screen->id, null );
 
 		// Add screen option: user can choose between 1 or 2 columns (default 2).
 		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );

@@ -515,6 +515,10 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			$query->set( 'ignore_sticky_posts', true );
 			$query->set( 'no_found_rows', true );
 
+			// Set the post type.
+			$post_types = get_query_var( 'post_type', 'post' );
+			$query->set( 'post_type', $post_types );
+
 			// Set the feed query params.
 			$query->set( 'order', 'DESC' );
 			$query->set( 'orderby', 'post_modified' );

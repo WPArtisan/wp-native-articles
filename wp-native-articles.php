@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.1.6' );
+	define( 'WPNA_VERSION', '1.2.0' );
 }
 
 // Define the plugin base path.
@@ -158,45 +158,6 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 
 	}
 endif;
-
-/**
- * Setup Freemius.
- *
- * @since 1.1.6
- * @return Freemius
- */
-function wpna_fs() {
-	global $wpna_fs;
-
-	if ( ! isset( $wpna_fs ) ) {
-		// Include Freemius SDK.
-		require_once WPNA_BASE_PATH . '/includes/lib/freemius/start.php';
-
-		$wpna_fs = fs_dynamic_init( array(
-			'id'                  => '945',
-			'slug'                => 'wp-native-articles',
-			'type'                => 'plugin',
-			'public_key'          => 'pk_7e07292ea2347c235cbead9edbf54',
-			'is_premium'          => false,
-			'has_addons'          => false,
-			'has_paid_plans'      => false,
-			'menu'                => array(
-				'slug'           => 'wpna_facebook',
-				'account'        => false,
-				'contact'        => false,
-				'support'        => false,
-			),
-		) );
-	}
-
-	return $wpna_fs;
-}
-
-// Init Freemius.
-wpna_fs();
-
-// Signal that SDK was initiated.
-do_action( 'wpna_fs_loaded' );
 
 // Kick everything off.
 wpna_initialise();

@@ -67,6 +67,7 @@ class WPNA_Facebook_Content_Parser {
 		// We can help clean up the content before WP gets to it.
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_shortcodes' ), 5, 1 );
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_oembeds' ), 5, 1 );
+		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'remove_more_link' ), 10, 1 );
 
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'convert_headings' ), 10, 1 );
 
@@ -111,7 +112,7 @@ class WPNA_Facebook_Content_Parser {
 		$_shortcode_tags = $shortcode_tags;
 
 		// Add any shortcode tags that we shouldn't touch here.
-		$disabled_tags = array( 'gallery', 'caption', 'wp_caption' );
+		$disabled_tags = array( 'caption', 'wp_caption' );
 
 		/**
 		 * Add a filter allowing alteration of the $disabled_tags array.
@@ -122,12 +123,32 @@ class WPNA_Facebook_Content_Parser {
 		 */
 		$disabled_tags = apply_filters( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', $disabled_tags, $content );
 
+		// Add any shortcode tags that use a custom callback here.
+		$override_tags = array(
+			'gallery' => array( $this, 'gallery_shortcode' ),
+		);
+
+		/**
+		 * Add a filter allowing alteration of the $override_tags array.
+		 *
+		 * @since 1.2.0
+		 * @param array   $override_tags
+		 * @param content $content
+		 */
+		$override_tags = apply_filters( 'wpna_facebook_article_setup_wrap_shortcodes_override_tags', $override_tags, $content );
+
 		foreach ( $shortcode_tags as $tag => $cb ) {
+
 			if ( in_array( $tag, $disabled_tags, true ) ) {
+				// If the tag is to be ignored then continue.
 				continue;
+			} elseif ( isset( $override_tags[ $tag ] ) ) {
+				// If the tag has a custom callback, set that.
+				$shortcode_tags[ $tag ] = $override_tags[ $tag ];
+			} else {
+				// Overwrite the callback function.
+				$shortcode_tags[ $tag ] = array( $this, 'wrap_shortcode' );
 			}
-			// Overwrite the callback function.
-			$shortcode_tags[ $tag ] = array( $this, 'wrap_shortcode' );
 		}
 
 		return $content;
@@ -165,6 +186,80 @@ class WPNA_Facebook_Content_Parser {
 
 		// Return the unique key wrapped in a figure element.
 		return '<figure class="op-interactive">' . $shortcode_key . '</figure>';
+	}
+
+	/**
+	 * Wraps [gallery] shortcodes.
+	 *
+	 * Ensures they're always properly formatted and don't get caught up
+	 * in the other parts of the content parser.
+	 *
+	 * @param array $attr Shortcode attributes.
+	 * @return string
+	 */
+	public function gallery_shortcode( $attr ) {
+		global $post, $_shortcode_tags, $_shortcode_content;
+
+		static $instance = 0;
+		$instance++;
+
+		if ( ! empty( $attr['ids'] ) ) {
+			// 'ids' is explicitly ordered, unless you specify otherwise.
+			if ( empty( $attr['orderby'] ) ) {
+				$attr['orderby'] = 'post__in';
+			}
+			$attr['include'] = $attr['ids'];
+		}
+
+		$html5 = current_theme_supports( 'html5', 'gallery' );
+		$atts = shortcode_atts( array(
+			'order'      => 'ASC',
+			'orderby'    => 'menu_order ID',
+			'id'         => $post ? $post->ID : 0,
+			'itemtag'    => $html5 ? 'figure'     : 'dl',
+			'icontag'    => $html5 ? 'div'        : 'dt',
+			'captiontag' => $html5 ? 'figcaption' : 'dd',
+			'columns'    => 3,
+			'size'       => 'thumbnail',
+			'include'    => '',
+			'exclude'    => '',
+			'link'       => '',
+		), $attr, 'gallery' );
+
+		$id = intval( $atts['id'] );
+
+		// Copied from core. Might be better as WP_Query?
+		// @codingStandardsIgnoreStart
+		if ( ! empty( $atts['include'] ) ) {
+			$_attachments = get_posts( array( 'include' => $atts['include'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+
+			$attachments = array();
+			foreach ( $_attachments as $key => $val ) {
+				$attachments[ $val->ID ] = $_attachments[ $key ];
+			}
+		} elseif ( ! empty( $atts['exclude'] ) ) {
+			$attachments = get_children( array( 'post_parent' => $id, 'exclude' => $atts['exclude'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+		} else {
+			$attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+		}
+		// @codingStandardsIgnoreEnd
+
+		if ( empty( $attachments ) ) {
+			return '';
+		}
+
+		$output = PHP_EOL;
+		foreach ( $attachments as $att_id => $attachment ) {
+			$output .= '<figure>' . PHP_EOL;
+			$output .= wp_get_attachment_image_url( $att_id, 'full', false ) . PHP_EOL;
+			$output .= '</figure>' . PHP_EOL;
+		}
+
+		$shortcode_key = mt_rand();
+
+		$_shortcode_content[ $shortcode_key ] = $output;
+
+		return '<figure class="op-slideshow">' . $shortcode_key . '</figure>' . PHP_EOL;
 	}
 
 	/**
@@ -213,6 +308,21 @@ class WPNA_Facebook_Content_Parser {
 		$_shortcode_content[ $shortcode_key ] = $cache;
 
 		return '<figure class="op-interactive">' . $shortcode_key . '</figure>';
+	}
+
+	/**
+	 * Removes the annoying more <span> when it's in the content.
+	 * e.g. <span id="more-{id}"></span>
+	 *
+	 * @access public
+	 * @param  string $content Post content.
+	 * @return string
+	 */
+	public function remove_more_link( $content ) {
+		// Replace the <span> with an empty string.
+		$content = str_replace( '<span id="more-' . get_the_ID() . '"></span>', '', $content );
+
+		return $content;
 	}
 
 	/**

@@ -474,7 +474,7 @@ if ( ! function_exists( 'wpna_replace_date_placeholders' ) ) :
 			}
 		}
 
-		// Cycle through the double escaped characters and repalce them.
+		// Cycle through the double escaped characters and replace them.
 		if ( ! empty( $matches[2] ) ) {
 			foreach ( $matches[2] as $match ) {
 				$string = str_replace( "%%{$match}", "%{$match}", $string );

@@ -224,7 +224,7 @@ class WPNA_Facebook_Post {
 	public function get_the_kicker() {
 		$categories = get_the_category( $this->get_the_ID() );
 
-		$kicker = implode( ', ', wp_list_pluck( $categories, 'category_nicename' ) );
+		$kicker = implode( ', ', wp_list_pluck( $categories, 'cat_name' ) );
 
 		/**
 		 * Filter the kicker for an article.
@@ -407,7 +407,19 @@ class WPNA_Facebook_Post {
 			return $content;
 		}
 
-		$content = get_the_content( $this->get_the_ID() );
+		// Get the global $more value.
+		global $more;
+
+		// Save the current $more value.
+		$default_more = $more;
+
+		// Ensure it's set to 1. Shows the whole post.
+		$more = 1;
+
+		$content = get_the_content( null, false );
+
+		// Reset the $more value just incase.
+		$more = $default_more;
 
 		/**
 		 * Filter the post content before WP has its fun.

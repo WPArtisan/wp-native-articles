@@ -104,9 +104,21 @@ Yes it does. There's a management panel in the Network Admin sidebar menu.
 It can be used to copy settings from one blog to another and set a default blog
 to inherit settings from when new blogs are created.
 
+= Does it support custom post types? =
+
+Yes. The RSS feeds defaults to posts but custom post types can be specified by pass in query parameters. More information can be [found here](http://docs.wp-native-articles.com/article/44-custom-post-types)
+
 = Is it multilingual compatible? =
 
 Yes. All text strings use the WordPress i18n translation functions. If you'd like to help translate the plugin we'd love to hear from you!
+
+= Does it work for multi-language sites? =
+
+Yes. If you're using the WPML plugin it will generate a combined feed of all languages by default or you can pass in query parameters to specify which languages you'd like.
+
+= What's the minimum PHP version required? =
+
+It has the same requirements as WordPress, so PHP >= 5.2.4.
 
 = I've found a bug? I have a feature request? =
 
@@ -123,6 +135,15 @@ through the WordPress support forum found on the Plugin download page.
 6. Multisite options page.
 
 == Changelog ==
+
+= 1.2.0 =
+
+* Feature. Now supports custom post types in the RSS feed
+* Feature. Article kicker doesn't display if the category is 'uncategorized'
+* Fix. Article kicker now displays the category name instead of the category slug
+* Fix. Bug with screen metaboxes
+* Fix. Ensures whole post is displayed when <!--MORE--> tag is present
+* Fix. [gallery] shortcodes should now show correctly
 
 = 1.1.6 =
 * Feature. Can now use dynamic date variables in Copyright & Credit fields
