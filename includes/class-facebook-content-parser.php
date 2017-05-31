@@ -251,7 +251,7 @@ class WPNA_Facebook_Content_Parser {
 		$output = PHP_EOL;
 		foreach ( $attachments as $att_id => $attachment ) {
 			$output .= '<figure>' . PHP_EOL;
-			$output .= wp_get_attachment_image_url( $att_id, 'full', false ) . PHP_EOL;
+			$output .= sprintf( '<img src="%s" />', wp_get_attachment_image_url( $att_id, 'full', false ) ) . PHP_EOL;
 			$output .= '</figure>' . PHP_EOL;
 		}
 

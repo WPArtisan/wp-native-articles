@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.7.3
-Stable tag: 1.1.6
+Tested up to: 4.7.5
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -136,8 +136,10 @@ through the WordPress support forum found on the Plugin download page.
 
 == Changelog ==
 
-= 1.2.0 =
+= 1.2.1 =
+* Fix. Bug with [gallery] images
 
+= 1.2.0 =
 * Feature. Now supports custom post types in the RSS feed
 * Feature. Article kicker doesn't display if the category is 'uncategorized'
 * Fix. Article kicker now displays the category name instead of the category slug
