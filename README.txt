@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.7.5
-Stable tag: 1.2.1
+Tested up to: 4.8
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,28 +12,21 @@ Easy Facebook Instant Articles Plugin for your WordPress site with better conten
 
 == Description ==
 
+**1.2.2 - Now Supports Visual Bakery (beta)**
+
 A better implementation of Facebook Instant Articles for WordPress.
 
-Only available in the Facebook mobile app, Instant Articles are a pre-loaded, super fast, and optimized version of your regular articles.
-Boasting some impressive stats (10x faster, 20% more reads, 70% less abandonment) they have quickly become a must for every publisher.
+Only available in the Facebook mobile app, Instant Articles are a pre-loaded, super fast, and optimized version of your regular articles. Boasting some impressive stats (10x faster, 20% more reads, 70% less abandonment) they have quickly become a must for every publisher.
 
 **How it works**
 
-After installation and setup this plugin auto generates an instant article version for each of your WordPress articles.
-The article's regular HTML is parsed and converted to correct Facebook Instant Article markup which is then submitted to Facebook via a RSS feed. When your
-article is viewed using the Facebook mobile app it will now load the fast, optimized instant article version directly in the app.
-When the article is shared or posted its instant status will also be denoted by the lightening symbol in the corner.
+After installation and setup this plugin auto generates an instant article version for each of your WordPress articles. The article's regular HTML is parsed and converted to correct Facebook Instant Article markup which is then submitted to Facebook via a RSS feed. When your article is viewed using the Facebook mobile app it will now load the fast, optimized instant article version directly in the app. When the article is shared or posted its instant status will also be denoted by the lightning symbol in the corner.
 
 [Read more about Instant Articles from the official documentation](https://developers.facebook.com/docs/instant-articles)
 
 **Content Parsing**
 
-A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure
-imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content
-tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take
-account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort
-to correctly format any WordPress content it could possibly come across. You can read more about the challenges and
-solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
+A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort to correctly format any WordPress content it could possibly come across. You can read more about the challenges and solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
 
 > **PRO Version**
 >
@@ -135,6 +128,14 @@ through the WordPress support forum found on the Plugin download page.
 6. Multisite options page.
 
 == Changelog ==
+
+= 1.2.2 =
+* Feature. Support for Visual Bakery (beta)
+* Feature. Optionally show subtitle, kicker, authors & media in the article header
+* Feature. Add Facebook ad density option
+* Feature. Add Facebook recirculation ad option
+* Fix. Embedding other WordPress posts from your site now works
+* Fix. Using embed code from Twitter & Instagram directly now works
 
 = 1.2.1 =
 * Fix. Bug with [gallery] images

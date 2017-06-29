@@ -78,10 +78,18 @@ class WPNA_Activator {
 				'fbia_enable_ads'        => 'off',
 				'fbia_auto_ad_placement' => 'off',
 				'fbia_ad_code'           => '',
+
+				'fbia_show_subtitle'     => 'on',
+				'fbia_show_authors'      => 'on',
+				'fbia_show_kicker'       => 'on',
+				'fbia_show_media'        => 'on',
+				'fbia_caption_title'     => 'off',
+
 				'fbia_feed_slug'         => 'facebook-instant-articles',
 				'fbia_posts_per_feed'    => '25',
 				'fbia_article_caching'   => '1',
 				'fbia_modified_only'     => '1',
+
 				'fbia_app_id'            => '',
 				'fbia_app_secret'        => '',
 				'fbia_sync_articles'     => 'on',

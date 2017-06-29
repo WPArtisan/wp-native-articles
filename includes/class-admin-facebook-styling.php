@@ -52,6 +52,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		}
 
 		// Sanitize the main options.
+		add_filter( 'wpna_sanitize_option_fbia_show_subtitle',                      'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_show_authors',                       'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_show_kicker',                        'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_show_media',                         'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_caption_title',                      'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_caption_title_font_size',            'wpna_validate_font_size', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_caption_title_vertical_position',    'wpna_validate_vertical_alignment', 10, 1 );
@@ -63,6 +67,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		add_filter( 'wpna_sanitize_option_fbia_caption_credit_horizontal_position', 'wpna_validate_horizontal_alignment', 10, 1 );
 
 		// Sanitize the post meta.
+		add_filter( 'wpna_sanitize_post_meta_fbia_show_subtitle',                      'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_show_authors',                       'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_show_kicker',                        'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_show_media',                         'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_caption_title',                      'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_caption_title_font_size',            'wpna_validate_font_size', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_caption_title_vertical_position',    'wpna_validate_vertical_alignment', 10, 1 );
@@ -99,8 +107,53 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 		register_setting( $option_group_captions, 'wpna_options', 'wpna_sanitize_options' );
 
+		// Unique ID for this section.
+		$general_settings_section_id = 'wpna_facebook-styling-general';
+
 		add_settings_section(
+			$general_settings_section_id,
+			esc_html__( 'General', 'wp-native-articles' ),
+			array( $this, 'general_section_callback' ),
+			$option_group_captions
+		);
+
+		add_settings_field(
+			'fbia_show_subtitle',
+			'<label for="fbia_show_subtitle">' . esc_html__( 'Show Subtitle', 'wp-native-articles' ) . '</label>',
+			array( $this, 'fbia_show_subtitle_callback' ),
 			$option_group_captions,
+			$general_settings_section_id
+		);
+
+		add_settings_field(
+			'fbia_show_authors',
+			'<label for="fbia_show_authors">' . esc_html__( 'Show Authors', 'wp-native-articles' ) . '</label>',
+			array( $this, 'fbia_show_authors_callback' ),
+			$option_group_captions,
+			$general_settings_section_id
+		);
+
+		add_settings_field(
+			'fbia_show_kicker',
+			'<label for="fbia_show_kicker">' . esc_html__( 'Show Kicker', 'wp-native-articles' ) . '</label>',
+			array( $this, 'fbia_show_kicker_callback' ),
+			$option_group_captions,
+			$general_settings_section_id
+		);
+
+		add_settings_field(
+			'fbia_show_media',
+			'<label for="fbia_show_media">' . esc_html__( 'Show Media', 'wp-native-articles' ) . '</label>',
+			array( $this, 'fbia_show_media_callback' ),
+			$option_group_captions,
+			$general_settings_section_id
+		);
+
+		// Unique ID for this section.
+		$caption_settings_section_id = 'wpna_facebook-styling-caption';
+
+		add_settings_section(
+			$caption_settings_section_id,
 			esc_html__( 'Captions', 'wp-native-articles' ),
 			array( $this, 'captions_section_callback' ),
 			$option_group_captions
@@ -111,7 +164,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_title">' . esc_html__( 'Show Title', 'wp-native-articles' ) . '</label>',
 			array( $this, 'fbia_caption_title_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -119,7 +172,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_title_font_size">' . esc_html__( 'Title Font Size', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_title_font_size_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -127,7 +180,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_title_vertical_position">' . esc_html__( 'Title Vertical Position', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_title_vertical_position_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -135,7 +188,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_title_horizontal_position">' . esc_html__( 'Title Horizontal Position', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_title_horizontal_position_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -143,7 +196,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_font_size">' . esc_html__( 'Caption Font Size', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_font_size_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -151,7 +204,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_vertical_position">' . esc_html__( 'Caption Vertical Position', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_vertical_position_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		add_settings_field(
@@ -159,7 +212,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			'<label for="fbia_caption_horizontal_position">' . esc_html__( 'Caption Horizontal Position', 'wp-native-articles' ) . '</label>',
 			array( $this, 'caption_horizontal_position_callback' ),
 			$option_group_captions,
-			$option_group_captions
+			$caption_settings_section_id
 		);
 
 		if ( 1 === 2 ) {
@@ -168,7 +221,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				'<label for="fbia_caption_credit_vertical_position">' . esc_html__( 'Credit Vertical Position', 'wp-native-articles' ) . '</label>',
 				array( $this, 'caption_credit_vertical_position_callback' ),
 				$option_group_captions,
-				$option_group_captions
+				$caption_settings_section_id
 			);
 
 			add_settings_field(
@@ -176,7 +229,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				'<label for="fbia_caption_credit_horizontal_position">' . esc_html__( 'Credit Horizontal Position', 'wp-native-articles' ) . '</label>',
 				array( $this, 'caption_credit_horizontal_position_callback' ),
 				$option_group_captions,
-				$option_group_captions
+				$caption_settings_section_id
 			);
 		}
 
@@ -219,6 +272,129 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			<?php do_settings_sections( 'wpna_facebook-styling' ); ?>
 			<?php submit_button(); ?>
 		</form>
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML displayed at the top of the gneral settings section.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function general_section_callback() {
+		?>
+		<p>
+			<?php esc_html_e( 'General sections.', 'wp-native-articles' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'show_subtitle' settings field.
+	 *
+	 * Whether to show the subtitle in the article header or not. The subtitle
+	 * defaults to the post excerpt.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function fbia_show_subtitle_callback() {
+		$values = (array) wpna_get_switch_values();
+		?>
+		<label for="fbia_show_subtitle">
+			<?php $this->generate_styling_select_element( 'fbia_show_subtitle', $values, wpna_get_option( 'fbia_show_subtitle' ) ); ?>
+			<?php esc_html_e( 'Show the subtitle.', 'wp-native-articles' ); ?>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_show_subtitle' );
+		?>
+
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'show_authors' settings field.
+	 *
+	 * Whether to show the authors in the article header or not.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function fbia_show_authors_callback() {
+		$values = (array) wpna_get_switch_values();
+		?>
+		<label for="fbia_show_authors">
+			<?php $this->generate_styling_select_element( 'fbia_show_authors', $values, wpna_get_option( 'fbia_show_authors' ) ); ?>
+			<?php esc_html_e( 'Show the authors.', 'wp-native-articles' ); ?>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_show_authors' );
+		?>
+
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'show_kicker' settings field.
+	 *
+	 * Whether to show the kicker in the article header or not. The kicker
+	 * defaults to a article's categories.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function fbia_show_kicker_callback() {
+		$values = (array) wpna_get_switch_values();
+		?>
+		<label for="fbia_show_kicker">
+			<?php $this->generate_styling_select_element( 'fbia_show_kicker', $values, wpna_get_option( 'fbia_show_kicker' ) ); ?>
+			<?php esc_html_e( 'Show the kicker.', 'wp-native-articles' ); ?>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_show_kicker' );
+		?>
+
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'show_media' settings field.
+	 *
+	 * Whether to show the media image in the article header or not. Defaults
+	 * to the article's featured image.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function fbia_show_media_callback() {
+		$values = (array) wpna_get_switch_values();
+		?>
+		<label for="fbia_show_media">
+			<?php $this->generate_styling_select_element( 'fbia_show_media', $values, wpna_get_option( 'fbia_show_media' ) ); ?>
+			<?php esc_html_e( 'Show the media.', 'wp-native-articles' ); ?>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_show_media' );
+		?>
+
 		<?php
 	}
 
@@ -573,6 +749,48 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
+					<label for="fbia_sponsored"><?php esc_html_e( 'Show Subtitle', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( '_wpna_fbia_show_subtitle', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_subtitle', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_show_subtitle' );
+					?>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="fbia_sponsored"><?php esc_html_e( 'Show Authors', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( '_wpna_fbia_show_authors', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_authors', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_show_authors' );
+					?>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="fbia_sponsored"><?php esc_html_e( 'Show Kicker', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( '_wpna_fbia_show_kicker', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_kicker', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_show_kicker' );
+					?>
+				</div>
+			</fieldset>
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="fbia_sponsored"><?php esc_html_e( 'Show Media', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( '_wpna_fbia_show_media', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_media', true ) ); ?>
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_show_media' );
+					?>
+				</div>
+			</fieldset>
+
+
+			<fieldset>
+				<div class="pure-control-group">
 					<label for="fbia_sponsored"><?php esc_html_e( 'Attachment Title', 'wp-native-articles' ); ?></label>
 					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title', true ) ); ?>
 					<?php
@@ -739,6 +957,10 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 		// Nothing fancy, let's just buid our own data array.
 		$field_keys = array(
+			'_wpna_fbia_show_subtitle',
+			'_wpna_fbia_show_authors',
+			'_wpna_fbia_show_kicker',
+			'_wpna_fbia_show_media',
 			'_wpna_fbia_caption_title',
 			'_wpna_fbia_caption_title_font_size',
 			'_wpna_fbia_caption_title_vertical_position',

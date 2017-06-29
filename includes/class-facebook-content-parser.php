@@ -71,9 +71,12 @@ class WPNA_Facebook_Content_Parser {
 
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'convert_headings' ), 10, 1 );
 
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'instagram_embeds' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'twitter_embeds' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'unique_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'featured_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'images_exist' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'remove_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'move_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'wrap_elements' ), 10, 1 );
@@ -125,7 +128,8 @@ class WPNA_Facebook_Content_Parser {
 
 		// Add any shortcode tags that use a custom callback here.
 		$override_tags = array(
-			'gallery' => array( $this, 'gallery_shortcode' ),
+			'gallery'  => array( $this, 'gallery_shortcode' ),
+			'fvplayer' => array( $this, 'fvplayer_shortcode' ),
 		);
 
 		/**
@@ -198,7 +202,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @return string
 	 */
 	public function gallery_shortcode( $attr ) {
-		global $post, $_shortcode_tags, $_shortcode_content;
+		global $post, $_shortcode_content;
 
 		static $instance = 0;
 		$instance++;
@@ -263,6 +267,176 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
+	 * Wraps [fvplayer] shortcodes.
+	 *
+	 * Ensures they're always properly formatted and don't get caught up
+	 * in the other parts of the content parser.
+	 *
+	 * @param array $attr Shortcode attributes.
+	 * @return string
+	 */
+	public function fvplayer_shortcode( $attr ) {
+		global $post, $_shortcode_content, $fv_fp;
+
+		// If the global flowplay class isn't there, bail.
+		if ( ! $fv_fp ) {
+			return;
+		}
+
+		// Get the global flowplayer options.
+		$flowplayer_options = get_option( 'fvwpflowplayer' );
+
+		// Setup the shortcodes with some defaults.
+		$atts = shortcode_atts( array(
+			'src'            => '',
+			'src1'           => '',
+			'src2'           => '',
+			'mobile'         => null,
+			'splash'         => '',
+			'caption'        => '',
+			'autoplay'       => null,
+			'loop'           => null,
+			'disablesharing' => null,
+		), $attr, 'fvplayer' );
+
+		$output = '';
+
+		$splash = false;
+
+		// First check if a splash was set for this video.
+		if ( ! empty( $atts['splash'] ) ) {
+			// Get the img url.
+			$ig_src = flowplayer::get_encoded_url( $splash );
+
+			// This is obviously less than ideal as it can be slow.
+			$response = wp_remote_head( $ig_src );
+			$response_code = wp_remote_retrieve_response_code( $response );
+
+			// The image exists.
+			if ( 200 === $response_code ) {
+				$splash = $ig_src;
+			}
+		}
+
+		// If no splash was set for this video or it can't be found try the global.
+		if ( ! $splash && ! empty( $flowplayer_options['splash'] ) ) {
+			// Get the img url.
+			$ig_src = flowplayer::get_encoded_url( $flowplayer_options['splash'] );
+
+			// This is obviously less than ideal as it can be slow.
+			$response = wp_remote_head( $ig_src );
+			$response_code = wp_remote_retrieve_response_code( $response );
+
+			// The image exists.
+			if ( 200 === $response_code ) {
+				$splash = $ig_src;
+			}
+		}
+
+		// If all the splash checks pass.
+		if ( $splash ) {
+			$output .= '<img src="' . $splash . '" />' . PHP_EOL;
+		}
+
+		// Start the video element.
+		$output .= '<video';
+
+		// Check for Autoplay.
+		// These options are overrides, can't combine unfortunatly.
+		if ( ! empty( $atts['autoplay'] ) ) {
+			if ( 'false' === $atts['autoplay'] ) {
+				$output .= ' data-fb-disable-autoplay';
+			}
+		} elseif ( ! empty( $flowplayer_options['autoplay'] ) ) {
+			if ( 'false' === $flowplayer_options['autoplay'] ) {
+				$output .= ' data-fb-disable-autoplay';
+			}
+		}
+
+		// Check for loop.
+		// These options are overrides, can't combine unfortunatly.
+		if ( ! empty( $atts['loop'] ) ) {
+			if ( 'true' === $atts['loop'] ) {
+				$output .= ' loop';
+			}
+		} elseif ( ! empty( $flowplayer_options['loop'] ) ) {
+			if ( 'true' === $flowplayer_options['loop'] ) {
+				$output .= ' loop';
+			}
+		}
+
+		// Close the video element.
+		$output .= '>' . PHP_EOL;
+
+		// If a mobile source has been set then use that.
+		if ( ! empty( $atts['mobile'] ) ) {
+			$output .= $fv_fp->get_video_src( $atts['mobile'], array( 'mobileUserAgent' => true ) );
+		} else {
+			// Get the src elements for each file.
+			foreach ( apply_filters( 'fv_player_media', array( $atts['src'], $atts['src1'], $atts['src2'] ), $fv_fp ) as $media_item ) {
+				$output .= $fv_fp->get_video_src( $media_item, array( 'mobileUserAgent' => true ) );
+			}
+		}
+
+		// Close the video tag.
+		$output .= '</video>' . PHP_EOL;
+
+		// Check for caption.
+		if ( ! empty( $atts['caption'] ) ) {
+
+			// Get the caption options.
+			$caption_settings = array_filter( array(
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_font_size', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_vertical_position', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_horizontal_position', null ),
+			) );
+
+			// Get the caption title options.
+			$caption_title_settings = array_filter( array(
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_font_size', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_vertical_position', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_horizontal_position', null ),
+			) );
+
+			$output .= '<figcaption';
+			if ( ! empty( $caption_settings ) ) {
+				$output .= ' class="' . implode( ', ', $caption_settings ) . '"';
+			}
+			$output .= '>' . PHP_EOL;
+
+			$output .= '<h1';
+			if ( ! empty( $caption_title_settings ) ) {
+				$output .= ' class="' . implode( ', ', $caption_title_settings ) . '"';
+			}
+			$output .= '>' . $atts['caption'] . '</h1>' . PHP_EOL;
+			$output .= '</figcaption>' . PHP_EOL;
+		}
+
+		// @todo: Check if YouTube or Vimeo.
+		$shortcode_key = mt_rand();
+
+		$_shortcode_content[ $shortcode_key ] = $output;
+
+		// Work out whether we want share buttons or not.
+		$figure = '<figure';
+
+		// These options are overrides, can't combine unfortunatly.
+		if ( ! empty( $atts['disablesharing'] ) ) {
+			if ( 'false' === $atts['disablesharing'] ) {
+				$figure .= ' data-feedback="fb:likes, fb:comments"';
+			}
+		} elseif ( ! empty( $flowplayer_options['disablesharing'] ) ) {
+			if ( 'false' === $flowplayer_options['disablesharing'] ) {
+				$figure .= ' data-feedback="fb:likes, fb:comments"';
+			}
+		}
+
+		$figure .= '>';
+
+		return $figure . $shortcode_key . '</figure>' . PHP_EOL;
+	}
+
+	/**
 	 * Wraps oembeds in <figure> elements.
 	 *
 	 * Registers a filter metod for all oembeds so they get wrapped in <figure>
@@ -301,7 +475,7 @@ class WPNA_Facebook_Content_Parser {
 		$shortcode_key = mt_rand();
 
 		// Wrap it in an iframe if it isn't already.
-		if ( '<iframe' !== substr( $cache, 0, 7 ) ) {
+		if ( strpos( $cache, '<iframe' ) === false ) {
 			$cache = '<iframe>' . $cache . '</iframe>';
 		}
 
@@ -397,6 +571,114 @@ class WPNA_Facebook_Content_Parser {
 		);
 
 		return strip_tags( $content, implode( '', $allowed_tags ) );
+	}
+
+	/**
+	 * Checks for manually added Instagram embed code.
+	 *
+	 * If the instagram embed code has been pasted in manually we need to deal
+	 * with it as a special case.
+	 *
+	 * @since 1.2.2
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return DOMDocument
+	 */
+	public function instagram_embeds( DOMDocument $dom_document ) {
+
+		global $_shortcode_content;
+
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$figure_template_base->setAttribute( 'class', 'op-interactive' );
+
+		$elements = $dom_document->getElementsByTagName( 'blockquote' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			if ( 'instagram-media' === $element->getAttribute( 'class' ) ) {
+				$shortcode_key = mt_rand();
+
+				// Add the instagram embed script inside the iFrame. The parser will remove the one in the content.
+				$embed_content = '<iframe>' . PHP_EOL;
+				$embed_content .= $dom_document->saveXML( $element ) . PHP_EOL;
+				// @codingStandardsIgnoreLine
+				$embed_content .= '<script async defer src="//platform.instagram.com/en_US/embeds.js"></script>' . PHP_EOL;
+				$embed_content .= '</iframe>' . PHP_EOL;
+
+				// Cache the embed so it doesn't go through the parser.
+				$_shortcode_content[ $shortcode_key ] = $embed_content;
+
+				$figure_template = clone $figure_template_base;
+				$figure_template->nodeValue = $shortcode_key;
+
+				$element->parentNode->replaceChild( $figure_template, $element );
+			}
+
+			$i--;
+		}
+
+		return $dom_document;
+	}
+
+	/**
+	 * Checks for manually added Instagram embed code.
+	 *
+	 * If the instagram embed code has been pasted in manually we need to deal
+	 * with it as a special case.
+	 *
+	 * @since 1.2.2
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return DOMDocument
+	 */
+	public function twitter_embeds( DOMDocument $dom_document ) {
+
+		global $_shortcode_content;
+
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$figure_template_base->setAttribute( 'class', 'op-interactive' );
+
+		$elements = $dom_document->getElementsByTagName( 'blockquote' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			if ( 'twitter-tweet' === $element->getAttribute( 'class' ) ) {
+				$shortcode_key = mt_rand();
+
+				// Add the instagram embed script inside the iFrame. The parser will remove the one in the content.
+				$embed_content = '<iframe>' . PHP_EOL;
+				$embed_content .= $dom_document->saveXML( $element ) . PHP_EOL;
+				// @codingStandardsIgnoreLine
+				$embed_content .= '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>' . PHP_EOL;
+				$embed_content .= '</iframe>' . PHP_EOL;
+
+				// Cache the embed so it doesn't go through the parser.
+				$_shortcode_content[ $shortcode_key ] = $embed_content;
+
+				$figure_template = clone $figure_template_base;
+				$figure_template->nodeValue = $shortcode_key;
+
+				$element->parentNode->replaceChild( $figure_template, $element );
+			}
+
+			$i--;
+		}
+
+		return $dom_document;
 	}
 
 	/**
@@ -528,6 +810,55 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
+	 * Carefully remove certain elements that aren't wrapped in <iframes>.
+	 *
+	 * Scripts aren't allowed outside of iFrames. Any that need inserting can
+	 * be added manually.
+	 *
+	 * @since 1.2.2
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return DOMDocument
+	 */
+	public function remove_elements( DOMDocument $dom_document ) {
+
+		// Elements to remove.
+		$elements_to_remove = array( 'script', 'style' );
+
+		/**
+		 * Elements to remove
+		 *
+		 * @since 1.2.2
+		 * @param array The elements to search for and remove.
+		 */
+		$elements_to_remove = apply_filters( 'wpna_facebook_article_setup_remove_elements', $elements_to_remove );
+
+		foreach ( $elements_to_remove as $element_to_remove ) {
+
+			$elements = $dom_document->getElementsByTagName( $element_to_remove );
+
+			$i = $elements->length - 1;
+
+			// Using a regressive loop. Removing elements with a foreach can get confused
+			// when the index changes.
+			while ( $i > -1 ) {
+
+				$element = $elements->item( $i );
+
+				if ( 'figure' !== $element->parentNode->tagName && 'iframe' !== $element->parentNode->tagName ) {
+					// Remove the element.
+					$element->parentNode->removeChild( $element );
+				}
+
+				$i--;
+			}
+		}
+
+		return $dom_document;
+	}
+
+	/**
 	 * Ensures all images are wrapped in figure tags.
 	 *
 	 * Wraps all images in <figure> elements as specified by the Facebook spec.
@@ -549,14 +880,14 @@ class WPNA_Facebook_Content_Parser {
 		$figure_attr = array();
 
 		// Image likes. Check for post override then use global.
-		$image_likes = wpna_get_post_option( get_the_ID(), 'fbna_image_likes' );
+		$image_likes = wpna_get_post_option( get_the_ID(), 'fbia_image_likes' );
 
 		if ( wpna_switch_to_boolean( $image_likes ) ) {
 			$figure_attr[] = 'fb:likes';
 		}
 
 		// Image comments. Check for post override then use global.
-		$image_comments = wpna_get_post_option( get_the_ID(), 'fbna_image_comments' );
+		$image_comments = wpna_get_post_option( get_the_ID(), 'fbia_image_comments' );
 
 		if ( wpna_switch_to_boolean( $image_comments ) ) {
 			$figure_attr[] = 'fb:comments';
@@ -733,7 +1064,7 @@ class WPNA_Facebook_Content_Parser {
 		 * @since 1.0.0
 		 * @param array The elements to search for and wrap.
 		 */
-		$elements_to_wrap = apply_filters( 'wpna_facebook_article_setup_move_elements', $elements_to_move );
+		$elements_to_move = apply_filters( 'wpna_facebook_article_setup_move_elements', $elements_to_move );
 
 		foreach ( $elements_to_move as $element_to_move ) {
 
@@ -782,6 +1113,9 @@ class WPNA_Facebook_Content_Parser {
 				if ( function_exists( 'mb_convert_encoding' ) ) {
 					$parent_node_html = mb_convert_encoding( $parent_node_html, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
 				}
+
+				// Remove cdata added by saveXML().
+				$parent_node_html = str_replace( array( '<![CDATA[', ']]>' ), '', $parent_node_html );
 
 				$dom_document_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
 				libxml_clear_errors();

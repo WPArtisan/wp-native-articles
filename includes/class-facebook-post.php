@@ -501,7 +501,11 @@ class WPNA_Facebook_Post {
 			// Get just the body content.
 			$body = $dom_document->getElementsByTagName( 'body' )->item( 0 );
 
+			// Save the content.
 			$content = $dom_document->saveXML( $body );
+
+			// Strip out the cdata added by saveXML().
+			$content = str_replace( array( '<![CDATA[', ']]>' ), '', $content );
 		}
 
 		/**

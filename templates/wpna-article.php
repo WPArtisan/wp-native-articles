@@ -16,11 +16,26 @@
 	<head>
 		<meta charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>">
 		<link rel="canonical" href="<?php echo esc_url( $post->get_permalink() ); ?>">
-		<meta property="op:markup_version" content="v1.0">
+		<meta property="op:generator" content="wp-native-articles" />
+		<meta property="op:generator:version" content="<?php echo esc_attr( WPNA_VERSION ); ?>" />
+		<meta property="op:markup_version" content="v1.0"/>
 		<meta property="fb:article_style" content="<?php echo esc_attr( $post->get_style() ); ?>">
-		<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) && wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_auto_ad_placement' ) ) ) : ?>
-			<meta property="fb:use_automatic_ad_placement" content="true">
+		<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>
+
+			<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_auto_ad_placement' ) ) ) : ?>
+				<?php
+				// Get the ad density.
+				$density = wpna_get_post_option( $post->get_the_ID(), 'fbia_ad_density', 'default' ); ?>
+
+			<meta property="fb:use_automatic_ad_placement" content="enable=true ad_density=<?php echo esc_attr( $density ); ?>">
+			<?php endif; ?>
+
+			<?php if ( $recirculation_ad = wpna_get_option( 'fbia_recirculation_ad' ) ) : ?>
+			<meta property="fb:op-recirculation-ads" content="placement_id=<?php echo esc_attr( $recirculation_ad ); ?>">
+			<?php endif; ?>
+
 		<?php endif; ?>
+
 	</head>
 
 	<body>
@@ -31,11 +46,16 @@
 				/**
 				 * The main cover for the article.
 				 * Can be an image or video and can have a caption.
+				 * Optional.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
 				?>
-				<?php if ( $image = $post->get_the_featured_image() ) : ?>
+				<?php
+				// Check if it should be shown for this article or not.
+				$show_media = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_media', 'on' ) );
+				?>
+				<?php if ( $show_media && $image = $post->get_the_featured_image() ) : ?>
 					<figure>
 						<img src="<?php echo esc_url( $image['url'] ); ?>" />
 						<?php if ( ! empty( $image['caption'] ) ) : ?>
@@ -47,6 +67,7 @@
 				<?php
 				/**
 				 * The main title for the article. Has to be in <h1> tags.
+				 * Required.
 				 *
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
@@ -61,7 +82,11 @@
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
 				?>
-				<?php if ( $post->get_the_excerpt() ) : ?>
+				<?php
+				// Check if it should be shown for this article or not.
+				$show_subtitle = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_subtitle', 'on' ) );
+				?>
+				<?php if ( $show_subtitle && $post->get_the_excerpt() ) : ?>
 					<h2><?php echo esc_html( $post->get_the_excerpt() ); ?></h2>
 				<?php endif; ?>
 
@@ -73,7 +98,11 @@
 				 * @link https://developers.facebook.com/docs/instant-articles/reference/cover
 				 */
 				?>
-				<?php if ( $post->get_the_kicker() ) : ?>
+				<?php
+				// Check if it should be shown for this article or not.
+				$show_kicker = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_kicker', 'on' ) );
+				?>
+				<?php if ( $show_kicker && $post->get_the_kicker() ) : ?>
 					<h3 class="op-kicker"><?php echo esc_html( $post->get_the_kicker() ); ?></h3>
 				<?php endif; ?>
 
@@ -84,15 +113,22 @@
 				<time class="op-modified" datetime="<?php echo esc_attr( $post->get_modified_date_iso() ); ?>"><?php echo esc_html( $post->get_modified_date() ); ?></time>
 
 				<?php
-				// The authors of your article.
-				$authors = $post->get_authors();
-				if ( ! empty( $authors ) ) : ?>
-					<?php foreach ( (array) $authors as $author ) : ?>
-						<address>
-							<a><?php echo esc_html( $author->display_name ); ?></a>
-							<?php echo esc_html( get_the_author_meta( 'description', $author->ID ) ); ?>
-						</address>
-					<?php endforeach; ?>
+				// Check if it should be shown for this article or not.
+				$show_authors = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_authors', 'on' ) );
+				?>
+				<?php if ( $show_authors ) : ?>
+
+					<?php
+					// The authors of your article.
+					$authors = $post->get_authors();
+					if ( ! empty( $authors ) ) : ?>
+						<?php foreach ( (array) $authors as $author ) : ?>
+							<address>
+								<a><?php echo esc_html( $author->display_name ); ?></a>
+								<?php echo esc_html( get_the_author_meta( 'description', $author->ID ) ); ?>
+							</address>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				<?php endif; ?>
 
 				<?php

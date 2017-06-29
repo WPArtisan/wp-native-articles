@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.2.1
+ * Version: 1.2.2
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.2.1' );
+	define( 'WPNA_VERSION', '1.2.2' );
 }
 
 // Define the plugin base path.
@@ -152,6 +152,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/yoast-seo.php';
 		include WPNA_BASE_PATH . '/includes/compat/co-authors-plus.php';
 		include WPNA_BASE_PATH . '/includes/compat/infogram.php';
+		include WPNA_BASE_PATH . '/includes/compat/visual-bakery.php';
 
 		// Load the plugin text domain. For i18n.
 		add_action( 'init', 'wpna_load_textdomain', 10, 0 );

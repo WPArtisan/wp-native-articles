@@ -77,8 +77,10 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_filter( 'wpna_sanitize_option_fbia_copyright',         'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_enable_ads',        'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_ad_density',        'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_ad_code',           'wpna_sanitize_unsafe_html', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_analytics',         'wpna_sanitize_unsafe_html', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_recirculation_ad',  'sanitize_text_field', 10, 1 );
 
 		// Post meta sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
@@ -90,6 +92,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_filter( 'wpna_sanitize_post_meta_fbia_copyright',         'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_enable_ads',        'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_ad_density',        'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_ad_code',           'wpna_sanitize_unsafe_html', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_analytics',         'wpna_sanitize_unsafe_html', 10, 1 );
 	}
@@ -345,9 +348,25 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		);
 
 		add_settings_field(
+			'fbia_ad_density',
+			'<label for="fbia_ad_density">' . esc_html__( 'Ad Density', 'wp-native-articles' ) . '</label>',
+			array( $this, 'ad_density_callback' ),
+			$this->page_slug,
+			$option_group
+		);
+
+		add_settings_field(
 			'fbia_ad_code',
 			'<label for="fbia_ad_code">' . esc_html__( 'Ad Code', 'wp-native-articles' ) . '</label>',
 			array( $this, 'ad_code_callback' ),
+			$this->page_slug,
+			$option_group
+		);
+
+		add_settings_field(
+			'fbia_recirculation_ad',
+			'<label for="fbia_recirculation_ad">' . esc_html__( 'Recirculation Ad (beta)', 'wp-native-articles' ) . '</label>',
+			array( $this, 'recirculation_ad_callback' ),
 			$this->page_slug,
 			$option_group
 		);
@@ -754,6 +773,39 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	}
 
 	/**
+	 * Outputs the HTML for the 'fbia_ad_density' settings field.
+	 *
+	 * Faceook now allows you to specify ad density.
+	 * Options:
+	 * - default (250 word gap which offers high ad density)
+	 * - medium (350 word gap which offers medium ad density)
+	 * - low (500 word gap which offers low ad density)
+	 *
+	 * @since 1.2.2
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function ad_density_callback() {
+		?>
+		<label for="fbia_ad_density">
+			<select name="wpna_options[fbia_ad_density]" id="fbia_ad_density">
+				<option value="default"<?php selected( wpna_get_option( 'fbia_ad_density' ), 'default' ); ?>><?php esc_html_e( 'Default (250 word gap)', 'wp-native-articles' ); ?></option>
+				<option value="medium"<?php selected( wpna_get_option( 'fbia_ad_density' ), 'medium' ); ?>><?php esc_html_e( 'Medium (350 word gap)', 'wp-native-articles' ); ?></option>
+				<option value="low"<?php selected( wpna_get_option( 'fbia_ad_density' ), 'low' ); ?>><?php esc_html_e( 'Low (500 word gap)', 'wp-native-articles' ); ?></option>
+			</select>
+			<?php esc_html_e( 'How frequently you would like ads to appear within your article.', 'wp-native-articles' ); ?>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_ad_density' );
+		?>
+
+		<?php
+	}
+
+	/**
 	 * Outputs the HTML for the 'fbia_auto_ad_placement' settings field.
 	 *
 	 * Sets the default ad code to use for each article. Can be overridden on a
@@ -772,6 +824,39 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<?php
 		// Show a notice if the option has been overridden.
 		wpna_option_overridden_notice( 'fbia_ad_code' );
+		?>
+
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'fbia_recirculation_ad_callback' settings field.
+	 *
+	 * Facebook is experimenting with ads in Recirculation units.
+	 *
+	 * @since 1.2.2
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function recirculation_ad_callback() {
+		?>
+		<input type="text" name="wpna_options[fbia_recirculation_ad]" id="fbia_recirculation_ad" class="regular-text" value="<?php echo esc_attr( wpna_get_option( 'fbia_recirculation_ad' ) ); ?>">
+		<p class="description"><?php esc_html_e( 'The ad placement ID (different to your standard Audience Network Placement ID)', 'wp-native-articles' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Facebook is experimenting with placing native ads within the recirculation unit at the bottom of articles. Adding a placement ID in here will enable it.', 'wp-native-articles' ); ?></p>
+		<p class="description">
+			<?php echo sprintf(
+				wp_kses(
+					__( 'See the <a target="_blank" href="%s">Placing Ads in Recirculation Units Documentation</a> for more information and setup.', 'wp-native-articles' ),
+					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+				),
+				esc_url( 'https://developers.facebook.com/docs/instant-articles/monetization/ad-placement#recirculation-units' )
+			);?>
+		</p>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_recirculation_ad' );
 		?>
 
 		<?php
@@ -946,6 +1031,23 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 			<fieldset>
 				<div class="pure-control-group">
+					<label for="fbia-ad-density"><?php esc_html_e( 'Ad Density', 'wp-native-articles' ); ?></label>
+					<select name="_wpna_fbia_ad_density" id="fbia-ad-density">
+						<option></option>
+						<option value="default"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_density', true ), 'default' ); ?>><?php esc_html_e( 'Default (250 word gap)', 'wp-native-articles' ); ?></option>
+						<option value="medium"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_density', true ), 'medium' ); ?>><?php esc_html_e( 'Medium (350 word gap)', 'wp-native-articles' ); ?></option>
+						<option value="low"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_density', true ), 'low' ); ?>><?php esc_html_e( 'Low (500 word gap)', 'wp-native-articles' ); ?></option>
+					</select>
+
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_ad_density' );
+					?>
+				</div>
+			</fieldset>
+
+			<fieldset>
+				<div class="pure-control-group">
 					<label for="fbia-ad-code"><?php esc_html_e( 'Ad Code', 'wp-native-articles' ); ?></label>
 					<textarea name="_wpna_fbia_ad_code" rows="10" cols="50" class="code" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_ad_code' ) ); ?>"><?php echo esc_textarea( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code', true ) ); ?></textarea>
 					<?php
@@ -1026,6 +1128,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			'_wpna_fbia_analytics',
 			'_wpna_fbia_enable_ads',
 			'_wpna_fbia_auto_ad_placement',
+			'_wpna_fbia_ad_density',
 			'_wpna_fbia_ad_code',
 		);
 
