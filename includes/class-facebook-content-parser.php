@@ -70,11 +70,17 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'remove_more_link' ), 10, 1 );
 
 		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'convert_headings' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_after_the_content_filter', array( $this, 'remove_local_hyperlinks' ), 10, 1 );
 
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'instagram_embeds' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'twitter_embeds' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'gist_embeds' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'pre_tags' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'code_tags' ), 10, 1 );
+
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'unique_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'featured_images' ), 10, 1 );
+		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'unlink_images' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'images_exist' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'remove_elements' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_transform', array( $this, 'move_elements' ), 10, 1 );
@@ -301,124 +307,188 @@ class WPNA_Facebook_Content_Parser {
 
 		$output = '';
 
-		$splash = false;
+		// Workout autoplay value.
+		$autoplay = true;
 
-		// First check if a splash was set for this video.
-		if ( ! empty( $atts['splash'] ) ) {
-			// Get the img url.
-			$ig_src = flowplayer::get_encoded_url( $splash );
-
-			// This is obviously less than ideal as it can be slow.
-			$response = wp_remote_head( $ig_src );
-			$response_code = wp_remote_retrieve_response_code( $response );
-
-			// The image exists.
-			if ( 200 === $response_code ) {
-				$splash = $ig_src;
-			}
-		}
-
-		// If no splash was set for this video or it can't be found try the global.
-		if ( ! $splash && ! empty( $flowplayer_options['splash'] ) ) {
-			// Get the img url.
-			$ig_src = flowplayer::get_encoded_url( $flowplayer_options['splash'] );
-
-			// This is obviously less than ideal as it can be slow.
-			$response = wp_remote_head( $ig_src );
-			$response_code = wp_remote_retrieve_response_code( $response );
-
-			// The image exists.
-			if ( 200 === $response_code ) {
-				$splash = $ig_src;
-			}
-		}
-
-		// If all the splash checks pass.
-		if ( $splash ) {
-			$output .= '<img src="' . $splash . '" />' . PHP_EOL;
-		}
-
-		// Start the video element.
-		$output .= '<video';
-
-		// Check for Autoplay.
-		// These options are overrides, can't combine unfortunatly.
 		if ( ! empty( $atts['autoplay'] ) ) {
-			if ( 'false' === $atts['autoplay'] ) {
-				$output .= ' data-fb-disable-autoplay';
-			}
+			$autoplay = 'false' !== $atts['autoplay'];
 		} elseif ( ! empty( $flowplayer_options['autoplay'] ) ) {
-			if ( 'false' === $flowplayer_options['autoplay'] ) {
+			$autoplay = 'false' !== $flowplayer_options['autoplay'];
+		}
+
+		// Parse the URL.
+		$parsed_url = wp_parse_url( $atts['src'] );
+
+		$video_id = null;
+
+		// First check if it's a YouTube video.
+		if ( isset( $parsed_url['host'] ) && in_array( $parsed_url['host'], array( 'www.youtube.com', 'youtube.com', 'youtu.be' ), true ) ) {
+
+			if ( isset( $parsed_url['path'] ) ) {
+
+				// Format: https://www.youtube.com/watch?v=-PVNKvIDRwI.
+				if ( false !== strripos( $parsed_url['path'], 'watch' ) ) {
+					parse_str( $parsed_url['query'], $parsed_query );
+					$video_id = ! empty( $parsed_query['v'] ) ? $parsed_query['v'] : null ;
+				} elseif ( false !== strripos( $parsed_url['path'], 'embed' ) ) {
+					// Format: https://www.youtube.com/embed/-PVNKvIDRwI.
+					$video_id = str_ireplace( 'embed' , '', $parsed_url['path'] );
+				} else {
+					// Format: https://youtu.be/-PVNKvIDRwI.
+					$video_id = $parsed_url['path'];
+				}
+			}
+
+			$video_id = trim( $video_id, '/' );
+
+			// Construct the correct embed URL.
+			$url = sprintf( 'https://www.youtube.com/embed/%s', $video_id );
+
+			// Output the valid iFrame.
+			$output = PHP_EOL . sprintf( '<iframe width="560" height="315" src="%s"></iframe>', esc_url( $url ) ) . PHP_EOL;
+
+			// Check if it's a Vimeo video.
+			// Possible formats:
+			// https://vimeo.com/225479756.
+			// https://player.vimeo.com/video/225479756.
+			// https://vimeo.com/groups/timelapsevideos/videos/201545098.
+			// https://vimeo.com/channels/musicvideoland/225008552/.
+		} elseif ( isset( $parsed_url['host'] ) && in_array( $parsed_url['host'], array( 'www.vimeo.com', 'vimeo.com', 'player.vimeo.com' ), true ) ) {
+
+			// Vimeo videos are easy. The last part of the path is always the video ID.
+			$path_parts = explode( '/', $parsed_url['path'] );
+
+			// Remove empty elements incase the URL ends with a slash.
+			$path_parts = array_filter( $path_parts );
+
+			// Video ID is the last part of the path.
+			$video_id = array_pop( $path_parts );
+
+			// Construct the correct embed URL.
+			$url = sprintf( 'https://player.vimeo.com/video/%s', $video_id );
+
+			// Output the valid iFrame.
+			$output = PHP_EOL . sprintf( '<iframe width="560" height="315" src="%s"></iframe>', esc_url( $url ) ) . PHP_EOL;
+
+			// It's a regular video. Embed as normal.
+		} else {
+
+			$splash = false;
+
+			// First check if a splash was set for this video.
+			if ( ! empty( $atts['splash'] ) ) {
+				// Get the img url.
+				$ig_src = flowplayer::get_encoded_url( $splash );
+
+				// This is obviously less than ideal as it can be slow.
+				$response = wp_remote_head( $ig_src );
+				$response_code = wp_remote_retrieve_response_code( $response );
+
+				// The image exists.
+				if ( 200 === $response_code ) {
+					$splash = $ig_src;
+				}
+			}
+
+			// If no splash was set for this video or it can't be found try the global.
+			if ( ! $splash && ! empty( $flowplayer_options['splash'] ) ) {
+				// Get the img url.
+				$ig_src = flowplayer::get_encoded_url( $flowplayer_options['splash'] );
+
+				// This is obviously less than ideal as it can be slow.
+				$response = wp_remote_head( $ig_src );
+				$response_code = wp_remote_retrieve_response_code( $response );
+
+				// The image exists.
+				if ( 200 === $response_code ) {
+					$splash = $ig_src;
+				}
+			}
+
+			// If all the splash checks pass.
+			if ( $splash ) {
+				$output .= '<img src="' . $splash . '" />' . PHP_EOL;
+			}
+
+			// Start the video element.
+			$output .= '<video';
+
+			// Check for Autoplay.
+			if ( ! $autoplay ) {
 				$output .= ' data-fb-disable-autoplay';
 			}
-		}
 
-		// Check for loop.
-		// These options are overrides, can't combine unfortunatly.
-		if ( ! empty( $atts['loop'] ) ) {
-			if ( 'true' === $atts['loop'] ) {
-				$output .= ' loop';
+			// Check for loop.
+			// These options are overrides, can't combine unfortunatly.
+			if ( ! empty( $atts['loop'] ) ) {
+				if ( 'true' === $atts['loop'] ) {
+					$output .= ' loop';
+				}
+			} elseif ( ! empty( $flowplayer_options['loop'] ) ) {
+				if ( 'true' === $flowplayer_options['loop'] ) {
+					$output .= ' loop';
+				}
 			}
-		} elseif ( ! empty( $flowplayer_options['loop'] ) ) {
-			if ( 'true' === $flowplayer_options['loop'] ) {
-				$output .= ' loop';
-			}
-		}
 
-		// Close the video element.
-		$output .= '>' . PHP_EOL;
-
-		// If a mobile source has been set then use that.
-		if ( ! empty( $atts['mobile'] ) ) {
-			$output .= $fv_fp->get_video_src( $atts['mobile'], array( 'mobileUserAgent' => true ) );
-		} else {
-			// Get the src elements for each file.
-			foreach ( apply_filters( 'fv_player_media', array( $atts['src'], $atts['src1'], $atts['src2'] ), $fv_fp ) as $media_item ) {
-				$output .= $fv_fp->get_video_src( $media_item, array( 'mobileUserAgent' => true ) );
-			}
-		}
-
-		// Close the video tag.
-		$output .= '</video>' . PHP_EOL;
-
-		// Check for caption.
-		if ( ! empty( $atts['caption'] ) ) {
-
-			// Get the caption options.
-			$caption_settings = array_filter( array(
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_font_size', null ),
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_vertical_position', null ),
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_horizontal_position', null ),
-			) );
-
-			// Get the caption title options.
-			$caption_title_settings = array_filter( array(
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_font_size', null ),
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_vertical_position', null ),
-				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_horizontal_position', null ),
-			) );
-
-			$output .= '<figcaption';
-			if ( ! empty( $caption_settings ) ) {
-				$output .= ' class="' . implode( ', ', $caption_settings ) . '"';
-			}
+			// Close the video element.
 			$output .= '>' . PHP_EOL;
 
-			$output .= '<h1';
-			if ( ! empty( $caption_title_settings ) ) {
-				$output .= ' class="' . implode( ', ', $caption_title_settings ) . '"';
+			// If a mobile source has been set then use that.
+			if ( ! empty( $atts['mobile'] ) ) {
+				$output .= $fv_fp->get_video_src( $atts['mobile'], array( 'mobileUserAgent' => true ) );
+			} else {
+				// Get the src elements for each file.
+				foreach ( apply_filters( 'fv_player_media', array( $atts['src'], $atts['src1'], $atts['src2'] ), $fv_fp ) as $media_item ) {
+					$output .= $fv_fp->get_video_src( $media_item, array( 'mobileUserAgent' => true ) );
+				}
 			}
-			$output .= '>' . $atts['caption'] . '</h1>' . PHP_EOL;
-			$output .= '</figcaption>' . PHP_EOL;
+
+			// Close the video tag.
+			$output .= '</video>' . PHP_EOL;
+
+			// Check for caption.
+			if ( ! empty( $atts['caption'] ) ) {
+
+				// Get the caption options.
+				$caption_settings = array_filter( array(
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_font_size', null ),
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_vertical_position', null ),
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_horizontal_position', null ),
+				) );
+
+				// Get the caption title options.
+				$caption_title_settings = array_filter( array(
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_title_font_size', null ),
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_title_vertical_position', null ),
+					wpna_get_post_option( get_the_ID(), 'fbia_caption_title_horizontal_position', null ),
+				) );
+
+				$output .= '<figcaption';
+				if ( ! empty( $caption_settings ) ) {
+					$output .= ' class="' . implode( ', ', $caption_settings ) . '"';
+				}
+				$output .= '>' . PHP_EOL;
+
+				$output .= '<h1';
+				if ( ! empty( $caption_title_settings ) ) {
+					$output .= ' class="' . implode( ', ', $caption_title_settings ) . '"';
+				}
+				$output .= '>' . $atts['caption'] . '</h1>' . PHP_EOL;
+				$output .= '</figcaption>' . PHP_EOL;
+			}
 		}
 
-		// @todo: Check if YouTube or Vimeo.
 		$shortcode_key = mt_rand();
 
 		$_shortcode_content[ $shortcode_key ] = $output;
 
 		// Work out whether we want share buttons or not.
 		$figure = '<figure';
+
+		// If it's a YouTube or Vimeo video then we want it interactive.
+		if ( $video_id ) {
+			$figure .= ' class="op-interactive"';
+		}
 
 		// These options are overrides, can't combine unfortunatly.
 		if ( ! empty( $atts['disablesharing'] ) ) {
@@ -515,6 +585,29 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
+	 * Remove in page hyperlinks.
+	 *
+	 * FB IA doesn't like hyperlinks that start with #.
+	 * (from http://wordpress.stackexchange.com/a/227332/19528)
+	 *
+	 * @since 1.2.4
+	 *
+	 * @access public
+	 * @param  string $content The content of the post.
+	 * @return string
+	 */
+	public function remove_local_hyperlinks( $content ) {
+		// Match all hyperlinks starting with a #.
+		preg_match_all( '!<a[^>]*? href=[\'"]#[^<]+</a>!i', $content, $matches );
+
+		foreach ( $matches[0] as $link ) {
+			$content = str_replace( $link, strip_tags( $link ), $content );
+		}
+
+		return $content;
+	}
+
+	/**
 	 * Remove all invalid tags.
 	 *
 	 * Only allow specified elements. Facebook is very fussy.
@@ -566,7 +659,6 @@ class WPNA_Facebook_Content_Parser {
 			'<acronym>',
 			'<b>',
 			'<br>',
-			'<hr>',
 			'<i>',
 		);
 
@@ -682,6 +774,176 @@ class WPNA_Facebook_Content_Parser {
 	}
 
 	/**
+	 * Ensures gists are properly embedded.
+	 *
+	 * @since 1.2.3
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return object
+	 */
+	public function gist_embeds( DOMDocument $dom_document  ) {
+
+		global $_shortcode_content;
+
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$figure_template_base->setAttribute( 'class', 'op-interactive' );
+
+		$elements = $dom_document->getElementsByTagName( 'script' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			if ( false !== stripos( $element->getAttribute( 'src' ), 'gist.github.com' ) ) {
+				$shortcode_key = mt_rand();
+
+				// Add the gist embed script inside an iFrame.
+				$embed_content = '<iframe width="560" class="no-margin">' . PHP_EOL;
+				// Add some CSS in to match the size correctly.
+				$embed_content .= '
+				<style type="text/css">
+					.gist {width:560px !important;}
+					.gist-file,
+					.gist-data {max-width: 560px;}
+				</style>
+				' . PHP_EOL;
+				// @codingStandardsIgnoreLine
+				$embed_content .= sprintf( '<script src="%s"></script>', esc_url( $element->getAttribute( 'src' ) ) ) . PHP_EOL;
+				$embed_content .= '</iframe>' . PHP_EOL;
+
+				// Cache the embed so it doesn't go through the parser.
+				$_shortcode_content[ $shortcode_key ] = $embed_content;
+
+				$figure_template = clone $figure_template_base;
+				$figure_template->nodeValue = $shortcode_key;
+
+				$element->parentNode->replaceChild( $figure_template, $element );
+			}
+
+			$i--;
+		}
+
+		return $dom_document;
+	}
+
+	/**
+	 * Ensures <pre> tags are properly formatted.
+	 *
+	 * @since 1.2.3
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return object
+	 */
+	public function pre_tags( DOMDocument $dom_document  ) {
+
+		global $_shortcode_content;
+
+		$figure_template_base = $dom_document->createElement( 'figure' );
+		$figure_template_base->setAttribute( 'class', 'op-interactive' );
+
+		$elements = $dom_document->getElementsByTagName( 'pre' );
+
+		$i = $elements->length - 1;
+
+		// Basic styling for the <pre> elements.
+		$pre_tag_styling = 'pre { padding: 1rem; font-size: 12px; line-height: 20px; background: #f7f7f7; color: #333; }';
+
+		/**
+		 * Allow filtering of the <pre> element styling.
+		 *
+		 * @since 1.2.3
+		 * @param string The default <pre> element styles.
+		 */
+		$pre_tag_styling = apply_filters( 'wpna_facebook_article_pre_block_styling', $pre_tag_styling );
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			// Make sure it's not part of an embed.
+			if ( ! in_array( $element->parentNode->nodeName, array( 'script', 'iframe', 'figure' ), true ) ) {
+				$shortcode_key = mt_rand();
+
+				// Add the pre block inside an iFrame.
+				$embed_content = '<iframe width="560" class="no-margin">' . PHP_EOL;
+				// Add some CSS in to match the size correctly.
+				$embed_content .= '<style type="text/css">' . PHP_EOL;
+				$embed_content .= $pre_tag_styling . PHP_EOL;
+				$embed_content .= '</style>' . PHP_EOL;
+				$embed_content .= $dom_document->saveXML( $element ) . PHP_EOL;
+				$embed_content .= '</iframe>' . PHP_EOL;
+
+				// Cache the embed so it doesn't go through the parser.
+				$_shortcode_content[ $shortcode_key ] = $embed_content;
+
+				$figure_template = clone $figure_template_base;
+				$figure_template->nodeValue = $shortcode_key;
+
+				$element->parentNode->replaceChild( $figure_template, $element );
+			}
+
+			$i--;
+		}
+
+		return $dom_document;
+	}
+
+	/**
+	 * Replace <code> (that aren't allowed) tags with <i> tags.
+	 *
+	 * @since 1.2.3
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return object
+	 */
+	public function code_tags( DOMDocument $dom_document  ) {
+
+		global $_shortcode_content;
+
+		$figure_template_base = $dom_document->createElement( 'i' );
+
+		$elements = $dom_document->getElementsByTagName( 'code' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			// Make sure it's not part of an embed.
+			if ( ! in_array( $element->parentNode->nodeName, array( 'script', 'iframe', 'figure' ), true ) ) {
+				$shortcode_key = mt_rand();
+
+				// Add the pre block inside an iFrame.
+				$embed_content = $element->nodeValue;
+
+				// Cache the embed so it doesn't go through the parser.
+				$_shortcode_content[ $shortcode_key ] = $embed_content;
+
+				$figure_template = clone $figure_template_base;
+				$figure_template->nodeValue = $shortcode_key;
+
+				$element->parentNode->replaceChild( $figure_template, $element );
+			}
+
+			$i--;
+		}
+
+		return $dom_document;
+	}
+
+	/**
 	 * Ensures article images are unique.
 	 *
 	 * We can only use each image once per article. This will remove any duplicates.
@@ -695,16 +957,24 @@ class WPNA_Facebook_Content_Parser {
 	public function unique_images( DOMDocument $dom_document ) {
 		$found_images = array();
 
-		foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $image ) {
+		$elements = $dom_document->getElementsByTagName( 'img' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+			// Setup the current element.
+			$element = $elements->item( $i );
 
 			// If the image has been used before remove it.
-			if ( in_array( $image->getAttribute( 'src' ), $found_images, true ) ) {
+			if ( in_array( $element->getAttribute( 'src' ), $found_images, true ) ) {
 
-				$element_to_remove = $image;
+				$element_to_remove = $element;
 
 				// If the image has a caption we also wish to remove that.
-				if ( 'div' === $image->parentNode->nodeName && false !== strpos( $image->parentNode->getAttribute( 'class' ), 'wp-caption' ) ) {
-					$element_to_remove = $image->parentNode;
+				if ( 'div' === $element->parentNode->nodeName && false !== strpos( $element->parentNode->getAttribute( 'class' ), 'wp-caption' ) ) {
+					$element_to_remove = $element->parentNode;
 				}
 
 				// Remove the element.
@@ -713,9 +983,11 @@ class WPNA_Facebook_Content_Parser {
 			} else {
 
 				// Add it to the found images array.
-				$found_images[] = $image->getAttribute( 'src' );
+				$found_images[] = $element->getAttribute( 'src' );
 
 			}
+
+			$i--;
 		}
 
 		return $dom_document;
@@ -744,8 +1016,16 @@ class WPNA_Facebook_Content_Parser {
 			$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
 			$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-			// Get all images.
-			foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $element ) {
+			$elements = $dom_document->getElementsByTagName( 'img' );
+
+			$i = $elements->length - 1;
+
+			// Using a regressive loop. Removing elements with a foreach can get confused
+			// when the index changes.
+			while ( $i > -1 ) {
+				// Setup the current element.
+				$element = $elements->item( $i );
+
 				// Check if the src is the same as the featured image.
 				if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
 
@@ -761,6 +1041,8 @@ class WPNA_Facebook_Content_Parser {
 					// Remove the element.
 					$parent_node->removeChild( $element );
 				}
+
+				$i--;
 			}
 		}
 
@@ -781,15 +1063,33 @@ class WPNA_Facebook_Content_Parser {
 	 * @return DOMDocument
 	 */
 	public function images_exist( DOMDocument $dom_document ) {
+
 		// Find all images and loop through them.
-		foreach ( $images = $dom_document->getElementsByTagName( 'img' ) as $element ) {
+		$elements = $dom_document->getElementsByTagName( 'img' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+			// Setup the current element.
+			$element = $elements->item( $i );
 
 			// This is obviously less than ideal as it can be slow.
-			$response = wp_remote_head( $element->getAttribute( 'src' ) );
+			// Can't use HEAD as some sites block it / doesn't follow redirects.
+			if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
+				$response = vip_safe_wp_remote_get( $element->getAttribute( 'src' ) );
+			} else {
+				// @codingStandardsIgnoreLine
+				$response = wp_remote_get( $element->getAttribute( 'src' ) );
+			}
+
 			$response_code = wp_remote_retrieve_response_code( $response );
+			$headers = wp_remote_retrieve_headers( $response );
 
 			// The image doesn't exist, remove it.
-			if ( 200 !== $response_code ) {
+			// If the image is smaller than 1024 bytes, remove it.
+			if ( $response_code >= 400 || ! isset( $headers['content-length'] ) || absint( $headers['content-length'] ) < 1028 ) {
 
 				// Get the parent node.
 				$parent_node = $element->parentNode;
@@ -804,6 +1104,46 @@ class WPNA_Facebook_Content_Parser {
 				$parent_node->removeChild( $element );
 
 			}
+
+			$i--;
+		}
+
+		return $dom_document;
+	}
+
+	/**
+	 * Carefully remove links from around images.
+	 *
+	 * Images can't be wrapped in links and they really mess up the rest of the
+	 * parser.
+	 *
+	 * @since 1.2.3
+	 *
+	 * @access public
+	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
+	 * @return DOMDocument
+	 */
+	public function unlink_images( DOMDocument $dom_document ) {
+
+		$elements = $dom_document->getElementsByTagName( 'img' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
+
+			if ( 'a' === $element->parentNode->tagName ) {
+
+				// Move the image outside the link and remove it.
+				$new_image = clone $element;
+				$element->parentNode->parentNode->replaceChild( $new_image, $element->parentNode );
+
+			}
+
+			$i--;
 		}
 
 		return $dom_document;
@@ -827,7 +1167,7 @@ class WPNA_Facebook_Content_Parser {
 		$elements_to_remove = array( 'script', 'style' );
 
 		/**
-		 * Elements to remove
+		 * Elements to remove.
 		 *
 		 * @since 1.2.2
 		 * @param array The elements to search for and remove.
@@ -912,7 +1252,15 @@ class WPNA_Facebook_Content_Parser {
 			) );
 		}
 
-		foreach ( $dom_document->getElementsByTagName( 'img' ) as $image ) {
+		$elements = $dom_document->getElementsByTagName( 'img' );
+
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$image = $elements->item( $i );
 
 			// Marginally faster than creating everytime.
 			$fragment_template = clone $fragment_template_base;
@@ -1035,6 +1383,8 @@ class WPNA_Facebook_Content_Parser {
 
 			// Replace the element we found with the new one.
 			$image->parentNode->replaceChild( $fragment_template, $image );
+
+			$i--;
 		}
 
 		return $dom_document;
@@ -1068,7 +1418,15 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $elements_to_move as $element_to_move ) {
 
-			foreach ( $elements = $dom_document->getElementsByTagName( $element_to_move ) as $element ) {
+			$elements = $dom_document->getElementsByTagName( $element_to_move );
+
+			$i = $elements->length - 1;
+
+			// Using a regressive loop. Removing elements with a foreach can get confused
+			// when the index changes.
+			while ( $i > -1 ) {
+
+				$element = $elements->item( $i );
 
 				$parent_node = $element->parentNode;
 
@@ -1083,6 +1441,7 @@ class WPNA_Facebook_Content_Parser {
 
 				// If it's already top level then let's not worry.
 				if ( 'body' === $parent_node->nodeName ) {
+					$i--;
 					continue;
 				}
 
@@ -1125,6 +1484,8 @@ class WPNA_Facebook_Content_Parser {
 
 				// Now replace the existing element with the new element in the real DOMDocument.
 				$parent_node->parentNode->replaceChild( $imported_node, $parent_node );
+
+				$i--;
 			}
 		}
 
@@ -1160,7 +1521,16 @@ class WPNA_Facebook_Content_Parser {
 
 		foreach ( $elements_to_wrap as $element_to_wrap ) {
 
-			foreach ( $elements = $dom_document->getElementsByTagName( $element_to_wrap ) as $element ) {
+			$elements = $dom_document->getElementsByTagName( $element_to_wrap );
+
+			$i = $elements->length - 1;
+
+			// Using a regressive loop. Removing elements with a foreach can get confused
+			// when the index changes.
+			while ( $i > -1 ) {
+
+				$element = $elements->item( $i );
+
 				if ( 'figure' !== $element->parentNode->tagName ) {
 
 					$figure_template = clone $figure_template_base;
@@ -1168,6 +1538,8 @@ class WPNA_Facebook_Content_Parser {
 					$figure_template->appendChild( $element );
 
 				}
+
+				$i--;
 			}
 		}
 
@@ -1236,28 +1608,25 @@ class WPNA_Facebook_Content_Parser {
 	 */
 	public function remove_empty_elements( DOMDocument $dom_document ) {
 
-		// Holds the empty nodes that will need removing.
-		$nodes_to_remove = array();
+		$elements = $dom_document->getElementsByTagName( '*' );
 
-		foreach ( $dom_document->getElementsByTagName( '*' ) as $node ) {
+		$i = $elements->length - 1;
+
+		// Using a regressive loop. Removing elements with a foreach can get confused
+		// when the index changes.
+		while ( $i > -1 ) {
+
+			$element = $elements->item( $i );
 
 			// Ensure there's no empty paragraphs.
-			$trimmed_content = trim( $node->textContent );
+			$trimmed_content = trim( $element->textContent );
 
 			// If the node is completely empty queue it for removal.
-			if (
-				! in_array( $node->tagName, array( 'img', 'figure', 'iframe', 'script' ), true ) &&
-				empty( $trimmed_content )
-			) {
-				$nodes_to_remove[] = $node;
+			if ( ! in_array( $element->tagName, array( 'img', 'figure', 'iframe', 'script' ), true ) && empty( $trimmed_content ) ) {
+				$element->parentNode->removeChild( $element );
 			}
-		}
 
-		// Remove all the empty nodes we found.
-		// WARNING :: Don't attempt to do this inline in the loop above,
-		// it won't work for all nodes.
-		foreach ( $nodes_to_remove as $node ) {
-			$node->parentNode->removeChild( $node );
+			$i--;
 		}
 
 		return $dom_document;

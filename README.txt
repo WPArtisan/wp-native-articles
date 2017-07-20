@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,16 @@ through the WordPress support forum found on the Plugin download page.
 6. Multisite options page.
 
 == Changelog ==
+
+= 1.2.3 =
+* Feature. Support for GitHub gist embeds added
+* Feature. Support for <pre> & <code> tags added
+* Feature. YouTube & Vimeo videos added through FV Player Plugin now supported
+* Feature. Support for Newsmag theme Video posts added
+* Fix. In-page links now removed
+* Fix. Remove images less than 1024 bytes
+* Fix. Bug affecting images wrapped in links
+* Fix. Bug where some elements wouldn't get removed
 
 = 1.2.2 =
 * Feature. Support for Visual Bakery (beta)

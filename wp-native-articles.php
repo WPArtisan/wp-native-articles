@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.2.2
+ * Version: 1.2.3
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.2.2' );
+	define( 'WPNA_VERSION', '1.2.3' );
 }
 
 // Define the plugin base path.
@@ -35,9 +35,12 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return void
+	 * @return stdClass The initiated classes.
 	 */
 	function wpna_initialise() {
+
+		// Holds all the classes initialized.
+		$classes = new stdClass();
 
 		// Require the class if it doesn't exist.
 		if ( ! class_exists( 'WPNA_Activator' ) ) {
@@ -74,8 +77,9 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 
 		// Load the variable functions.
 		require WPNA_BASE_PATH . '/includes/functions-variables.php';
+
 		/**
-		 * Classes that register hooks and do stuff
+		 * Classes that register hooks and do stuff.
 		 */
 
 		// Load the admin tabs helper class.
@@ -102,47 +106,48 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			if ( ! class_exists( 'WPNA_Multisite_Admin' ) ) {
 				require WPNA_BASE_PATH . '/includes/class-multisite-admin.php';
 			}
-			$wpna_multisite_admin = new WPNA_Multisite_Admin();
+			$classes->wpna_multisite_admin = new WPNA_Multisite_Admin();
 		}
 
 		// Load the main admin section.
 		if ( ! class_exists( 'WPNA_Admin' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin.php';
 		}
-		$wpna_admin = new WPNA_Admin();
+		$classes->wpna_admin = new WPNA_Admin();
 
 		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Premium' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-premium.php';
 		}
-		$wpna_premium_admin = new WPNA_Admin_Premium();
+		$classes->wpna_admin_premium = new WPNA_Admin_Premium();
 
 		// Load the support admin section.
 		if ( ! class_exists( 'WPNA_Admin_Support' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-support.php';
 		}
-		$wpna_support_admin = new WPNA_Admin_Support();
+		$classes->wpna_admin_support = new WPNA_Admin_Support();
 
 		// Load Facebook Instant Articles functionality.
 		if ( ! class_exists( 'WPNA_Admin_Facebook' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook.php';
 		}
-		$wpna_facebook_admin = new WPNA_Admin_Facebook();
+		$classes->wpna_admin_facebook = new WPNA_Admin_Facebook();
 
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Styling' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook-styling.php';
 		}
-		$wpna_facebook_styling = new WPNA_Admin_Facebook_Styling();
+		$classes->wpna_admin_facebook_styling = new WPNA_Admin_Facebook_Styling();
 
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Feed' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook-feed.php';
 		}
-		$wpna_facebook_feed = new WPNA_Admin_Facebook_Feed();
+		$classes->wpna_admin_facebook_feed = new WPNA_Admin_Facebook_Feed();
+
 		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';
 		}
-		$wpna_facebook_content = new WPNA_Facebook_Content_Parser();
+		$classes->wpna_facebook_content_parser = new WPNA_Facebook_Content_Parser();
 
 		/**
 		 * Third party compatibility functions
@@ -153,15 +158,18 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/co-authors-plus.php';
 		include WPNA_BASE_PATH . '/includes/compat/infogram.php';
 		include WPNA_BASE_PATH . '/includes/compat/visual-bakery.php';
+		include WPNA_BASE_PATH . '/includes/compat/newsmag.php';
 
 		// Load the plugin text domain. For i18n.
 		add_action( 'init', 'wpna_load_textdomain', 10, 0 );
 
+		return $classes;
 	}
 endif;
 
-// Kick everything off.
-wpna_initialise();
+// Kick everything off. Assign all instantiated classes to a variable.
+// If anyone needs to unhook anything they can simply grab it.
+$wpna = wpna_initialise();
 
 /**
  * Disables the current plugin and shows a die message.
@@ -193,4 +201,3 @@ function wpna_disable_pro_plugin_check() {
 // activation hook and admin_init (incase it was activated in an obscure manner).
 register_activation_hook( __FILE__, 'wpna_disable_pro_plugin_check' );
 add_action( 'admin_init', 'wpna_disable_pro_plugin_check', 1, 0 );
-
