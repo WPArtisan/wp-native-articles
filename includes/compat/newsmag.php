@@ -28,7 +28,7 @@ if ( ! function_exists( 'wpna_newsmag_compatibility' ) ) :
 			// Render the video if the post has a video in the featured video section of the post.
 			if ( ! empty( $td_post_video['td_video'] ) ) {
 				// Format the video.
-				$video_output = sprintf( '<figure class=""><iframe width="560" height="315" src="%s"></iframe></figure>', esc_url( $td_post_video['td_video'] ) );
+				$video_output = sprintf( '<figure class="op-interactive"><iframe width="560" height="315" src="%s"></iframe></figure>', esc_url( $td_post_video['td_video'] ) );
 
 				// Prepend it to the content.
 				$content = $video_output . PHP_EOL . $content;

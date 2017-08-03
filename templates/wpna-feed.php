@@ -13,7 +13,6 @@
  */
 
 ?>
-
 <?php
 	// Has to be done like this otherwise WP plugin repository hooks parse it as PHP and fail it.
 	echo sprintf( '<?xml version="1.0" encoding="%s"?>', esc_attr( get_option( 'blog_charset' ) ) );

@@ -186,6 +186,11 @@ class WPNA_Facebook_Content_Parser {
 
 		$content = call_user_func( $_shortcode_tags[ $tag ], $attr, $content, $tag );
 
+		// Only wrap shortcodes that return scripts or iframes.
+		if ( false === strpos( $content, '</script>' ) && false === strpos( $content, '</iframe>' ) ) {
+			return $content;
+		}
+
 		// Wrap it in an iframe if it isn't already.
 		if ( '<iframe' !== substr( $content, 0, 7 ) ) {
 			$content = '<iframe>' . $content . '</iframe>';
@@ -1476,7 +1481,7 @@ class WPNA_Facebook_Content_Parser {
 				// Remove cdata added by saveXML().
 				$parent_node_html = str_replace( array( '<![CDATA[', ']]>' ), '', $parent_node_html );
 
-				$dom_document_temp->loadHTML( '<!doctype html><html><body>' . $parent_node_html . '</body></html>' );
+				$dom_document_temp->loadHTML( '<?xml version="1.0" encoding="utf-8"?><root/>' . $parent_node_html );
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
 				$body_temp = $dom_document_temp->getElementsByTagName( 'body' )->item( 0 );

@@ -47,12 +47,12 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		$this->page_slug = 'wpna_facebook';
 
 		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
-		add_action( 'admin_init',            array( $this, 'rating_notice' ), 10, 0 );
 
 		add_filter( 'plugin_action_links_' . plugin_basename( WPNA_BASE_PATH . '/wp-native-articles.php' ), array( $this, 'add_plugin_action_links' ), 10, 1 );
 
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
+			add_action( 'admin_init',            array( $this, 'rating_notice' ), 10, 0 );
 			add_action( 'wp_ajax_wpna-dismiss-notice', array( $this, 'ajax_dismiss_notice' ), 10, 0 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );

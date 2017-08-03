@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.8
-Stable tag: 1.2.3
+Tested up to: 4.8.1
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,9 +129,19 @@ through the WordPress support forum found on the Plugin download page.
 
 == Changelog ==
 
+= 1.2.4 =
+* Feature. Add initial support for WP Quads
+* Feature. Add initial support for theme.co Pro & X
+* Feature. Better rules when dealing with shortcodes in posts
+* Fix. 32bit support. Don't use absint for super large numbers
+* Fix. Allow some html tags in the excerpt
+* Fix. Occasional encoding error. Punctuation no longer appears as ã
+* Fix. Missing op-interactive tag in the Newsmag compatibility
+* Fix. Ignore <!--nextpage--> tags
+
 = 1.2.3 =
 * Feature. Support for GitHub gist embeds added
-* Feature. Support for <pre> & <code> tags added
+* Feature. Support for &lt;pre&gt; & &lt;code&gt; tags added
 * Feature. YouTube & Vimeo videos added through FV Player Plugin now supported
 * Feature. Support for Newsmag theme Video posts added
 * Fix. In-page links now removed

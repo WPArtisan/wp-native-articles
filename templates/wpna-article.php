@@ -87,7 +87,7 @@
 				$show_subtitle = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_subtitle', 'on' ) );
 				?>
 				<?php if ( $show_subtitle && $post->get_the_excerpt() ) : ?>
-					<h2><?php echo esc_html( $post->get_the_excerpt() ); ?></h2>
+					<h2><?php echo wp_kses_post( $post->get_the_excerpt() ); ?></h2>
 				<?php endif; ?>
 
 				<?php

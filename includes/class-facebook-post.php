@@ -408,7 +408,7 @@ class WPNA_Facebook_Post {
 		}
 
 		// Get the global $more value.
-		global $more;
+		global $more, $multipage, $pages;
 
 		// Save the current $more value.
 		$default_more = $more;
@@ -420,6 +420,12 @@ class WPNA_Facebook_Post {
 
 		// Reset the $more value just incase.
 		$more = $default_more;
+
+		// If they've used the <!--nextpage--> tag then
+		// make sure we get all the content.
+		if ( $multipage && count( $pages ) > 1 ) {
+			$content = implode( $pages, PHP_EOL );
+		}
 
 		/**
 		 * Filter the post content before WP has its fun.
