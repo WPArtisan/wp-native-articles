@@ -269,7 +269,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		add_settings_field(
 			'fbia_authorise_id',
-			'<label for="fbia_authorise_id">' . esc_html__( 'Authorisation ID', 'wp-native-articles' ) . '</label>',
+			'<label for="fbia_authorise_id">' . esc_html__( 'Authorization ID', 'wp-native-articles' ) . '</label>',
 			array( $this, 'authorise_id_callback' ),
 			$this->page_slug,
 			$option_group
@@ -365,7 +365,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		add_settings_field(
 			'fbia_recirculation_ad',
-			'<label for="fbia_recirculation_ad">' . esc_html__( 'Recirculation Ad (beta)', 'wp-native-articles' ) . '</label>',
+			'<label for="fbia_recirculation_ad">' . esc_html__( 'Recirculation Ad', 'wp-native-articles' ) . '</label>',
 			array( $this, 'recirculation_ad_callback' ),
 			$this->page_slug,
 			$option_group
@@ -407,7 +407,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		?>
 		<p>
 			<?php esc_html_e( 'Use this section to set generic Instant Article settings.', 'wp-native-articles' ); ?>
-			<?php esc_html_e( 'They can all be overridden on a per article basis with the exception of the `Authorisation ID` field.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'They can all be overridden on a per article basis with the exception of the `Authorization ID` field.', 'wp-native-articles' ); ?>
 		</p>
 
 		<?php
@@ -429,8 +429,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		if ( ! empty( $overriden_templates ) ) : ?>
 			<hr />
 			<p>
-				<span class="label label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
-				<i><b><?php esc_html_e( 'Templates being overriden', 'wp-native-articles' ); ?></b></i>
+				<span class="wpna-label wpna-label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+				<i><b><?php esc_html_e( 'Templates being overridden', 'wp-native-articles' ); ?></b></i>
 			</p>
 
 			<p><?php esc_html_e( 'The following templates are being overridden. Well this is normally fine it could mean that some of the settings below are not being outputted or that the output is modified in some way.', 'wp-native-articles' ); ?></p>
@@ -474,7 +474,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	/**
 	 * Outputs the HTML for the 'fbia_authorise_id' settings field.
 	 *
-	 * The authorisation ID from claiming your URL. Outputted in the header.
+	 * The authorization ID from claiming your URL. Outputted in the header.
 	 *
 	 * @since 1.0.0
 	 *
@@ -484,7 +484,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public function authorise_id_callback() {
 		?>
 		<input type="text" name="wpna_options[fbia_authorise_id]" id="fbia_authorise_id" class="regular-text" value="<?php echo esc_attr( wpna_get_option( 'fbia_authorise_id' ) ); ?>">
-		<p class="description"><?php esc_html_e( 'The authorisation ID for `Claim Your URL`', 'wp-native-articles' ); ?></p>
+		<p class="description"><?php esc_html_e( 'The authorization ID for `Claim Your URL`', 'wp-native-articles' ); ?></p>
 
 		<?php
 		// Show a notice if the option has been overridden.
@@ -636,7 +636,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<p class="description">
 			<?php echo sprintf(
 				wp_kses(
-					__( 'See the <a target="_blank" href="%s">Date Documentaion</a> for more information.', 'wp-native-articles' ),
+					__( 'See the <a target="_blank" href="%s">date documentation</a> for more information.', 'wp-native-articles' ),
 					array( 'a' => array( 'href' => array(), 'target' => array() ) )
 				),
 				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )
@@ -675,7 +675,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<p class="description">
 			<?php echo sprintf(
 				wp_kses(
-					__( 'See the <a target="_blank" href="%s">Date Documentaion</a> for more information.', 'wp-native-articles' ),
+					__( 'See the <a target="_blank" href="%s">date documentation</a> for more information.', 'wp-native-articles' ),
 					array( 'a' => array( 'href' => array(), 'target' => array() ) )
 				),
 				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )

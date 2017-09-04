@@ -205,7 +205,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function add_post_meta_box() {
 		add_meta_box(
 			'wp-native-articles',
-			esc_html__( 'WP Native Articles', 'wp-native-articles' ),
+			'WP Native Articles',
 			array( $this, 'post_meta_box_callback' ),
 			'post',
 			'advanced',

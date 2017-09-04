@@ -23,7 +23,7 @@ if ( ! function_exists( 'wpna_newsmag_compatibility' ) ) :
 	function wpna_newsmag_compatibility( $content ) {
 		if ( class_exists( 'td_util' ) && 'video' === get_post_format( get_the_ID() ) ) {
 			// Try and get the video.
-			$td_post_video = td_util::get_post_meta_array( get_the_ID(), 'td_post_video' );
+			$td_post_video = get_post_meta( get_the_ID(), 'td_post_video', true );
 
 			// Render the video if the post has a video in the featured video section of the post.
 			if ( ! empty( $td_post_video['td_video'] ) ) {

@@ -1,4 +1,4 @@
-.label {
+.wpna-label {
 	text-transform: uppercase;
 	display: inline;
 	padding: .2em .6em .3em;
@@ -12,15 +12,15 @@
 	border-radius: .25em;
 }
 
-.label-warning {
+.wpna-label-warning {
 	background: #f0ad4e;
 }
 
-.label-danger {
+.wpna-label-danger {
 	background: #d9534f;
 }
 
-.label-success {
+.wpna-label-success {
 	background: #5cb85c;
 }
 

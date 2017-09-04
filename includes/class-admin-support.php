@@ -200,7 +200,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		<p><?php echo sprintf( wp_kses( __( 'Documentation, tutorials and knowledge base for both the free and pro versions of the plugin can be found at <a target="_blank" href="%s">docs.wp-native-articles.com</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'http://docs.wp-native-articles.com' ) );?></p>
 
 		<h3><?php esc_html_e( 'Bugs and Support', 'wp-native-articles' ); ?></h3>
-		<p><?php echo sprintf( wp_kses( __( 'All bugs for the free version of the Plugin should be reported via the <a target="_blank" href="%s">WordPress plugin support forum</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/support/plugins/wp-native-articles/' ) );?></p>
+		<p><?php echo sprintf( wp_kses( __( 'All bugs for the free version of the plugin should be reported via the <a target="_blank" href="%s">WordPress plugin support forum</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/support/plugins/wp-native-articles/' ) );?></p>
 		<p><?php echo sprintf( wp_kses( __( 'If you have the Pro version of the plugin you can access our premium support and email us directly by visiting your account <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wp-native-articles.com/account/' ) );?></p>
 
 		<h3><?php esc_html_e( 'FAQs', 'wp-native-articles' ); ?></h3>

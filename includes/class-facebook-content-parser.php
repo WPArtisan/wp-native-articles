@@ -65,6 +65,7 @@ class WPNA_Facebook_Content_Parser {
 	public function content_hooks() {
 
 		// We can help clean up the content before WP gets to it.
+		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'add_follow_redirects_filter' ), 5, 1 );
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_shortcodes' ), 5, 1 );
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'setup_wrap_oembeds' ), 5, 1 );
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'remove_more_link' ), 10, 1 );
@@ -94,6 +95,42 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_shortcode_wrapper' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'remove_oembed_wrapper' ), 10, 1 );
 		add_filter( 'wpna_facebook_article_content_after_transform', array( $this, 'restore_embeds' ), 10, 1 );
+	}
+
+	/**
+	 * Adds a filter into the HTTP lib to enable follow redirects.
+	 *
+	 * Though technically a filter this is being used more like an action.
+	 *
+	 * @since 1.2.5
+	 *
+	 * @access public
+	 * @param  string $content The content of the post.
+	 * @return string
+	 */
+	public function add_follow_redirects_filter( $content ) {
+		add_filter( 'http_api_curl', array( $this, 'set_follow_redirects' ), 10, 3 );
+
+		return $content;
+	}
+
+	/**
+	 * Adds the CURLOPT_FOLLOWLOCATION argument to the CURL lib as it's
+	 * set to false by default.
+	 *
+	 * /wp-includes/class-wp-http-curl.php:ln147.
+	 *
+	 * @since 1.2.5
+	 *
+	 * @access public
+	 * @param resource $handle The cURL handle returned by curl_init().
+	 * @param array    $r       The HTTP request arguments.
+	 * @param string   $url     The request URL.
+	 * @return void
+	 */
+	public function set_follow_redirects( &$handle, $r, $url ) {
+		// @codingStandardsIgnoreLine
+		curl_setopt( $handle, CURLOPT_FOLLOWLOCATION, true );
 	}
 
 	/**
@@ -1015,39 +1052,43 @@ class WPNA_Facebook_Content_Parser {
 		global $post;
 		// Setup the featured image regex if the post has one.
 		if ( has_post_thumbnail( $post->ID ) ) {
+			// Get the featured image source.
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
-			$featured_image_path = wp_parse_url( $image[0], PHP_URL_PATH );
-			$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
-			$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
-			$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
+			// Make sure we've got an image.
+			if ( $image ) {
+				$featured_image_path = wp_parse_url( $image[0], PHP_URL_PATH );
+				$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
+				$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
+				$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-			$elements = $dom_document->getElementsByTagName( 'img' );
+				$elements = $dom_document->getElementsByTagName( 'img' );
 
-			$i = $elements->length - 1;
+				$i = $elements->length - 1;
 
-			// Using a regressive loop. Removing elements with a foreach can get confused
-			// when the index changes.
-			while ( $i > -1 ) {
-				// Setup the current element.
-				$element = $elements->item( $i );
+				// Using a regressive loop. Removing elements with a foreach can get confused
+				// when the index changes.
+				while ( $i > -1 ) {
+					// Setup the current element.
+					$element = $elements->item( $i );
 
-				// Check if the src is the same as the featured image.
-				if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
+					// Check if the src is the same as the featured image.
+					if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
 
-					// Get the parent node.
-					$parent_node = $element->parentNode;
+						// Get the parent node.
+						$parent_node = $element->parentNode;
 
-					// If the image has a caption remove that as well.
-					if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
-						$element = $parent_node;
-						$parent_node = $parent_node->parentNode;
+						// If the image has a caption remove that as well.
+						if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
+							$element = $parent_node;
+							$parent_node = $parent_node->parentNode;
+						}
+
+						// Remove the element.
+						$parent_node->removeChild( $element );
 					}
 
-					// Remove the element.
-					$parent_node->removeChild( $element );
+					$i--;
 				}
-
-				$i--;
 			}
 		}
 
@@ -1086,7 +1127,7 @@ class WPNA_Facebook_Content_Parser {
 				$response = vip_safe_wp_remote_get( $element->getAttribute( 'src' ) );
 			} else {
 				// @codingStandardsIgnoreLine
-				$response = wp_remote_get( $element->getAttribute( 'src' ) );
+				$response = wp_remote_head( $element->getAttribute( 'src' ), array( 'sslverify' => false, 'timeout' => 1 ) );
 			}
 
 			$response_code = wp_remote_retrieve_response_code( $response );
@@ -1613,7 +1654,7 @@ class WPNA_Facebook_Content_Parser {
 	 */
 	public function remove_empty_elements( DOMDocument $dom_document ) {
 
-		$elements = $dom_document->getElementsByTagName( '*' );
+		$elements = $dom_document->getElementsByTagName( 'body' )->item( 0 )->getElementsByTagName( '*' );
 
 		$i = $elements->length - 1;
 
@@ -1627,7 +1668,15 @@ class WPNA_Facebook_Content_Parser {
 			$trimmed_content = trim( $element->textContent );
 
 			// If the node is completely empty queue it for removal.
-			if ( ! in_array( $element->tagName, array( 'img', 'figure', 'iframe', 'script' ), true ) && empty( $trimmed_content ) ) {
+			if (
+				! in_array( $element->tagName, array( 'img', 'figure', 'iframe', 'script' ), true )
+				&&
+				(
+					empty( $trimmed_content )
+					||
+					'&nbsp;' === htmlentities( $trimmed_content )
+				)
+			) {
 				$element->parentNode->removeChild( $element );
 			}
 

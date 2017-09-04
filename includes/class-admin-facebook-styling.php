@@ -257,7 +257,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 	 * Output the HTML for the Styling tab.
 	 *
 	 * Uses the settings API and outputs the fields registered.
-	 * settings_fields() requries the name of the group of settings to ouput.
+	 * settings_fields() requires the name of the group of settings to ouput.
 	 * do_settings_sections() requires the unique page slug for this settings form.
 	 *
 	 * @since 1.0.0
@@ -742,10 +742,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		// Add an empty first element to show it's optional.
 		array_unshift( $horizontal_positions, '' );
 		?>
-		<h3><?php esc_html_e( 'Override Default Values', 'wp-native-articles' ); ?></h3>
+		<h3><?php esc_html_e( 'Override Styling Values', 'wp-native-articles' ); ?></h3>
 		<p class="description"><?php esc_html_e( 'Use these settings to override global values for this post only', 'wp-native-articles' ); ?></p>
 
 		<div class="pure-form pure-form-aligned">
+
+			<h3><?php esc_html_e( 'General', 'wp-native-articles' ); ?></h3>
 
 			<fieldset>
 				<div class="pure-control-group">
@@ -788,6 +790,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 				</div>
 			</fieldset>
 
+			<h3><?php esc_html_e( 'Captions', 'wp-native-articles' ); ?></h3>
 
 			<fieldset>
 				<div class="pure-control-group">

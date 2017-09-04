@@ -590,9 +590,55 @@ class WPNA_Facebook_Post {
 	}
 
 	/**
+	 * Check to see if any manual related articles have been set.
+	 *
+	 * Facebook allows up to four related articles to be specified at the
+	 * bottom of every article. If four aren't specified Facebook will auto fill them.
+	 *
+	 * @link https://developers.facebook.com/docs/instant-articles/reference/related-articles
+	 *
+	 * @since 1.2.5
+	 *
+	 * @access public
+	 * @return array URLs to related articles.
+	 */
+	public function get_manual_related_articles() {
+
+		$manual_related_articles = array();
+
+		// Construct a quick loop to grab them all.
+		foreach ( array( 'one', 'two', 'three', 'four' ) as $number ) {
+
+			// Try and get the related article URL.
+			$related_article_url = get_post_meta( get_the_ID(), sprintf( '_wpna_fbia_related_article_%s', $number ), true );
+
+			// If it exists, add it to the array.
+			if ( ! empty( $related_article_url ) ) {
+				// Check whether it's sponsored or not. Can return 'on' or null.
+				$sponsored = get_post_meta( get_the_ID(), sprintf( '_wpna_fbia_related_article_%s_sponsored', $number ), true );
+				// Make an object and add it to the array.
+				$manual_related_articles[] = (object) array(
+					'url'       => $related_article_url,
+					'sponsored' => wpna_switch_to_boolean( $sponsored ),
+				);
+			}
+		}
+
+		/**
+		 * Filter the array of manual related articles before returning them.
+		 *
+		 * @since 1.2.5
+		 * @var array $manual_related_articles Array of manual related articles.
+		 */
+		$manual_related_articles = apply_filters( 'wpna_facebook_article_manual_related_articles', $manual_related_articles );
+
+		return $manual_related_articles;
+	}
+
+	/**
 	 * Sets up the query to get the related articles.
 	 *
-	 * Facebook allows up to three related articles to be specified at the
+	 * Facebook allows up to four related articles to be specified at the
 	 * bottom of every article.
 	 *
 	 * @link https://developers.facebook.com/docs/instant-articles/reference/related-articles

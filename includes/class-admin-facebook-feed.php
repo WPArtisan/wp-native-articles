@@ -217,7 +217,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 		<p>
 			<?php esc_html_e( 'These settings apply to the RSS feed of Instant Articles.', 'wp-native-articles' ); ?>
 			<br />
-			<?php esc_html_e( 'Unlike the API, the RSS feed generates many articles at once. This can be very intensive so it is highly recomended you enable caching.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'Unlike the API, the RSS feed generates many articles at once. This can be very intensive so it is highly recommended you enable caching.', 'wp-native-articles' ); ?>
 			<br />
 			<?php esc_html_e( 'Your feed can be found here:', 'wp-native-articles' ); ?>
 			<a href="<?php echo esc_url( get_feed_link( $feed_slug ) ); ?>" target="_blank"><?php echo esc_url( get_feed_link( $feed_slug ) ); ?></a>
@@ -239,7 +239,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	public function feed_slug_callback() {
 		?>
 		<input type="text" name="wpna_options[fbia_feed_slug]" id="fbia_feed_slug" class="regular-text" value="<?php echo esc_html( wpna_get_option( 'fbia_feed_slug' ) ); ?>" />
-		<p class="description"><?php esc_html_e( 'The endpoint of the Instant Articles Feed.', 'wp-native-articles' ); ?></p>
+		<p class="description"><?php esc_html_e( 'The endpoint for the Instant Articles Feed.', 'wp-native-articles' ); ?></p>
 
 		<?php
 		// Show a notice if the option has been overridden.

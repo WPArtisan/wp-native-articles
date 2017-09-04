@@ -234,7 +234,7 @@ if ( ! function_exists( 'wpna_hook_overridden_notice' ) ) :
 			if ( ! empty( $hooked_callbacks ) ) :
 			?>
 			<p>
-				<span class="label label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+				<span class="wpna-label wpna-label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
 				<i><b><?php esc_html_e( 'Functions are hooking into this option and might be changing the output', 'wp-native-articles' ); ?></b></i>
 			</p>
 			<?php if ( current_user_can( 'manage_options' ) ) : ?>
@@ -444,7 +444,7 @@ if ( ! function_exists( 'wpna_load_textdomain' ) ) :
 	 * @return void
 	 */
 	function wpna_load_textdomain() {
-		load_plugin_textdomain( 'wp-native-articles', false, WPNA_BASE_PATH . '/languages' );
+		load_plugin_textdomain( 'wp-native-articles', false, plugin_basename( WPNA_BASE_PATH ) . '/languages/' );
 	}
 endif;
 

@@ -58,7 +58,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	public function add_menu_items( $parent_page_id, $parent_page_slug ) {
 		$page_hook = add_submenu_page(
 			$parent_page_slug, // Parent page slug.
-			esc_html__( 'WP Native Article Premium', 'wp-native-articles' ),
+			'WP Native Articles Premium',
 			'<span style="color:#f18500">' . esc_html__( 'Premium', 'wp-native-articles' ) . '</span>',
 			'manage_options',
 			$this->page_slug,

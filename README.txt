@@ -4,15 +4,20 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.8.1
-Stable tag: 1.2.4
+Stable tag: 1.2.5
+Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: wp-native-articles
+Domain Path: /languages
 
 Easy Facebook Instant Articles Plugin for your WordPress site with better content parsing and advanced features.
 
 == Description ==
 
-**1.2.2 - Now Supports Visual Bakery (beta)**
+**Major Updates**
+- 1.2.5 - Specify different content for your Instant Article
+- 1.2.2 - WP Bakery Visual Composer Support
 
 A better implementation of Facebook Instant Articles for WordPress.
 
@@ -20,24 +25,24 @@ Only available in the Facebook mobile app, Instant Articles are a pre-loaded, su
 
 **How it works**
 
-After installation and setup this plugin auto generates an instant article version for each of your WordPress articles. The article's regular HTML is parsed and converted to correct Facebook Instant Article markup which is then submitted to Facebook via a RSS feed. When your article is viewed using the Facebook mobile app it will now load the fast, optimized instant article version directly in the app. When the article is shared or posted its instant status will also be denoted by the lightning symbol in the corner.
+After installation and setup this plugin auto generates an instant article version for each of your WordPress articles. The article's regular HTML is parsed and converted to correct Facebook Instant Article markup which is then submitted to Facebook via an RSS feed. Anytime your article is then viewed using the Facebook mobile app it will load the pre-cached, super fast, optimized version. When the article is shared or posted its instant status will also be denoted by the lightning symbol in the corner.
 
 [Read more about Instant Articles from the official documentation](https://developers.facebook.com/docs/instant-articles)
 
 **Content Parsing**
 
-A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort to correctly format any WordPress content it could possibly come across. You can read more about the challenges and solutions in [this blog post](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
+A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort to correctly format any WordPress content it could possibly come across. You can read more about the challenges and solutions faced when parsing unstructured content on our [Instant Articles blog](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
 
 > **PRO Version**
 >
-> [WP Native Articles Pro](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-a) comes with full [Facebook Instant Articles API](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-b#features) integration and has
-> advanced features such as:
+> [WP Native Articles Pro](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-a) comes with full [Facebook Instant Articles API](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-b#features) integration and has more advanced features such as:
 >
 > * **Full API integration**
 > * **Manage Articles** Publish, unpublish and manage Instant Articles directly from the WordPress post page.
 > * **Live Sync** Instant Articles synced instantly from WordPress, no waiting for FaceBook to scrape the RSS feed.
+> * **Individual Sync** Only make posts of your choosing Instant Articles
 > * **Article Status** Errors & import status for your Instant Articles displayed live in every article.
-> * **Instant Articles Analytics** Individual and aggregated site overview.
+> * **Instant Articles Analytics** Individual and aggregated site overview analytics, broken down by device and date.
 > * **Premium support**
 >
 > Check out the Pro version at [https://wp-native-articles.com/](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-c).
@@ -46,10 +51,10 @@ A large part of the complexity of integrating Facebook Instant Articles is the r
 
 Features planned for the near future.
 
-* Image options manager - done
-* Embed manager (ads, related articles, anything)
-* WP Comments
-* Advanced stats & weekly roundup
+* Placement manager (ads, related articles, anything)
+* Sync all your old articles
+* Embed WordPress Comments
+* Advanced stats & weekly roundup email
 * CLI & API integration
 
 == Installation ==
@@ -84,7 +89,7 @@ not only are there hooks galore in the plugin but the Instant Article templates 
 
 = Does it play well with other plugins? =
 
-Yes, extremely well. We've tested loads of popular plugins that embed content and built in support for Yoast, Co-Authors-Plus and Playbuzz to name a few.
+Yes, extremely well. We've tested loads of popular plugins that embed content and built in support for Yoast, Co-Authors-Plus, Visual Bakery and Playbuzz to name a few.
 If you find any that don't work or that we've missed please let us know and we'll be sure to fix them.
 
 = Is there a road map? =
@@ -116,7 +121,7 @@ It has the same requirements as WordPress, so PHP >= 5.2.4.
 = I've found a bug? I have a feature request? =
 
 Excellent. We'd love to hear from you. All support for the free plugin is done
-through the WordPress support forum found on the Plugin download page.
+through the WordPress support forum, found on the Plugin download page.
 
 == Screenshots ==
 
@@ -125,9 +130,20 @@ through the WordPress support forum found on the Plugin download page.
 3. RSS Feed options.
 4. Post options overrides.
 5. Post styling overrides.
-6. Multisite options page.
+6. Content & related articles overrides.
+7. Multisite options page.
 
 == Changelog ==
+
+= 1.2.5 =
+* Feature. Post content override. You can now specify different content for IA
+* Feature. Add [wpna hide=''][/wpna] shortcode for when you want to hide content from IA
+* Feature. You can now manually specify related posts
+* Feature. Removes paragraphs that only contain &nbsp;
+* Feature. Prepare plugin for translation + fix spelling errors
+* Feature. Better parsing for theme.co Pro & X
+* Feature. Faster method for checking if images exist
+* Fix. Better compatibility with older versions of Newmag theme
 
 = 1.2.4 =
 * Feature. Add initial support for WP Quads

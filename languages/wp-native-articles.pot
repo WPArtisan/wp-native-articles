@@ -1,0 +1,1212 @@
+# Copyright (C) 2017 WP Native Articles
+# This file is distributed under the same license as the WP Native Articles package.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Native Articles 1.2.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-native-"
+"articles-source\n"
+"POT-Creation-Date: 2017-08-29 19:42:44+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: includes/class-admin-facebook-api__isPro.php:143
+#: includes/class-admin-facebook-api__isPro.php:154
+msgid "An error occured. Please ensure the Facebook API is connected"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:188
+msgid "Facebook Instant Articles Insights"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:244
+#: includes/class-admin-facebook-api__isPro.php:441
+#: includes/class-admin-facebook-api__isPro.php:698
+msgid "Facebook API not connected"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:262
+msgid "No Facebook data returned"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:267
+#: includes/class-admin-facebook-api__isPro.php:485
+msgid "iOS"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:274
+#: includes/class-admin-facebook-api__isPro.php:492
+msgid "Android"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:281
+#: includes/class-admin-facebook-api__isPro.php:499
+msgid "Other"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:337
+#: includes/class-admin-facebook.php:993
+msgid "Analytics"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:365
+msgid "Instant Article Analytics"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:370
+msgid "Since"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:375
+msgid "Until"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:380
+msgid "Metric"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:382
+msgid "All Views"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:383
+msgid "All View Durations"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:384
+msgid "All View Durations Average"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:385
+msgid "All Scrolls"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:386
+msgid "All Scrolls Average"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:403
+msgid "A post has to be published before we can get stats"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:448
+#: includes/class-admin-facebook-api__isPro.php:705
+msgid "Invalid post ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:579
+msgid "Status"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:600
+msgid "Instant Article Status"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:606
+msgid "Import post as"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:609
+msgid "Draft"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:610
+msgid "Publish"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:649
+msgid "Status:"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:653
+msgid "Level"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:654
+msgid "Message"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:980
+msgid "Could not find post"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1003
+msgid "This article does not have an import ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1043
+msgid "Facebook Auth"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1050
+msgid "App ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1058
+msgid "App Secret"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1066
+msgid "Facebook User"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1074
+msgid "Page ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1084
+msgid "Facebook Status"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1092
+msgid "Sync Articles"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1100
+msgid "CRON Sync"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1108
+msgid "Enviroment"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1116
+msgid "Import As Draft"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1136
+msgid "API"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1175
+msgid "These settings apply to the Facebook API."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1177
+msgid ""
+"Unlike the RSS feed the API is in real time, articles will be updated on "
+"Facebook the same time they are updated on WordPress."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1193
+msgid "Your Facebook App ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1214
+msgid "Your Facebook App Secret"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1257
+msgid "Logout"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1292
+#: includes/class-admin-facebook.php:432 includes/functions-helper.php:237
+msgid "Warning"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1293
+msgid "Missing Facebook Permissions"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1295
+msgid ""
+"Facebook has been authorized but not all the required permissions have been "
+"enabled, this means some features may not work. The following permissions "
+"are missing, you can re-authorise Facebook using the button below."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1310
+msgid "Reauthorize"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1328
+msgid "Login"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1385
+msgid "%s page found"
+msgid_plural "%s pages found"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-admin-facebook-api__isPro.php:1388
+msgid "No pages found. Please check your permissions."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1417
+msgid "Missing Page ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1446
+msgid "Disconnected"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1453
+msgid "Code"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1454
+#: includes/lib/EDD_SL_Plugin_Updater__isPro.php:403
+msgid "Error"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1472
+msgid "Connected"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1476
+msgid "%s Instant Article found on this page"
+msgid_plural "%s Instant Articles found on this page"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-admin-facebook-api__isPro.php:1495
+#: includes/class-admin-facebook.php:460 includes/class-admin-facebook.php:536
+#: includes/class-admin-facebook.php:572 includes/class-admin-facebook.php:601
+#: includes/class-admin-facebook.php:732 includes/class-admin-facebook.php:761
+#: includes/class-admin-facebook.php:929 includes/class-admin-facebook.php:944
+#: includes/class-admin-facebook.php:959
+#: includes/class-admin-facebook.php:1007
+#: includes/class-admin-facebook.php:1022
+msgid "Disabled"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1496
+#: includes/class-admin-facebook.php:461 includes/class-admin-facebook.php:537
+#: includes/class-admin-facebook.php:573 includes/class-admin-facebook.php:602
+#: includes/class-admin-facebook.php:733 includes/class-admin-facebook.php:762
+#: includes/class-admin-facebook.php:930 includes/class-admin-facebook.php:945
+#: includes/class-admin-facebook.php:960
+#: includes/class-admin-facebook.php:1008
+#: includes/class-admin-facebook.php:1023
+msgid "Enabled"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1498
+msgid ""
+"Auto publish, update & delete Instant Articles in sync with WordPress posts"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1522
+msgid "Use background CRON to sync posts. Can speed up post saving time."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1545
+msgid "Development"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1546
+msgid "Production"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1571
+msgid ""
+"Import all articles as drafts. Articles can then published individually."
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1628
+msgid "Facebook successfully authorized"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1647
+msgid "Facebook successfully disconnected"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1681
+msgid "Missing Facebook app ID"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1686
+msgid "Missing Facebook app secret"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1725
+msgid "User could not be authenticated"
+msgstr ""
+
+#: includes/class-admin-facebook-api__isPro.php:1748
+msgid "Missing Facebook permissions"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:110
+msgid "RSS Feed"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:117
+msgid "Feed Slug"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:125
+msgid "Posts Per Feed"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:133
+msgid "Cache Article Content"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:141
+msgid "Modified Only"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:149
+msgid "Authentication"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:157
+msgid "Username"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:165
+msgid "Password"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:185
+msgid "Feed"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:225
+msgid "These settings apply to the RSS feed of Instant Articles."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:227
+msgid ""
+"Unlike the API, the RSS feed generates many articles at once. This can be "
+"very intensive so it is highly recommended you enable caching."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:229
+msgid "Your feed can be found here:"
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:249
+msgid "The endpoint for the Instant Articles Feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:273
+msgid "Limit the maximum amount of articles in the feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:298
+msgid "Cache the content of articles in the feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:324
+msgid "Only show recently modified posts in the feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:350
+msgid "Enable Basic Authentication for the RSS feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:374
+msgid "The username for the feed authentication."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:398
+msgid "The password for the feed authentication."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:674
+msgid "Authentication is required to view this feed."
+msgstr ""
+
+#: includes/class-admin-facebook-feed.php:675
+msgid "Authentication Error"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:115
+#: includes/class-admin-facebook.php:178 includes/class-admin-facebook.php:257
+#: includes/class-admin-general__isPro.php:122
+#: includes/class-admin-general__isPro.php:123
+#: includes/class-admin-general__isPro.php:159
+#: includes/class-admin-general__isPro.php:187
+#: includes/class-admin-support.php:125
+msgid "General"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:122
+#: includes/class-admin-facebook-styling.php:752
+msgid "Show Subtitle"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:130
+#: includes/class-admin-facebook-styling.php:762
+msgid "Show Authors"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:138
+#: includes/class-admin-facebook-styling.php:772
+msgid "Show Kicker"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:146
+#: includes/class-admin-facebook-styling.php:782
+msgid "Show Media"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:157
+msgid "Captions"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:164
+msgid "Show Title"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:172
+#: includes/class-admin-facebook-styling.php:805
+msgid "Title Font Size"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:180
+#: includes/class-admin-facebook-styling.php:816
+msgid "Title Vertical Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:188
+#: includes/class-admin-facebook-styling.php:827
+msgid "Title Horizontal Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:196
+#: includes/class-admin-facebook-styling.php:838
+msgid "Caption Font Size"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:204
+#: includes/class-admin-facebook-styling.php:849
+msgid "Caption Vertical Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:212
+#: includes/class-admin-facebook-styling.php:860
+msgid "Caption Horizontal Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:221
+#: includes/class-admin-facebook-styling.php:876
+msgid "Credit Vertical Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:229
+#: includes/class-admin-facebook-styling.php:887
+msgid "Credit Horizontal Position"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:250
+msgid "Article Styling"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:289
+msgid "General sections."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:310
+msgid "Show the subtitle."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:336
+msgid "Show the authors."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:363
+msgid "Show the kicker."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:390
+msgid "Show the media."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:412
+msgid "Use this section to set default Instant Article settings for captions."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:413
+msgid ""
+"They can all be overidden on a per article basis and on a per image basis."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:415
+msgid "Facebook guidelines:"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:436
+msgid "Show the attachment title."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:465
+#: includes/class-admin-facebook-styling.php:552
+msgid "Default font size to use for caption titles."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:494
+#: includes/class-admin-facebook-styling.php:581
+msgid "Default vertical position to use for caption titles."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:523
+#: includes/class-admin-facebook-styling.php:610
+msgid "Default horizontal position to use for caption titles."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:639
+msgid "Default vertical position to use for caption credits."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:668
+msgid "Default horizontal position to use for caption credits."
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:696
+msgid "Styling"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:745
+#: includes/class-admin-facebook.php:908
+msgid "Override Default Values"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:746
+#: includes/class-admin-facebook.php:909
+msgid "Use these settings to override global values for this post only"
+msgstr ""
+
+#: includes/class-admin-facebook-styling.php:794
+msgid "Attachment Title"
+msgstr ""
+
+#: includes/class-admin-facebook.php:115 includes/class-admin-facebook.php:116
+#: includes/class-admin-facebook.php:152
+msgid "Facebook Instant Articles"
+msgstr ""
+
+#: includes/class-admin-facebook.php:264
+msgid "Enable"
+msgstr ""
+
+#: includes/class-admin-facebook.php:272
+msgid "Authorization ID"
+msgstr ""
+
+#: includes/class-admin-facebook.php:280
+msgid "Article Style"
+msgstr ""
+
+#: includes/class-admin-facebook.php:288
+msgid "Default Article Sponsored"
+msgstr ""
+
+#: includes/class-admin-facebook.php:296 includes/class-admin-facebook.php:941
+msgid "Image Likes"
+msgstr ""
+
+#: includes/class-admin-facebook.php:304 includes/class-admin-facebook.php:956
+msgid "Image Comments"
+msgstr ""
+
+#: includes/class-admin-facebook.php:312
+msgid "Default Article Credits"
+msgstr ""
+
+#: includes/class-admin-facebook.php:320
+msgid "Default Article Copyright"
+msgstr ""
+
+#: includes/class-admin-facebook.php:328
+msgid "Analytics Code"
+msgstr ""
+
+#: includes/class-admin-facebook.php:336
+#: includes/class-admin-facebook.php:1004
+msgid "Enable Ads"
+msgstr ""
+
+#: includes/class-admin-facebook.php:344
+#: includes/class-admin-facebook.php:1019
+msgid "Auto Place Ads"
+msgstr ""
+
+#: includes/class-admin-facebook.php:352
+#: includes/class-admin-facebook.php:1034
+msgid "Ad Density"
+msgstr ""
+
+#: includes/class-admin-facebook.php:360
+#: includes/class-admin-facebook.php:1051
+msgid "Ad Code"
+msgstr ""
+
+#: includes/class-admin-facebook.php:368
+msgid "Recirculation Ad"
+msgstr ""
+
+#: includes/class-admin-facebook.php:409
+msgid "Use this section to set generic Instant Article settings."
+msgstr ""
+
+#: includes/class-admin-facebook.php:410
+msgid ""
+"They can all be overridden on a per article basis with the exception of the "
+"`Authorization ID` field."
+msgstr ""
+
+#: includes/class-admin-facebook.php:433
+msgid "Templates being overridden"
+msgstr ""
+
+#: includes/class-admin-facebook.php:436
+msgid ""
+"The following templates are being overridden. Well this is normally fine it "
+"could mean that some of the settings below are not being outputted or that "
+"the output is modified in some way."
+msgstr ""
+
+#: includes/class-admin-facebook.php:463
+msgid "Enable Facebook Instant Articles"
+msgstr ""
+
+#: includes/class-admin-facebook.php:487
+msgid "The authorization ID for `Claim Your URL`"
+msgstr ""
+
+#: includes/class-admin-facebook.php:511
+msgid "Default styling template to use"
+msgstr ""
+
+#: includes/class-admin-facebook.php:540
+msgid ""
+"Make all articles on this site `Sponsored` articles by default.\n"
+"\t\t\t\t\tPulls the Facebook profile link from the author page.\n"
+"\t\t\t\t\tThe Facebook profile link is added to the WordPress user profile "
+"page by numerous plugins but most noticeably Yoast SEO."
+msgstr ""
+
+#: includes/class-admin-facebook.php:575
+msgid "Add Like overlay for every image"
+msgstr ""
+
+#: includes/class-admin-facebook.php:604
+msgid "Add Comments overlay for every image"
+msgstr ""
+
+#: includes/class-admin-facebook.php:629
+msgid "Default credits applied to the bottom of every article"
+msgstr ""
+
+#: includes/class-admin-facebook.php:632 includes/class-admin-facebook.php:671
+msgid ""
+"Date placeholders prefixed by a <strong>%</strong> percent symbol can be "
+"used."
+msgstr ""
+
+#: includes/class-admin-facebook.php:639 includes/class-admin-facebook.php:678
+msgid ""
+"See the <a target=\"_blank\" href=\"%s\">date documentation</a> for more "
+"information."
+msgstr ""
+
+#: includes/class-admin-facebook.php:668
+msgid "Default copyright applied to the bottom of every article"
+msgstr ""
+
+#: includes/class-admin-facebook.php:707
+msgid "Analytics code to be used in every article. Auto wrapped in an iFrame"
+msgstr ""
+
+#: includes/class-admin-facebook.php:735
+msgid "Enable ads in Instant Articles"
+msgstr ""
+
+#: includes/class-admin-facebook.php:764
+msgid "Allow Facebook to auto position your ads in articles"
+msgstr ""
+
+#: includes/class-admin-facebook.php:793
+#: includes/class-admin-facebook.php:1037
+msgid "Default (250 word gap)"
+msgstr ""
+
+#: includes/class-admin-facebook.php:794
+#: includes/class-admin-facebook.php:1038
+msgid "Medium (350 word gap)"
+msgstr ""
+
+#: includes/class-admin-facebook.php:795
+#: includes/class-admin-facebook.php:1039
+msgid "Low (500 word gap)"
+msgstr ""
+
+#: includes/class-admin-facebook.php:797
+msgid "How frequently you would like ads to appear within your article."
+msgstr ""
+
+#: includes/class-admin-facebook.php:822
+msgid "Ad code for displaying your ads. Ensure it is wrapped in %s."
+msgstr ""
+
+#: includes/class-admin-facebook.php:845
+msgid ""
+"The ad placement ID (different to your standard Audience Network Placement "
+"ID)"
+msgstr ""
+
+#: includes/class-admin-facebook.php:846
+msgid ""
+"Facebook is experimenting with placing native ads within the recirculation "
+"unit at the bottom of articles. Adding a placement ID in here will enable it."
+msgstr ""
+
+#: includes/class-admin-facebook.php:850
+msgid ""
+"See the <a target=\"_blank\" href=\"%s\">Placing Ads in Recirculation Units "
+"Documentation</a> for more information and setup."
+msgstr ""
+
+#: includes/class-admin-facebook.php:882 includes/class-admin.php:99
+msgid "Settings"
+msgstr ""
+
+#: includes/class-admin-facebook.php:915
+msgid "Override Style Template"
+msgstr ""
+
+#: includes/class-admin-facebook.php:926
+msgid "Sponsored Article"
+msgstr ""
+
+#: includes/class-admin-facebook.php:971
+msgid "Credits"
+msgstr ""
+
+#: includes/class-admin-facebook.php:982
+msgid "Copyright"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:75
+#: includes/class-multisite-admin.php:220
+msgid "License key successfully updated."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:79
+#: includes/class-multisite-admin.php:224
+msgid "Error: Could not update license key."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:83
+#: includes/class-multisite-admin.php:228
+msgid "License successfully activated. You are now receiving updates."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:87
+#: includes/class-multisite-admin.php:232
+msgid "License successfully deactivated."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:95
+#: includes/class-multisite-admin.php:240
+msgid "Error: Your license could not be activated. Please try again."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:262
+#: includes/class-multisite-admin.php:286
+#: includes/class-multisite-admin.php:287
+msgid "Licensing"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:269
+#: includes/class-multisite-admin.php:718
+msgid "License Key"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:325
+msgid "This is a WordPress Multisite install."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:330
+msgid ""
+"Your License Key can be managed on the Network Settings page <a href=\"%s"
+"\">here</a>."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:342
+msgid "Your WP Native Articles License Key."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:343
+msgid "This is required for access to new updates, features and security."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:348
+#: includes/class-multisite-admin.php:727
+msgid ""
+"You can find it on your account page <a href=\"%s\" target=\"_blank\">here</"
+"a>."
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:362
+#: includes/class-admin-general__isPro.php:376
+#: includes/class-multisite-admin.php:748
+#: includes/class-multisite-admin.php:762
+msgid "Activate License"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:368
+#: includes/class-multisite-admin.php:754
+msgid "Active"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:370
+#: includes/class-multisite-admin.php:756
+msgid "Deactivate License"
+msgstr ""
+
+#: includes/class-admin-general__isPro.php:374
+#: includes/class-multisite-admin.php:760
+msgid "Inactive"
+msgstr ""
+
+#: includes/class-admin-premium__isFree.php:62
+msgid "Premium"
+msgstr ""
+
+#: includes/class-admin-premium__isFree.php:119
+msgid "WP Native Articles Premium"
+msgstr ""
+
+#: includes/class-admin-support.php:61 includes/class-admin-support.php:62
+#: includes/class-admin-support.php:97 includes/class-admin-support.php:197
+msgid "Support"
+msgstr ""
+
+#: includes/class-admin-support.php:133
+msgid "Debug"
+msgstr ""
+
+#: includes/class-admin-support.php:199
+msgid "Documentation &amp; Knowledge Base"
+msgstr ""
+
+#: includes/class-admin-support.php:200
+msgid ""
+"Documentation, tutorials and knowledge base for both the free and pro "
+"versions of the plugin can be found at <a target=\"_blank\" href=\"%s\">docs."
+"wp-native-articles.com</a>."
+msgstr ""
+
+#: includes/class-admin-support.php:202
+msgid "Bugs and Support"
+msgstr ""
+
+#: includes/class-admin-support.php:203
+msgid ""
+"All bugs for the free version of the plugin should be reported via the <a "
+"target=\"_blank\" href=\"%s\">WordPress plugin support forum</a>."
+msgstr ""
+
+#: includes/class-admin-support.php:204
+msgid ""
+"If you have the Pro version of the plugin you can access our premium support "
+"and email us directly by visiting your account <a target=\"_blank\" href=\"%s"
+"\">here</a>."
+msgstr ""
+
+#: includes/class-admin-support.php:206
+msgid "FAQs"
+msgstr ""
+
+#: includes/class-admin-support.php:207
+msgid ""
+"Popular FAQs regarding the free version are included in the WordPress readme "
+"<a target=\"_blank\" href=\"%s\">here</a>."
+msgstr ""
+
+#: includes/class-admin-support.php:208
+msgid ""
+"Further FAQs can be found on our website <a target=\"_blank\" href=\"%s"
+"\">here</a>."
+msgstr ""
+
+#: includes/class-admin-support.php:227
+msgid "Debug Information"
+msgstr ""
+
+#: includes/class-admin-support.php:228
+msgid "Summary"
+msgstr ""
+
+#: includes/class-admin-support.php:232
+msgid "WordPress Version"
+msgstr ""
+
+#: includes/class-admin-support.php:233 includes/class-admin-support.php:237
+#: includes/class-admin-support.php:263
+msgid "Unavailable"
+msgstr ""
+
+#: includes/class-admin-support.php:236
+msgid "Site URL"
+msgstr ""
+
+#: includes/class-admin-support.php:240
+msgid "Active Theme"
+msgstr ""
+
+#: includes/class-admin-support.php:244
+msgid "User Operating System"
+msgstr ""
+
+#: includes/class-admin-support.php:262
+msgid "PHP Version"
+msgstr ""
+
+#: includes/class-admin-support.php:266
+msgid "MySql Version"
+msgstr ""
+
+#: includes/class-admin-support.php:270
+msgid "Memory Limit"
+msgstr ""
+
+#: includes/class-admin-support.php:274
+msgid "Upload Max Filesize"
+msgstr ""
+
+#: includes/class-admin-support.php:278
+msgid "Post Max Size"
+msgstr ""
+
+#: includes/class-admin-support.php:282
+msgid "Max Execution Time"
+msgstr ""
+
+#: includes/class-admin-support.php:283
+msgid "seconds"
+msgstr ""
+
+#: includes/class-admin-support.php:288
+msgid "Full Debug Information"
+msgstr ""
+
+#: includes/class-admin-support.php:412
+msgid "This information is not available."
+msgstr ""
+
+#: includes/class-admin.php:97
+msgid "Upgrade to Premium"
+msgstr ""
+
+#: includes/class-admin.php:149 includes/class-admin.php:150
+#: includes/class-multisite-admin.php:274
+msgid "Native Articles"
+msgstr ""
+
+#: includes/class-admin.php:375
+msgid ""
+"Hey, we noticed you've been using WP Native Articles for a little while now "
+"– that’s brilliant! Could you please do me a BIG favor and give it a 5-star "
+"rating on WordPress? It really helps us spread the word and boosts our "
+"motivation."
+msgstr ""
+
+#: includes/class-admin.php:377
+msgid "Sure, you deserve it"
+msgstr ""
+
+#: includes/class-admin.php:378
+msgid "I already have"
+msgstr ""
+
+#: includes/class-admin.php:379
+msgid "Nope, not right now"
+msgstr ""
+
+#: includes/class-multisite-admin.php:138
+msgid "Multisite Options"
+msgstr ""
+
+#: includes/class-multisite-admin.php:145
+msgid "Access Level"
+msgstr ""
+
+#: includes/class-multisite-admin.php:153
+msgid "Inherit ID"
+msgstr ""
+
+#: includes/class-multisite-admin.php:163
+msgid "Reset Blog Settings"
+msgstr ""
+
+#: includes/class-multisite-admin.php:170
+msgid "Blog ID"
+msgstr ""
+
+#: includes/class-multisite-admin.php:204
+msgid "Multisite settings updated successfully."
+msgstr ""
+
+#: includes/class-multisite-admin.php:208
+msgid "Error updating multisite settings."
+msgstr ""
+
+#: includes/class-multisite-admin.php:212
+msgid "Blog settings successfully reset."
+msgstr ""
+
+#: includes/class-multisite-admin.php:216
+msgid "Error: Please provide a blog ID to reset."
+msgstr ""
+
+#: includes/class-multisite-admin.php:273
+#: includes/class-multisite-admin.php:312
+msgid "Multisite Settings"
+msgstr ""
+
+#: includes/class-multisite-admin.php:318
+msgid "Save Multisite Settings"
+msgstr ""
+
+#: includes/class-multisite-admin.php:323
+msgid "Reset Site to Defaults"
+msgstr ""
+
+#: includes/class-multisite-admin.php:369
+msgid "Administrator"
+msgstr ""
+
+#: includes/class-multisite-admin.php:370
+msgid "Network Administrator"
+msgstr ""
+
+#: includes/class-multisite-admin.php:372
+msgid "The minimum user role required to change native article settings."
+msgstr ""
+
+#: includes/class-multisite-admin.php:394
+msgid "When creating a new site inherit settings from this site."
+msgstr ""
+
+#: includes/class-multisite-admin.php:490
+msgid ""
+"Here you can reset ALL Native Article settings for a particular blog to the "
+"same as the Inherit ID blog above."
+msgstr ""
+
+#: includes/class-multisite-admin.php:707
+msgid "License"
+msgstr ""
+
+#: includes/class-multisite-admin.php:722
+msgid "Your WP Native Articles license key."
+msgstr ""
+
+#: includes/class-multisite-admin.php:723
+msgid ""
+"This is required for access to new updates, features and security fixes."
+msgstr ""
+
+#: includes/class-multisite-admin.php:773
+msgid "Save Changes"
+msgstr ""
+
+#: includes/compat/infogram.php:56
+msgid "id is required"
+msgstr ""
+
+#: includes/compat/visual-bakery.php:719
+msgid "Follow"
+msgstr ""
+
+#: includes/compat/visual-bakery.php:723
+msgid "Tweet to"
+msgstr ""
+
+#: includes/compat/visual-bakery.php:728 includes/compat/visual-bakery.php:732
+msgid "Tweet"
+msgstr ""
+
+#: includes/compat/visual-bakery.php:1357
+msgid "View stream on flickr"
+msgstr ""
+
+#: includes/functions-helper.php:238
+msgid "Functions are hooking into this option and might be changing the output"
+msgstr ""
+
+#: includes/functions-helper.php:528 includes/functions-helper.php:575
+#: includes/functions-helper.php:629
+msgid "An error occurred, please try again."
+msgstr ""
+
+#: includes/functions-helper.php:542
+msgid "Your license key expired on %s."
+msgstr ""
+
+#: includes/functions-helper.php:549
+msgid "Your license key has been disabled."
+msgstr ""
+
+#: includes/functions-helper.php:554
+msgid "Invalid license."
+msgstr ""
+
+#: includes/functions-helper.php:560
+msgid "Your license is not active for this URL."
+msgstr ""
+
+#: includes/functions-helper.php:565
+msgid "This appears to be an invalid license key for %s."
+msgstr ""
+
+#: includes/functions-helper.php:570
+msgid "Your license key has reached its activation limit."
+msgstr ""
+
+#: includes/lib/EDD_SL_Plugin_Updater__isPro.php:205
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s."
+msgstr ""
+
+#: includes/lib/EDD_SL_Plugin_Updater__isPro.php:213
+msgid ""
+"There is a new version of %1$s available. %2$sView version %3$s details%4$s "
+"or %5$supdate now%6$s."
+msgstr ""
+
+#: includes/lib/EDD_SL_Plugin_Updater__isPro.php:403
+msgid "You do not have permission to install plugin updates"
+msgstr ""
+
+#: wp-native-articles__isFree.php:193
+msgid "Please disable the Pro version before activating the Free version."
+msgstr ""
+
+#: wp-native-articles__isFree.php:194 wp-native-articles__isPro.php:229
+msgid "Plugin Activation Error"
+msgstr ""
+
+#: wp-native-articles__isPro.php:228
+msgid "Please disable the Free version before activating the Pro version."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "WP Native Articles"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://wp-native-articles.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Advanced Facebook Instant Articles integration for Wordpress"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "OzTheGreat (WPArtisan)"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://wpartisan.me"
+msgstr ""

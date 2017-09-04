@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.2.4
+ * Version: 1.2.5
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.2.4' );
+	define( 'WPNA_VERSION', '1.2.5' );
 }
 
 // Define the plugin base path.
@@ -143,11 +143,22 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$classes->wpna_admin_facebook_feed = new WPNA_Admin_Facebook_Feed();
 
+		if ( ! class_exists( 'WPNA_Admin_Facebook_Custom_Content' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-admin-facebook-custom-content.php';
+		}
+		$classes->wpna_facebook_custom_content = new WPNA_Admin_Facebook_Custom_Content();
+
 		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';
 		}
 		$classes->wpna_facebook_content_parser = new WPNA_Facebook_Content_Parser();
+
+		// Load the shortcodes class.
+		if ( ! class_exists( 'WPNA_Shortcodes' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-shortcodes.php';
+		}
+		$classes->wpna_shortcodes = new WPNA_Shortcodes();
 
 		/**
 		 * Third party compatibility functions
@@ -163,7 +174,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/pro-theme.php';
 
 		// Load the plugin text domain. For i18n.
-		add_action( 'init', 'wpna_load_textdomain', 10, 0 );
+		add_action( 'plugins_loaded', 'wpna_load_textdomain', 10, 0 );
 
 		return $classes;
 	}

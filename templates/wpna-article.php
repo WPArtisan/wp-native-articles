@@ -202,33 +202,54 @@
 				<?php endif; ?>
 
 				<?php
+				// Check if any manual related articles exist for this post.
+				$manual_related_articles = $post->get_manual_related_articles();
+				if ( ! empty( $manual_related_articles )  ) : ?>
+
+					<ul class="op-related-articles">
+						<?php foreach ( $manual_related_articles as $related_article ) : ?>
+							<?php if ( $related_article->sponsored ) : ?>
+								<li data-sponsored="true">
+							<?php else : ?>
+								<li>
+							<?php endif; ?>
+								<a href="<?php echo esc_url( $related_article->url ); ?>"></a>
+							</li>
+						<?php endforeach; ?>
+					</ul>
+
+				<?php else :
+
 					/**
-					 * Can define up to 3 related articles at the bottom of an article.
+					 * No manual related articles were found, generate them automatically.
+					 * Can define up to 4 related articles at the bottom of an article.
 					 */
 					$related_articles_loop = $post->get_related_articles();
 				?>
 
-				<?php if ( $related_articles_loop->have_posts() ) : ?>
-					<ul class="op-related-articles">
-						<?php foreach ( $related_articles = $related_articles_loop->get_posts() as $related_article ) : ?>
+					<?php if ( $related_articles_loop->have_posts() ) : ?>
+						<ul class="op-related-articles">
+							<?php foreach ( $related_articles = $related_articles_loop->get_posts() as $related_article ) : ?>
 
-							<?php
-							/**
-							 * Filter any attributes applied to the <li> element
-							 * of the related articles. e.g. sponsored.
-							 *
-							 * @since 1.0.0
-							 * @param $attrs List of attributes to add
-							 * @param $related_article The current related articles
-							 * @param $post The current post
-							 */
-							$attrs = apply_filters( 'wpna_facebook_article_related_articles_attributes', '', $related_article, $post );
-							?>
+								<?php
+								/**
+								 * Filter any attributes applied to the <li> element
+								 * of the related articles. e.g. sponsored.
+								 *
+								 * @since 1.0.0
+								 * @param $attrs List of attributes to add
+								 * @param $related_article The current related articles
+								 * @param $post The current post
+								 */
+								$attrs = apply_filters( 'wpna_facebook_article_related_articles_attributes', '', $related_article, $post );
+								?>
 
-							<li<?php echo esc_attr( $attrs ); ?>><a href="<?php echo esc_url( get_permalink( $related_article ) ); ?>"></a></li>
+								<li<?php echo esc_attr( $attrs ); ?>><a href="<?php echo esc_url( get_permalink( $related_article ) ); ?>"></a></li>
 
-						<?php endforeach; ?>
-					</ul>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
+
 				<?php endif; ?>
 
 				<?php
