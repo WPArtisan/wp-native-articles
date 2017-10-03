@@ -105,6 +105,15 @@
 	display: inherit;
 }
 
-.wpna-error {
-	color: red !important;
+.wpna-error,
+.wpna-failed {
+	color: #dc3232 !important;
+}
+
+.wpna-success {
+	color: #46b450 !important;
+}
+
+.wpna-warning {
+	color: #ffba00 !important;
 }

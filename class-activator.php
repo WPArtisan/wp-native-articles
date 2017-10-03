@@ -31,6 +31,7 @@ class WPNA_Activator {
 	 * @return void
 	 */
 	public static function run() {
+		add_site_option( 'wpna_db_version', WPNA_VERSION );
 		self::flush_rewrite_rules();
 		self::add_default_options();
 		self::add_default_site_options();
@@ -121,6 +122,31 @@ class WPNA_Activator {
 			// When to provide prompts for plugin ratings, in days.
 			add_site_option( 'wpna_rating_prompts', array( 7, 30, 90 ) );
 		}
+	}
+
+	/**
+	 * Holds all scripts for creating the custom tables in the database.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public static function run_database_scripts() {
+		global $wpdb;
+
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$scripts = array();
+		if ( ! empty( $scripts ) ) {
+			require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+			foreach ( $scripts as $script ) {
+				dbDelta( $scripts );
+			}
+
+			update_site_option( 'wpna_db_version', WPNA_VERSION );
+		}
+
 	}
 
 }

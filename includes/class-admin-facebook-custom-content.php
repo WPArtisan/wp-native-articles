@@ -38,15 +38,16 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 		add_filter( 'wpna_facebook_article_pre_the_content_filter', array( $this, 'override_post_content' ), 10, 1 );
 
 		// Sanitize the post meta.
-		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content_enable',          'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content',                 'wpna_sanitize_unsafe_html', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_one',             'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_video_header',                    'esc_url_raw', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content_enable',           'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content',                  'wpna_sanitize_unsafe_html', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_one',             'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_one_sponsored',   'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_two',             'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_two',             'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_two_sponsored',   'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_three',           'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_three',           'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_three_sponsored', 'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_four',            'sanitize_text_field', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_four',            'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_four_sponsored',  'wpna_switchval', 10, 1 );
 	}
 
@@ -93,10 +94,25 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 	 */
 	public function post_meta_box_custom_content_cb( $post ) {
 		?>
-		<h3><?php esc_html_e( 'Content Override', 'wp-native-articles' ); ?></h3>
-		<p class="description"><?php esc_html_e( 'Set custom content for this post to be used in the Instant Article. If enabled, this will be used instead of the content above. This is useful if you are getting lots of import errors in Facebook.', 'wp-native-articles' ); ?></p>
-
 		<div class="pure-form pure-form-aligned">
+
+			<h3><?php esc_html_e( 'Video Header', 'wp-native-articles' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Use a video in the the article header instead of the feature image.', 'wp-native-articles' ); ?></p>
+
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="fbia_video_header"><?php esc_html_e( 'Video URL', 'wp-native-articles' ); ?></label>
+					<input type="url" name="_wpna_fbia_video_header" id="fbia_video_header" class="" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_video_header', true ) ); ?>" />
+
+					<?php
+					// Show a notice if the option has been overridden.
+					wpna_post_option_overridden_notice( 'fbia_video_header' );
+					?>
+				</div>
+			</fieldset>
+
+			<h3><?php esc_html_e( 'Content Override', 'wp-native-articles' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Set custom content for this post to be used in the Instant Article. If enabled, this will be used instead of the content above. This is useful if you are getting lots of import errors in Facebook.', 'wp-native-articles' ); ?></p>
 
 			<fieldset>
 				<div class="pure-control-group">
@@ -122,7 +138,8 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 
 			<h3><?php esc_html_e( 'Related Articles', 'wp-native-articles' ); ?></h3>
 
-			<p><?php esc_html_e( 'Manually specify the first four related articles for this post. Has to be a link to a post on the same site.', 'wp-native-articles' ); ?>
+			<p class="description">
+				<?php esc_html_e( 'Manually specify the first four related articles for this post. Has to be a link to a post on the same site.', 'wp-native-articles' ); ?>
 				<?php echo sprintf(
 					wp_kses(
 						__( 'See the <a target="_blank" href="%s">Official Documentation</a> for more information on related articles.', 'wp-native-articles' ),
@@ -130,6 +147,7 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 					),
 					esc_url( 'https://developers.facebook.com/docs/instant-articles/reference/related-articles' )
 				);?>
+			</p>
 
 			<fieldset>
 				<div class="pure-control-group">
@@ -252,6 +270,7 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 
 		// Nothing fancy, let's just buid our own data array.
 		$field_keys = array(
+			'_wpna_fbia_video_header',
 			'_wpna_fbia_custom_content_enable',
 			'_wpna_fbia_custom_content',
 			'_wpna_fbia_related_article_one',

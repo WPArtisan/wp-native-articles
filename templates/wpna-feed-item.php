@@ -12,12 +12,14 @@
  */
 
 ?>
-
 <item>
 	<title><?php echo esc_html( $post->get_the_title() ); ?></title>
 	<link><?php echo esc_url( $post->get_permalink() ); ?></link>
 	<content:encoded><![CDATA[
-		<?php include wpna_locate_template( 'wpna-article' ); ?>
+		<?php
+			// @codingStandardsIgnoreLine
+			echo wpna_get_fbia_post();
+		?>
 	]]></content:encoded>
 	<guid isPermaLink="false"><?php echo esc_url( get_the_guid() ); ?></guid>
 	<description><![CDATA[<?php echo esc_html( $post->get_the_excerpt() ); ?>]]></description>

@@ -17,7 +17,6 @@
 	// Has to be done like this otherwise WP plugin repository hooks parse it as PHP and fail it.
 	echo sprintf( '<?xml version="1.0" encoding="%s"?>', esc_attr( get_option( 'blog_charset' ) ) );
 ?>
-
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 	<channel>
 		<title><?php bloginfo_rss( 'name' ); ?></title>

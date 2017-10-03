@@ -139,7 +139,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function scripts( $hook ) {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', dirname( __FILE__ ) ), array( 'jquery-ui-tabs' ), WPNA_VERSION, true );
+			wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', dirname( __FILE__ ) ), array( 'jquery', 'jquery-ui-tabs' ), WPNA_VERSION, true );
 		}
 
 		// Dismissible JS. Create Nonce.

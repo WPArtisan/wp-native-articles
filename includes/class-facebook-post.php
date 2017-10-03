@@ -87,6 +87,42 @@ class WPNA_Facebook_Post {
 	}
 
 	/**
+	 * Returns whether RTL should be used for the post.
+	 *
+	 * First checks the post meta to see if it's been overridden.
+	 * If not it returns the global default.
+	 *
+	 * The Auto detect values uses the same value as the WordPress admin.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function is_rtl() {
+
+		// Checks for post options, then global options then default.
+		$rtl = wpna_get_post_option( get_the_ID(), 'fbia_rtl', 'off' );
+
+		// If set to auto, use the WP detection function.
+		if ( 'auto' === $rtl ) {
+			$rtl = is_rtl();
+		} else {
+			$rtl = wpna_switch_to_boolean( $rtl );
+		}
+
+		/**
+		 * Filter the article style.
+		 *
+		 * @since 1.3.0
+		 * @param bool $rtl Whether this post should be RTL.
+		 */
+		$rtl = apply_filters( 'wpna_facebook_post_is_rtl', $rtl );
+
+		return $rtl;
+	}
+
+	/**
 	 * Returns the title of the post.
 	 *
 	 * First checks the post meta to see if it's been overridden.
@@ -481,15 +517,26 @@ class WPNA_Facebook_Post {
 		if ( class_exists( 'DOMDocument' ) ) {
 
 			$libxml_previous_state = libxml_use_internal_errors( true );
-			$dom_document = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
+			$dom_document = new DOMDocument( '1.0' );
 
-			if ( function_exists( 'mb_convert_encoding' ) ) {
-				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
-			}
-
+			// Remove any existing tags that may or may not be there.
 			$content = str_ireplace( array( '<body>', '</body>', '<html>', '</html>' ), '', $content );
 
-			$dom_document->loadHTML( '<!doctype html><html><body>' . $content . '</body></html>' );
+			// Make sure body tags are there.
+			$content = '<body>' . $content . '</body>';
+
+			// Convert encoding.
+			if ( function_exists( 'mb_convert_encoding' ) ) {
+				$content = mb_convert_encoding( $content, 'HTML-ENTITIES', get_option( 'blog_charset' ) );
+			} else {
+				// If mb_convert_encoding() isn't installed then try and detect
+				// encoding automatically via meta tag in the head.
+				$content = '<head>
+					<meta http-equiv="Content-Type" content="text/html; charset=' . get_option( 'blog_charset' ) . '">
+					</head>' . $content;
+			}
+
+			$dom_document->loadHTML( '<!doctype html><html>' . $content . '</html>' );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 
@@ -668,7 +715,7 @@ class WPNA_Facebook_Post {
 			'update_post_term_cache' => false,
 			'update_post_meta_cache' => false,
 			'cache_results'          => false,
-			'post_type'              => 'post',
+			'post_type'              => wpna_allowed_post_types(),
 			'post_status'            => 'publish',
 		);
 
@@ -729,14 +776,32 @@ class WPNA_Facebook_Post {
 	 * First checks the post meta to see if it's been overridden.
 	 * If not it returns the global default.
 	 *
+	 * Depending on the ad type set will either format be custom ad code
+	 * or a placement id that will need formatting.
+	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return string
 	 */
 	public function get_ads() {
-		// Make sure there's ad codes before we output it.
-		$ad_code = wpna_get_post_option( get_the_ID(), 'fbia_ad_code' );
+
+		if ( 'audience_network' === wpna_get_post_option( get_the_ID(), 'fbia_ad_code_type' ) ) {
+			// Get the palcement ID.
+			$placement_id = wpna_get_post_option( get_the_ID(), 'fbia_ad_code_placement_id' );
+
+			// Grab the HTML for the ad placement.
+			// The $placement_id var is available inside the template.
+			ob_start();
+
+			include wpna_locate_template( 'wpna-audience-network-banner.php' );
+
+			$ad_code = ob_get_clean();
+
+		} else {
+			// Get the custom ad code.
+			$ad_code = wpna_get_post_option( get_the_ID(), 'fbia_ad_code' );
+		}
 
 		/**
 		 * Filter the ad code for the article.

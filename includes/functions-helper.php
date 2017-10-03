@@ -484,3 +484,88 @@ if ( ! function_exists( 'wpna_replace_date_placeholders' ) ) :
 		return $string;
 	}
 endif;
+
+if ( ! function_exists( 'wpna_fbia_post' ) ) :
+
+	/**
+	 * A generic function for grabbing the Instant Article version of a post.
+	 *
+	 * @since 1.3.0
+	 * @param  int|object $wp_post A post object or ID for grabbing the post.
+	 * @return string The formatted Instant Article
+	 */
+	function wpna_get_fbia_post( $wp_post = null ) {
+		// Make sure we have the post.
+		$wp_post = get_post( $wp_post );
+
+		// When running in CRON the global post isn't set so set it.
+		// @codingStandardsIgnoreLine
+		$GLOBALS['post'] = $wp_post;
+
+		// Make sure all the global WP values are populated.
+		setup_postdata( $wp_post );
+
+		// Variable name is important here. It's accessed in the template.
+		$post = new WPNA_Facebook_Post( $wp_post->ID );
+
+		/**
+		 * Fired before an Instant Article post template is loaded.
+		 *
+		 * @var $post The post being converted
+		 */
+		do_action( 'wpna_pre_get_fbia_post', $post );
+
+		// Generate the article and grab the HTML.
+		ob_start();
+
+		include wpna_locate_template( 'wpna-article' );
+
+		$html_source = ob_get_clean();
+
+		/**
+		 * Fired after an Instant Article post template is loaded.
+		 *
+		 * @var $post The post being converted
+		 * @var $html_source The post source
+		 */
+		do_action( 'wpna_post_get_fbia_post', $post, $html_source );
+
+		// Reset just incase.
+		wp_reset_postdata();
+
+		return $html_source;
+	}
+endif;
+
+if ( ! function_exists( 'wpna_premium_feature_notice' ) ) :
+
+	/**
+	 * Outputs an HTML notice prompting an upgrade to the premium version.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return void
+	 */
+	function wpna_premium_feature_notice() {
+		?>
+		<style>
+		.wpna-premium-feature {
+			background: #96ccff;
+			padding: 4px 6px;
+			font-weight: bold;
+			color: #fff;
+			font-size: 10px;
+			border-radius: 4px;
+		}
+		</style>
+		<hr />
+		<h4>
+		<?php echo wp_kses(
+			__( '<span class="wpna-premium-feature" style="">Premium Feature</span> This a premium only feature, visit <a href="https://wp-native-articles.com?utm_source=fplugin&utm_medium=upgrade_premium_notice" target="_blank">https://wp-native-articles.com</a> to upgrade and enable it.', 'wp-native-articles' ),
+			array( 'span' => array( 'class' => true ), 'a' => array( 'href' => true, 'target' => true ) )
+		); ?>
+		</h4>
+		<hr />
+		<?php
+	}
+endif;

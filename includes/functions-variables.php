@@ -155,3 +155,33 @@ if ( ! function_exists( 'wpna_get_switch_values' ) ) :
 	}
 
 endif;
+
+if ( ! function_exists( 'wpna_allowed_post_types' ) ) :
+
+	/**
+	 * Returns the default post types to convert to IA.
+	 *
+	 * These can be overriden in the RSS method through URL params.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @return array Post types to sync.
+	 */
+	function wpna_allowed_post_types() {
+		$values = array(
+			'post',
+		);
+
+		/**
+		 * Filter all the values before they're returned
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param array $values Post types to convert.
+		 */
+		$values = apply_filters( 'wpna_allowed_post_types', $values );
+
+		return $values;
+	}
+
+endif;

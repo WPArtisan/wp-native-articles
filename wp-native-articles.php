@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.2.5
+ * Version: 1.3.0
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.2.5' );
+	define( 'WPNA_VERSION', '1.3.0' );
 }
 
 // Define the plugin base path.
@@ -41,6 +41,9 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 
 		// Holds all the classes initialized.
 		$classes = new stdClass();
+
+		// Preparation for when we re-factor the pro plugin.
+		$GLOBALS['wpna_pro'] = new stdClass();
 
 		// Require the class if it doesn't exist.
 		if ( ! class_exists( 'WPNA_Activator' ) ) {
@@ -79,6 +82,26 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		require WPNA_BASE_PATH . '/includes/functions-variables.php';
 
 		/**
+		 * Action files.
+		 */
+
+		// Load the upgrade file.
+		require WPNA_BASE_PATH . '/upgrade.php';
+
+		// Load the global actions file.
+		require WPNA_BASE_PATH . '/includes/admin-actions.php';
+
+		// Load the global notices file.
+		require WPNA_BASE_PATH . '/includes/admin-notices.php';
+
+		/**
+		 * Contextual Help.
+		 */
+
+		 // Load the placements contextual help.
+		 require WPNA_BASE_PATH . '/includes/placements/contextual-help.php';
+
+		/**
 		 * Classes that register hooks and do stuff.
 		 */
 
@@ -99,6 +122,11 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		// Facebook post object. Used in the templates.
 		if ( ! class_exists( 'WPNA_Facebook_Post' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-facebook-post.php';
+		}
+
+		// Load the list table class for placements.
+		if ( ! class_exists( 'WPNA_Admin_Placements_List_Table' ) ) {
+			require WPNA_BASE_PATH . '/includes/placements/class-admin-placements-list-table.php';
 		}
 
 		// Load the multisite functionality.
@@ -143,6 +171,18 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$classes->wpna_admin_facebook_feed = new WPNA_Admin_Facebook_Feed();
 
+		if ( ! class_exists( 'WPNA_Admin_Placements' ) ) {
+			require WPNA_BASE_PATH . '/includes/placements/class-admin-placements.php';
+		}
+		// Preparation for pro refactor.
+		$GLOBALS['wpna_pro']->wpna_admin_placements = new WPNA_Admin_Placements();
+
+		if ( ! class_exists( 'WPNA_Admin_Facebook_Crawler_Ingestion' ) ) {
+			require WPNA_BASE_PATH . '/includes/class-admin-facebook-crawler-ingestion.php';
+		}
+		// Preparation for pro refactor.
+		$GLOBALS['wpna_pro']->wpna_admin_facebook_crawler_ingestion = new WPNA_Admin_Facebook_Crawler_Ingestion();
+
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Custom_Content' ) ) {
 			require WPNA_BASE_PATH . '/includes/class-admin-facebook-custom-content.php';
 		}
@@ -172,6 +212,9 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/newsmag.php';
 		include WPNA_BASE_PATH . '/includes/compat/wp-quads.php';
 		include WPNA_BASE_PATH . '/includes/compat/pro-theme.php';
+		include WPNA_BASE_PATH . '/includes/compat/adace.php';
+		include WPNA_BASE_PATH . '/includes/compat/easyazon.php';
+		include WPNA_BASE_PATH . '/includes/compat/wp-recipe-maker.php';
 
 		// Load the plugin text domain. For i18n.
 		add_action( 'plugins_loaded', 'wpna_load_textdomain', 10, 0 );

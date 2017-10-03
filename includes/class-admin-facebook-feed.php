@@ -516,7 +516,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 			$query->set( 'no_found_rows', true );
 
 			// Set the post type.
-			$post_types = get_query_var( 'post_type', 'post' );
+			$post_types = get_query_var( 'post_type', wpna_allowed_post_types() );
 			$query->set( 'post_type', $post_types );
 
 			// Set the feed query params.

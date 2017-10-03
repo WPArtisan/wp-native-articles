@@ -12,7 +12,11 @@
 
 ?>
 <!doctype html>
+<?php if ( $post->is_rtl() ) : ?>
+<html lang="<?php echo esc_attr( get_bloginfo( 'language' ) ); ?>" dir="rtl" prefix="op: http://media.facebook.com/op#">
+<?php else : ?>
 <html lang="<?php echo esc_attr( get_bloginfo( 'language' ) ); ?>" prefix="op: http://media.facebook.com/op#">
+<?php endif; ?>
 	<head>
 		<meta charset="<?php echo esc_attr( get_option( 'blog_charset' ) ); ?>">
 		<link rel="canonical" href="<?php echo esc_url( $post->get_permalink() ); ?>">
@@ -55,13 +59,27 @@
 				// Check if it should be shown for this article or not.
 				$show_media = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_media', 'on' ) );
 				?>
-				<?php if ( $show_media && $image = $post->get_the_featured_image() ) : ?>
-					<figure>
-						<img src="<?php echo esc_url( $image['url'] ); ?>" />
-						<?php if ( ! empty( $image['caption'] ) ) : ?>
-							<figcaption><?php echo esc_html( $image['caption'] ); ?></figcaption>
-						<?php endif; ?>
-					</figure>
+				<?php if ( $show_media ) : ?>
+					<?php if ( $video_url = get_post_meta( get_the_ID(), '_wpna_fbia_video_header', true ) ) : ?>
+						<figure>
+							<video>
+								<?php
+									// Manually pass all mime type to wp_check_filetype().
+									// Incase the current user has upload mime type restrictions applied.
+									$mime_types = wp_get_mime_types();
+									$filetype = wp_check_filetype( $video_url, $mime_types );
+								?>
+								<source src="<?php echo esc_url( $video_url ); ?>" type="<?php echo esc_attr( $filetype['type'] ); ?>" />
+							</video>
+						</figure>
+					<?php elseif ( $image = $post->get_the_featured_image() ) : ?>
+						<figure>
+							<img src="<?php echo esc_url( $image['url'] ); ?>" />
+							<?php if ( ! empty( $image['caption'] ) ) : ?>
+								<figcaption><?php echo esc_html( $image['caption'] ); ?></figcaption>
+							<?php endif; ?>
+						</figure>
+					<?php endif; ?>
 				<?php endif; ?>
 
 				<?php
@@ -232,6 +250,13 @@
 							<?php foreach ( $related_articles = $related_articles_loop->get_posts() as $related_article ) : ?>
 
 								<?php
+								$attrs = '';
+
+								// Check if the related article is a sponsored one.
+								if ( wpna_switch_to_boolean( wpna_get_post_option( $related_article->ID, 'fbia_sponsored' ) ) ) {
+									$attrs = ' data-sponsored="true"';
+								}
+
 								/**
 								 * Filter any attributes applied to the <li> element
 								 * of the related articles. e.g. sponsored.
@@ -241,10 +266,11 @@
 								 * @param $related_article The current related articles
 								 * @param $post The current post
 								 */
-								$attrs = apply_filters( 'wpna_facebook_article_related_articles_attributes', '', $related_article, $post );
+								$attrs = apply_filters( 'wpna_facebook_article_related_articles_attributes', $attrs, $related_article, $post );
 								?>
 
-								<li<?php echo esc_attr( $attrs ); ?>><a href="<?php echo esc_url( get_permalink( $related_article ) ); ?>"></a></li>
+								<?php // @codingStandardsIgnoreLine ?>
+								<li<?php echo $attrs; ?>><a href="<?php echo esc_url( get_permalink( $related_article ) ); ?>"></a></li>
 
 							<?php endforeach; ?>
 						</ul>
