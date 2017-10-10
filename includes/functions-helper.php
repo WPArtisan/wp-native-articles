@@ -485,7 +485,7 @@ if ( ! function_exists( 'wpna_replace_date_placeholders' ) ) :
 	}
 endif;
 
-if ( ! function_exists( 'wpna_fbia_post' ) ) :
+if ( ! function_exists( 'wpna_get_fbia_post' ) ) :
 
 	/**
 	 * A generic function for grabbing the Instant Article version of a post.

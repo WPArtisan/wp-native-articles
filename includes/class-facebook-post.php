@@ -559,6 +559,19 @@ class WPNA_Facebook_Post {
 
 			// Strip out the cdata added by saveXML().
 			$content = str_replace( array( '<![CDATA[', ']]>' ), '', $content );
+
+			// Remove <body> from start of string.
+			$prefix = '<body>';
+			if ( substr( $content, 0, strlen( $prefix ) ) == $prefix ) {
+				$content = substr( $content, strlen( $prefix ) );
+			}
+
+			// Remove </body> from end of string.
+			$prefix = '</body>';
+			if ( substr( $content, -strlen( $prefix ), strlen( $prefix ) ) == $prefix ) {
+				$content = substr( $content, 0, -strlen( $prefix ) );
+			}
+
 		}
 
 		/**

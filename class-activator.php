@@ -31,7 +31,6 @@ class WPNA_Activator {
 	 * @return void
 	 */
 	public static function run() {
-		add_site_option( 'wpna_db_version', WPNA_VERSION );
 		self::flush_rewrite_rules();
 		self::add_default_options();
 		self::add_default_site_options();

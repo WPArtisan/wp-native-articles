@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.3.0
+ * Version: 1.3.1
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.3.0' );
+	define( 'WPNA_VERSION', '1.3.1' );
 }
 
 // Define the plugin base path.
@@ -223,9 +223,12 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 	}
 endif;
 
-// Kick everything off. Assign all instantiated classes to a variable.
-// If anyone needs to unhook anything they can simply grab it.
-$wpna = wpna_initialise();
+// Check the pro version isn't active then kick everything off.
+// Assign all instantiated classes to a variable. If anyone needs
+// to unhook anything then they can simply grab it.
+if ( ! function_exists( 'wpna_initialise_pro' ) ) {
+	$wpna = wpna_initialise();
+}
 
 /**
  * Disables the current plugin and shows a die message.

@@ -63,14 +63,14 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_shortcode_override' ) ) :
 	 *
 	 * A lot of it is a direct copy from the plugin.
 	 *
-	 * @param  array $attr Shortocde tags to override.
+	 * @param  array $atts Shortocde tags to override.
 	 * @return string Formatted recipe
 	 */
-	function wpna_wp_recipe_maker_shortcode_override( $attr ) {
+	function wpna_wp_recipe_maker_shortcode_override( $atts ) {
 		$atts = shortcode_atts( array(
 			'id'       => 'random',
 			'template' => '',
-		), $atts, 'wprm_recipe' );
+		), $atts, 'wprm-recipe' );
 
 		$recipe_template = trim( $atts['template'] );
 
@@ -85,26 +85,29 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_shortcode_override' ) ) :
 					// @codingStandardsIgnoreLine
 					'orderby'        => 'rand',
 				) );
+				$posts = $query->posts;
 			}
 
-			$recipe_id = isset( $posts[0] ) ? $posts[0]->ID : 0;
+			$recipe_id = isset( $query->posts[0] ) ? $query->posts[0]->ID : 0;
 		} elseif ( 'latest' === $atts['id'] ) {
 			$posts = new WP_Query(array(
 				'post_type'      => WPRM_POST_TYPE,
 				'posts_per_page' => 1,
 			));
 
-			$recipe_id = isset( $posts[0] ) ? $posts[0]->ID : 0;
+			$recipe_id = isset( $query->posts[0] ) ? $query->posts[0]->ID : 0;
 		} else {
 			$recipe_id = intval( $atts['id'] );
 		}
 
 		$output = '';
 
-		$recipe = WPRM_Recipe_Manager::get_recipe( $recipe_id );
+		if ( class_exists( 'WPRM_Recipe_Manager' ) ) {
+			$recipe = WPRM_Recipe_Manager::get_recipe( $recipe_id );
 
-		if ( $recipe ) {
-			$output = wpna_wp_recipe_maker_get_template( $recipe );
+			if ( $recipe ) {
+				$output = wpna_wp_recipe_maker_get_template( $recipe );
+			}
 		}
 
 		return $output;
@@ -127,114 +130,54 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_get_template' ) ) :
 			<p><?php echo esc_html( strip_tags( $recipe->summary() ) ); ?></p>
 
 			<?php
-			// All these options are inside an iFrame so we can use SVG icons.
-			?>
-			<figure class="op-interactive">
-				<iframe class="column-width" width="360">
-					<?php
-					// Get the default styles.
-					// Add in a few of our own so it looks good in IA.
-					// @codingStandardsIgnoreLine
-					echo WPRM_Template_Manager::get_template_styles( $recipe, 'screen' );
-					?>
-					<style>
-					* {
-						font-family: Helvetica, sans-serif;
-						font-size: 1rem;
-					}
-					.wprm-recipe-details-container {
-						margin-bottom: 15px;
-					}
-					.wprm-recipe-details-container div {
-						margin-bottom: 5px;
-					}
-					.wprm-recipe-details-icon svg {
-						vertical-align: middle;
-						width: 16px;
-						height: 16px;
-					}
-					.wprm-recipe-details-name {
-						display: inline-block;
-						font-weight: 700;
-						min-width: 130px;
-					}
-					</style>
+			// Get and display all the taxonomies.
+			$taxonomies = WPRM_Taxonomies::get_taxonomies(); ?>
+			<p>
+			<?php foreach ( $taxonomies as $taxonomy => $options ) :
+				$key = substr( $taxonomy, 5 );
+				$terms = $recipe->tags( $key );
 
-					<div class="wprm-recipe-details-container wprm-recipe-tags-container">
-						<?php
-						$taxonomies = WPRM_Taxonomies::get_taxonomies();
+				if ( count( $terms ) > 0 ) : ?>
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( $key . '_tags', $options['singular_name'] ) ); ?></strong>&nbsp;&nbsp;&nbsp;
+					<?php foreach ( $terms as $index => $term ) {
+						if ( 0 !== $index ) {
+							echo ', ';
+						}
+						echo esc_html( $term->name );
+}; ?>
+				<br />
+			<?php endif; // Count.
+			endforeach; // Taxonomies. ?>
+			</p>
 
-						foreach ( $taxonomies as $taxonomy => $options ) :
-							$key = substr( $taxonomy, 5 );
-							$terms = $recipe->tags( $key );
+			<p>
+				<?php if ( $recipe->prep_time() ) : ?>
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'prep_time' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( strip_tags( $recipe->prep_time_formatted() ) ); ?>
+				<?php endif; // Prep time. ?>
+				<?php if ( $recipe->cook_time() ) : ?>
+					<br />
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'cook_time' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( strip_tags( $recipe->cook_time_formatted() ) ); ?>
+				<?php endif; // Cook time. ?>
+				<?php if ( $recipe->total_time() ) : ?>
+					<br />
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'total_time' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( strip_tags( $recipe->total_time_formatted() ) ); ?>
+				<?php endif; // Total time. ?>
+			</p>
 
-							if ( count( $terms ) > 0 ) : ?>
-							<div class="wprm-recipe-<?php echo esc_attr( $key ); ?>-container">
-								<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/tag.svg' ); ?></span> <span class="wprm-recipe-details-name wprm-recipe-<?php echo esc_attr( $key ); ?>-name"><?php echo esc_html( WPRM_Template_Helper::label( $key . '_tags', $options['singular_name'] ) ); ?></span>
-								<span class="wprm-recipe-<?php echo esc_attr( $key ); ?>"<?php echo esc_html( WPRM_Template_Helper::tags_meta( $key ) ); ?>>
-									<?php foreach ( $terms as $index => $term ) {
-										if ( 0 !== $index ) {
-											echo ', ';
-										}
-										echo esc_html( $term->name );
-}
-									?>
-								</span>
-							</div>
-						<?php endif; // Count.
-						endforeach; // Taxonomies. ?>
-					</div>
+			<p>
+				<?php if ( $recipe->servings() ) : ?>
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'servings' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( strip_tags( $recipe->servings() ) ); ?> <?php echo esc_html( $recipe->servings_unit() ); ?>
+				<?php endif; // servings. ?>
+				<?php if ( $recipe->calories() ) : ?>
+					<br />
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'calories' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( $recipe->calories() ); ?> <?php esc_html_e( 'kcal', 'wp-recipe-maker' ); ?>
+				<?php endif; // calories. ?>
+				<?php if ( $recipe->author() ) : ?>
+					<br />
+					<strong><?php echo esc_html( WPRM_Template_Helper::label( 'author' ) ); ?></strong>&nbsp;&nbsp;&nbsp;<?php echo esc_html( $recipe->author() ); ?>
+				<?php endif; // author. ?>
+			</p>
 
-					<div class="wprm-recipe-details-container wprm-recipe-times-container">
-						<?php if ( $recipe->prep_time() ) : ?>
-						<div class="wprm-recipe-prep-time-container">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/knife.svg' ); ?></span> <span class="wprm-recipe-details-name wprm-recipe-prep-time-name"><?php echo esc_html( WPRM_Template_Helper::label( 'prep_time' ) ); ?></span> <?php echo esc_html( $recipe->prep_time_formatted() ); ?>
-						</div>
-						<?php endif; // Prep time. ?>
-						<?php if ( $recipe->cook_time() ) : ?>
-						<div class="wprm-recipe-cook-time-container">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/pan.svg' ); ?></span> <span class="wprm-recipe-details-name wprm-recipe-cook-time-name"><?php echo esc_html( WPRM_Template_Helper::label( 'cook_time' ) ); ?></span> <?php echo esc_html( $recipe->cook_time_formatted() ); ?>
-						</div>
-						<?php endif; // Cook time. ?>
-						<?php if ( $recipe->total_time() ) : ?>
-						<div class="wprm-recipe-total-time-container">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/clock.svg' ); ?></span> <span class="wprm-recipe-details-name wprm-recipe-total-time-name"><?php echo esc_html( WPRM_Template_Helper::label( 'total_time' ) ); ?></span> <?php echo esc_html( $recipe->total_time_formatted() ); ?>
-						</div>
-						<?php endif; // Total time. ?>
-					</div>
-
-					<div class="wprm-recipe-details-container">
-						<?php if ( $recipe->servings() ) : ?>
-						<div class="wprm-recipe-servings-container">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/cutlery.svg' ); ?></span>
-							<span class="wprm-recipe-details-name wprm-recipe-servings-name"><?php echo esc_html( WPRM_Template_Helper::label( 'servings' ) ); ?></span>
-							<span itemprop="recipeYield">
-								<span class="wprm-recipe-details wprm-recipe-servings"><?php echo esc_html( $recipe->servings() ); ?></span>
-								<span class="wprm-recipe-details-unit wprm-recipe-servings-unit"><?php echo esc_html( $recipe->servings_unit() ); ?></span>
-							</span>
-						</div>
-						<?php endif; // Servings. ?>
-						<?php if ( $recipe->calories() ) : ?>
-						<div class="wprm-recipe-calories-container" itemprop="nutrition" itemscope itemtype="http://schema.org/NutritionInformation">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/battery.svg' ); ?></span>
-							<span class="wprm-recipe-details-name wprm-recipe-calories-name"><?php echo esc_html( WPRM_Template_Helper::label( 'calories' ) ); ?></span>
-							<span itemprop="calories">
-								<span class="wprm-recipe-details wprm-recipe-calories"><?php echo esc_html( $recipe->calories() ); ?></span>
-								<span class="wprm-recipe-details-unit wprm-recipe-calories-unit"><?php esc_html_e( 'kcal', 'wp-recipe-maker' ); ?></span>
-							</span>
-						</div>
-						<?php endif; // Calories. ?>
-						<?php if ( $recipe->author() ) : ?>
-						<div class="wprm-recipe-author-container">
-							<span class="wprm-recipe-details-icon"><?php include( WPRM_DIR . 'assets/icons/chef-hat.svg' ); ?></span>
-							<span class="wprm-recipe-details-name wprm-recipe-author-name"><?php echo esc_html( WPRM_Template_Helper::label( 'author' ) ); ?></span>
-							<span class="wprm-recipe-details wprm-recipe-author"><?php echo esc_html( $recipe->author() ); ?></span>
-						</div>
-						<?php endif; // Author. ?>
-					</div>
-
-				</iframe>
-			</figure>
 
 			<?php
 			$ingredients = $recipe->ingredients();
@@ -253,7 +196,7 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_get_template' ) ) :
 							<?php if ( $ingredient['unit'] ) : ?>
 							<span><?php echo esc_html( $ingredient['unit'] ); ?></span>
 							<?php endif; // Ingredient unit. ?>
-							<span><?php echo esc_html( WPRM_Template_Helper::ingredient_name( $ingredient, true ) ); ?></span>
+							<span><?php echo wp_kses_post( WPRM_Template_Helper::ingredient_name( $ingredient, true ) ); ?></span>
 							<?php if ( $ingredient['notes'] ) : ?>
 							<i><?php echo esc_html( $ingredient['notes'] ); ?></i>
 							<?php endif; // Ingredient notes. ?>

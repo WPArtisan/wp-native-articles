@@ -79,7 +79,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_filter( 'wpna_sanitize_option_fbia_enable_ads',        'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_ad_density',        'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_option_fbia_ad_code',           'wpna_sanitize_unsafe_html', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_recirculation_ad',  'sanitize_text_field', 10, 1 );
 
 		// Post meta sanitization filters.
@@ -94,7 +93,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_filter( 'wpna_sanitize_post_meta_fbia_enable_ads',        'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_auto_ad_placement', 'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_ad_density',        'sanitize_text_field', 10, 1 );
-		add_filter( 'wpna_sanitize_post_meta_fbia_ad_code',           'wpna_sanitize_unsafe_html', 10, 1 );
 	}
 
 	/**
