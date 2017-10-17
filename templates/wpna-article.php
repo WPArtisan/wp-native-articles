@@ -22,6 +22,8 @@
 		<link rel="canonical" href="<?php echo esc_url( $post->get_permalink() ); ?>">
 		<meta property="op:generator" content="wp-native-articles" />
 		<meta property="op:generator:version" content="<?php echo esc_attr( WPNA_VERSION ); ?>" />
+		<meta property="op:generator:transformer" content="wp-native-articles-parser"/>
+		<meta property="op:generator:transformer:version" content="<?php echo esc_attr( WPNA_PARSER_VERSION ); ?>"/>
 		<meta property="op:markup_version" content="v1.0"/>
 		<meta property="fb:article_style" content="<?php echo esc_attr( $post->get_style() ); ?>">
 		<?php if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_enable_ads' ) ) ) : ?>

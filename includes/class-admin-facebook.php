@@ -68,6 +68,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		// Form sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
 		add_filter( 'wpna_sanitize_option_fbia_enable',            'wpna_switchval', 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_content_parser',    'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_authorise_id',      'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_style',             'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_rtl',               'sanitize_text_field', 10, 1 );
@@ -286,6 +287,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			'fbia_enable',
 			'<label for="fbia_enable">' . esc_html__( 'Enable', 'wp-native-articles' ) . '</label>',
 			array( $this, 'enable_callback' ),
+			$this->page_slug,
+			$option_group
+		);
+
+		add_settings_field(
+			'fbia_content_parser',
+			'<label for="fbia_content_parser">' . esc_html__( 'Content Parser', 'wp-native-articles' ) . '</label>',
+			array( $this, 'content_parser_callback' ),
 			$this->page_slug,
 			$option_group
 		);
@@ -513,6 +522,43 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<?php
 		// Show a notice if the option has been overridden.
 		wpna_option_overridden_notice( 'fbia_enable' );
+		?>
+
+		<?php
+	}
+
+	/**
+	 * Outputs the HTML for the 'fbia_content_parser' settings field.
+	 *
+	 * Whether the Facebook Instant Articles feed is enabled or not.
+	 *
+	 * @since 1.3.2
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function content_parser_callback() {
+		?>
+		<label for="fbia_content_parser">
+			<select name="wpna_options[fbia_content_parser]" id="fbia-content-parser">
+				<option value="v1"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v1' ); ?>><?php esc_html_e( 'Version One', 'wp-native-articles' ); ?></option>
+				<option value="v2"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v2' ); ?>><?php esc_html_e( 'Version Two (beta)', 'wp-native-articles' ); ?></option>
+			</select>
+			<p class="description">
+				<?php echo sprintf(
+					wp_kses(
+						__( 'Version Two of the content parser is up to 10x faster, uses fewer resources, and is better at transforming content. However it is still in beta. If you have any problems with content it can’t parse please let us <a target="_blank" href="%s">know here</a>.', 'wp-native-articles' ),
+						array( 'a' => array( 'href' => array(), 'target' => array() ) )
+					),
+					esc_url( 'http://docs.wp-native-articles.com/contact' )
+				);?>
+				<?php esc_html_e( ' ', 'wp-native-articles' ); ?>
+			</p>
+		</label>
+
+		<?php
+		// Show a notice if the option has been overridden.
+		wpna_option_overridden_notice( 'fbia_content_parser' );
 		?>
 
 		<?php

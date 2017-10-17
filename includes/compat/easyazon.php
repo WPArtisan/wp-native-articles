@@ -60,8 +60,6 @@ if ( ! function_exists( 'wpna_easyazon_cta_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_easyazon_cta_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		$shortcode_content = EasyAzonPro_Components_Shortcodes_CTA::shortcode( $atts, $content );
 
 		// It can return an empty string, bail if it does.
@@ -69,22 +67,19 @@ if ( ! function_exists( 'wpna_easyazon_cta_shortcode' ) ) :
 			return '';
 		}
 
-		$output = '';
+		$output = '<figure class="op-interactive">' . PHP_EOL;
 
 		// Wrap it in an iFrame so we can achieve the desired effect.
 		$output .= '<iframe class="no-margin">' . PHP_EOL;
 		$output .= '<style>* {text-align: center;}</style>';
 		$output .= $shortcode_content . PHP_EOL;
 		$output .= '</iframe>' . PHP_EOL;
+		$output .= '</figure>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Grab a placement for this code.
+		$placement_id = wpna_content_parser_get_placeholder( $output );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . '</figure>' . PHP_EOL;
+		return '<pre>' . $placement_id . '</pre>';
 	}
 endif;
 
@@ -98,8 +93,6 @@ if ( ! function_exists( 'wpna_easyazon_image_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_easyazon_image_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// @codingStandardsIgnoreLine
 		extract( shortcode_atts( array(
 			'align'  => '',
@@ -114,7 +107,7 @@ if ( ! function_exists( 'wpna_easyazon_image_shortcode' ) ) :
 			return '';
 		}
 
-		$output = '';
+		$output = '<figure class="op-interactive">';
 
 		// Wrap it in an iFrame so we can achieve the desired effect.
 		if ( $height && $width ) {
@@ -129,15 +122,12 @@ if ( ! function_exists( 'wpna_easyazon_image_shortcode' ) ) :
 		$output .= '<style>* {text-align: center;} img { width: auto; height: auto; max-width: 100%; max-height: 100%; }</style>' . PHP_EOL;
 		$output .= $shortcode_content . PHP_EOL;
 		$output .= '</iframe>' . PHP_EOL;
+		$output .= '</figure>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Grab a placement for this code.
+		$placement_id = wpna_content_parser_get_placeholder( $output );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . '</figure>' . PHP_EOL;
+		return '<pre>' . $placement_id . '</pre>';
 	}
 endif;
 
@@ -151,8 +141,6 @@ if ( ! function_exists( 'wpna_easyazon_info_block_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_easyazon_info_block_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		$shortcode_content = EasyAzonPro_Components_Shortcodes_InfoBlock::shortcode( $atts, $content );
 
 		// It can return an empty string, bail if it does.
@@ -160,21 +148,18 @@ if ( ! function_exists( 'wpna_easyazon_info_block_shortcode' ) ) :
 			return '';
 		}
 
-		$output = '';
+		$output = '<figure class="op-interactive">';
 
 		// Wrap it in an iFrame so we can achieve the desired effect.
 		$output .= '<iframe class="no-margin" width="360">' . PHP_EOL;
 		$output .= '<style>* {font-family: Helvetica, sans-serif;font-size: 1rem;} .easyazon-attribute-name {text-align:left;}</style>';
 		$output .= $shortcode_content . PHP_EOL;
 		$output .= '</iframe>' . PHP_EOL;
+		$output .= '</figure>' . PHP_EOL;
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Grab a placement for this code.
+		$placement_id = wpna_content_parser_get_placeholder( $output );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . '</figure>' . PHP_EOL;
+		return '<pre>' . $placement_id . '</pre>';
 	}
 endif;

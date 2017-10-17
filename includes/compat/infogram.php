@@ -64,11 +64,17 @@ if ( ! function_exists( 'wpna_infogram_embed' ) ) :
 		}
 
 		// Construct the async JS.
-		$embed_code = '<iframe>';
-		$embed_code .= '<div class="infogram-embed" data-id="' . esc_attr( $atts['id'] ) . '" data-type="' . esc_attr( $format ) . '"></div>';
-		$embed_code .= '<script>!function(e,t,n,s){var i="InfogramEmbeds",o=e.getElementsByTagName(t),d=o[0],a=/^http:/.test(e.location)?"http:":"https:";if(/^\/{2}/.test(s)&&(s=a+s),window[i]&&window[i].initialized)window[i].process&&window[i].process();else if(!e.getElementById(n)){var r=e.createElement(t);r.async=1,r.id=n,r.src=s,d.parentNode.insertBefore(r,d)}}(document,"script","infogram-async","//e.infogr.am/js/dist/embed-loader-min.js");</script>';
-		$embed_code .= '</iframe>';
+		$output = '<figure class="op-interactive">';
+		$output .= '<iframe>';
+		$output .= '<div class="infogram-embed" data-id="' . esc_attr( $atts['id'] ) . '" data-type="' . esc_attr( $format ) . '"></div>';
+		$output .= '<script>!function(e,t,n,s){var i="InfogramEmbeds",o=e.getElementsByTagName(t),d=o[0],a=/^http:/.test(e.location)?"http:":"https:";if(/^\/{2}/.test(s)&&(s=a+s),window[i]&&window[i].initialized)window[i].process&&window[i].process();else if(!e.getElementById(n)){var r=e.createElement(t);r.async=1,r.id=n,r.src=s,d.parentNode.insertBefore(r,d)}}(document,"script","infogram-async","//e.infogr.am/js/dist/embed-loader-min.js");</script>';
+		$output .= '</iframe>';
+		$output .= '</figure>';
 
-		return $embed_code;
+		// Grab a placement for this code.
+		$placement_id = wpna_content_parser_get_placeholder( $output );
+
+		return '<pre>' . $placement_id . '</pre>';
+
 	}
 endif;

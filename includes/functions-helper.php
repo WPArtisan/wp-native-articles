@@ -537,6 +537,62 @@ if ( ! function_exists( 'wpna_get_fbia_post' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'wpna_content_parser_get_placeholder' ) ) :
+
+	/**
+	 * A generic function for storing a content string and returning a unique id.
+	 *
+	 * This is used extensively in the content-parser to remove content strings
+	 * we don't want to be parsed any further.
+	 *
+	 * @since 1.3.2
+	 * @param  string $content The content to placeholder.
+	 * @return string Generate a unique (enough) key for this placeholder
+	 */
+	function wpna_content_parser_get_placeholder( $content ) {
+		global $_shortcode_content;
+
+		if ( ! $_shortcode_content || ! is_array( $_shortcode_content ) ) {
+			$_shortcode_content = array();
+		}
+
+		// Generate a unique (enough) key for this re.
+		$shortcode_key = mt_rand();
+
+		// Store the shortcode content in the global array so it can be replaced later.
+		$_shortcode_content[ $shortcode_key ] = $content;
+
+		// Return the unique key for this palceholder.
+		return $shortcode_key;
+	}
+endif;
+
+if ( ! function_exists( 'wpna_content_parser_get_placeholder_node' ) ) :
+
+	/**
+	 * A generic function for creating a placeholder for a DOMDocument node.
+	 *
+	 * This is used extensively in the content-parser to remove content strings
+	 * we don't want to be parsed any further.
+	 *
+	 * @since 1.3.2
+	 * @param  string $node The node to create the content placeholder for.
+	 * @return string A DOMDocument node <pre> tag containg a placeholder key.
+	 */
+	function wpna_content_parser_get_placeholder_node( $node ) {
+		// Save the node content.
+		$output = $node->ownerDocument->saveXML( $node );
+
+		// Get a unique palceholder marker for this content.
+		$placeholder = wpna_content_parser_get_placeholder( $output );
+
+		// Create a new <pre> element. wpautop doesn't wrap <pre> tags.
+		$fragment = $node->ownerDocument->createElement( 'pre', $placeholder );
+
+		return $fragment;
+	}
+endif;
+
 if ( ! function_exists( 'wpna_premium_feature_notice' ) ) :
 
 	/**

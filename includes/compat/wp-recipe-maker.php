@@ -121,9 +121,10 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_get_template' ) ) :
 	 * Grabs a template for a recipe.
 	 *
 	 * @param  object $recipe The recipe for format.
-	 * @return void
+	 * @return string The formatted recipie.
 	 */
 	function wpna_wp_recipe_maker_get_template( $recipe ) {
+		ob_start();
 		?>
 			<h1><?php echo esc_html( $recipe->name() ); ?></h1>
 
@@ -265,5 +266,8 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_get_template' ) ) :
 			<?php endif; ?>
 
 		<?php
+		$output = ob_get_clean();
+
+		return $output;
 	}
 endif;

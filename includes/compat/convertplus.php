@@ -34,14 +34,13 @@ if ( ! function_exists( 'wpna_cp_modal_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_cp_modal_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
 		// @codingStandardsIgnoreLine
 		extract( shortcode_atts( array(
 			'id'      => '',
 			'display' => '',
 		), $atts ) );
 
-		$output = '';
+		$output = '<figure class="op-interactive">';
 
 		// Wrap it in an iFrame so we can achieve the desired effect.
 		// We can't do model popups on IA so juut link the content to the original post.
@@ -50,14 +49,11 @@ if ( ! function_exists( 'wpna_cp_modal_shortcode' ) ) :
 		$output .= $content . PHP_EOL;
 		$output .= '</a>' . PHP_EOL;
 		$output .= '</iframe>' . PHP_EOL;
+		$output .= '</figure>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Grab a placement for this code.
+		$placement_id = wpna_content_parser_get_placeholder( $output );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placement_id . '</pre>';
 	}
 endif;

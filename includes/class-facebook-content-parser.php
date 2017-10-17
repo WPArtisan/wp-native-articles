@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since  1.0.0
  */
+// @codingStandardsIgnoreLine
 class WPNA_Facebook_Content_Parser {
 
 	/**
@@ -170,6 +171,7 @@ class WPNA_Facebook_Content_Parser {
 		$disabled_tags = apply_filters( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', $disabled_tags, $content );
 
 		// Add any shortcode tags that use a custom callback here.
+		// View the /includes/compat folder for examples.
 		$override_tags = array(
 			'gallery'  => array( $this, 'gallery_shortcode' ),
 			'fvplayer' => array( $this, 'fvplayer_shortcode' ),
@@ -1376,7 +1378,7 @@ class WPNA_Facebook_Content_Parser {
 
 					// Set the caption title settings.
 					if ( ! empty( $caption_title_settings ) ) {
-						$figcaption_title_template->setAttribute( 'class', implode( ', ', array_filter( $caption_title_settings ) ) );
+						$figcaption_title_template->setAttribute( 'class', implode( ' ', array_filter( $caption_title_settings ) ) );
 					}
 
 					// Set the caption title.
@@ -1405,7 +1407,7 @@ class WPNA_Facebook_Content_Parser {
 
 				// Set the caption settings, position, size etc.
 				if ( ! empty( $caption_settings ) ) {
-					$figcaption_template->setAttribute( 'class', implode( ', ', array_filter( $caption_settings ) ) );
+					$figcaption_template->setAttribute( 'class', implode( ' ', array_filter( $caption_settings ) ) );
 				}
 
 				/**
@@ -1741,7 +1743,15 @@ class WPNA_Facebook_Content_Parser {
 	public function restore_embeds( $content ) {
 		global $_shortcode_content;
 
-		return str_replace( array_keys( $_shortcode_content ), array_values( $_shortcode_content ), $content );
+		// V2 embeds are wrapped in <pre> tags.
+		foreach ( $_shortcode_content as $placeholder => $shortcode_content ) {
+			$content = str_replace( '<pre>' . $placeholder . '</pre>', $shortcode_content, $content );
+		}
+
+		// V1 embeds aren't wrapped at all.
+		$content = str_replace( array_keys( $_shortcode_content ), array_values( $_shortcode_content ), $content );
+
+		return $content;
 	}
 
 }

@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.3.1
+ * Version: 1.3.2
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.3.1' );
+	define( 'WPNA_VERSION', '1.3.2' );
 }
 
 // Define the plugin base path.
@@ -190,7 +190,13 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 
 		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
-			require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';
+			if ( 'v2' === wpna_get_option( 'fbia_content_parser' ) ) {
+				define( 'WPNA_PARSER_VERSION', '2.0.0' );
+				require WPNA_BASE_PATH . '/includes/class-facebook-content-parser-v2.php';
+			} else {
+				define( 'WPNA_PARSER_VERSION', '1.0.0' );
+				require WPNA_BASE_PATH . '/includes/class-facebook-content-parser.php';
+			}
 		}
 		$classes->wpna_facebook_content_parser = new WPNA_Facebook_Content_Parser();
 
@@ -203,6 +209,17 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		/**
 		 * Third party compatibility functions
 		 */
+
+		if ( defined( 'WPNA_PARSER_VERSION' ) && '1.0.0' !== WPNA_PARSER_VERSION ) {
+			include WPNA_BASE_PATH . '/includes/compat/wordpress-caption.php';
+			include WPNA_BASE_PATH . '/includes/compat/wordpress-gallery.php';
+
+			include WPNA_BASE_PATH . '/includes/compat/embeds-gist.php';
+			include WPNA_BASE_PATH . '/includes/compat/embeds-instagram.php';
+			include WPNA_BASE_PATH . '/includes/compat/embeds-twitter.php';
+
+			include WPNA_BASE_PATH . '/includes/compat/fvplayer.php';
+		}
 
 		include WPNA_BASE_PATH . '/includes/compat/playbuzz.php';
 		include WPNA_BASE_PATH . '/includes/compat/yoast-seo.php';

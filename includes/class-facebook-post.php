@@ -464,6 +464,13 @@ class WPNA_Facebook_Post {
 		}
 
 		/**
+		 * Fired before the content is converted.
+		 *
+		 * @since 2.0.0
+		 */
+		do_action( 'wpna_facebook_article_pre_the_content_transform', $content );
+
+		/**
 		 * Filter the post content before WP has its fun.
 		 *
 		 * The transformer class uses this to wrap shortcodes before they're parsed.
@@ -560,18 +567,8 @@ class WPNA_Facebook_Post {
 			// Strip out the cdata added by saveXML().
 			$content = str_replace( array( '<![CDATA[', ']]>' ), '', $content );
 
-			// Remove <body> from start of string.
-			$prefix = '<body>';
-			if ( substr( $content, 0, strlen( $prefix ) ) == $prefix ) {
-				$content = substr( $content, strlen( $prefix ) );
-			}
-
-			// Remove </body> from end of string.
-			$prefix = '</body>';
-			if ( substr( $content, -strlen( $prefix ), strlen( $prefix ) ) == $prefix ) {
-				$content = substr( $content, 0, -strlen( $prefix ) );
-			}
-
+			// Remove <body> from start and end of string.
+			$content = str_replace( array( '<body>', '</body>' ), '', $content );
 		}
 
 		/**
@@ -585,6 +582,13 @@ class WPNA_Facebook_Post {
 		$content = apply_filters( 'wpna_facebook_article_content_after_transform', $content );
 
 		$this->set_cache( $this->post_id, $content );
+
+		/**
+		 * Fired after the content is converted.
+		 *
+		 * @since 2.0.0
+		 */
+		do_action( 'wpna_facebook_article_after_the_content_transform', $content );
 
 		return $content;
 	}

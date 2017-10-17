@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.8.2
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -16,9 +16,10 @@ Easy Facebook Instant Articles Plugin for your WordPress site with better conten
 == Description ==
 
 **Major Updates**
-- 1.3.0 - Placement Manager, Crawler Ingestion & WP Recipe Maker Support.
-- 1.2.5 - Specify different content for your Instant Article
-- 1.2.2 - WP Bakery Visual Composer Support
+_- 1.3.2 - Content Parser V2 Released._
+_- 1.3.0 - Placement Manager, Crawler Ingestion & WP Recipe Maker Support._
+_- 1.2.5 - Specify different content for your Instant Article._
+_- 1.2.2 - WP Bakery Visual Composer Support._
 
 A better implementation of Facebook Instant Articles for WordPress.
 
@@ -31,6 +32,8 @@ After installation and setup this plugin auto generates an instant article versi
 [Read more about Instant Articles from the official documentation](https://developers.facebook.com/docs/instant-articles)
 
 **Content Parsing**
+
+[Version 2 Released](https://wp-native-articles.com/blog/introducing-v2-content-parser/) - Converts posts up to 8X faster, using fewer resources, and much more accurately.
 
 A large part of the complexity of integrating Facebook Instant Articles is the rigorous content structure imposed. Due to the WYSIWYG editor and the plethora of plugins and themes available, WordPress content tends to be rather unstructured. Most of the current Facebook Instant Article plugins don't really take account of this and either produce invalid content or strip parts out. This plugin is a concentrated effort to correctly format any WordPress content it could possibly come across. You can read more about the challenges and solutions faced when parsing unstructured content on our [Instant Articles blog](https://wp-native-articles.com/blog/formatting-wordpress-html-content-instant-articles/?utm_source=fplugin&utm_medium=readme).
 
@@ -137,6 +140,10 @@ through the WordPress support forum, found on the Plugin download page.
 7. Multisite options page.
 
 == Changelog ==
+
+= 1.3.2 =
+* Feature. Content Parser V2 (beta)
+* Fix. Bugs with WP Recipe Maker compatibility
 
 = 1.3.1 =
 * Fix. Bugs with WP Recipe Maker compatibility
