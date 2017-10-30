@@ -31,7 +31,8 @@ if ( ! function_exists( 'wpna_get_option' ) ) :
 	 * @return mixed The option or default value.
 	 */
 	function wpna_get_option( $name, $default = false ) {
-		global $wpna_options;
+		// Grab all the options.
+		$wpna_options = wpna_get_options();
 
 		// Setup the default value.
 		$value = $default;
@@ -84,11 +85,8 @@ if ( ! function_exists( 'wpna_get_options' ) ) :
 	 * @return array All of the plugin's options.
 	 */
 	function wpna_get_options() {
-		global $wpna_options;
-
-		if ( ! $wpna_options ) {
-			$wpna_options = get_option( 'wpna_options' );
-		}
+		// get_option is cached so can call it as much as we like.
+		$wpna_options = get_option( 'wpna_options' );
 
 		/**
 		 * Filter all the option values before they're returned.
@@ -495,6 +493,10 @@ if ( ! function_exists( 'wpna_get_fbia_post' ) ) :
 	 * @return string The formatted Instant Article
 	 */
 	function wpna_get_fbia_post( $wp_post = null ) {
+
+		// Set the transforming IA flag.
+		wpna_transforming_ia( true );
+
 		// Make sure we have the post.
 		$wp_post = get_post( $wp_post );
 
@@ -533,7 +535,30 @@ if ( ! function_exists( 'wpna_get_fbia_post' ) ) :
 		// Reset just incase.
 		wp_reset_postdata();
 
+		// Reset the transforming IA flag.
+		wpna_transforming_ia( false );
+
 		return $html_source;
+	}
+endif;
+
+if ( ! function_exists( 'wpna_transforming_ia' ) ) :
+
+	/**
+	 * Used to workout if an article is currently being converted or not.
+	 *
+	 * @since 1.3.3
+	 * @param mixed $status Set the current covnersation status.
+	 * @return bool Whether an article is currently being converted.
+	 */
+	function wpna_transforming_ia( $status = null ) {
+		static $wpna_transforming_ia;
+
+		if ( isset( $status ) ) {
+			$wpna_transforming_ia = $status;
+		}
+
+		return $wpna_transforming_ia;
 	}
 endif;
 

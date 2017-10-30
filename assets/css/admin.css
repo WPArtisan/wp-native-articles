@@ -1,3 +1,27 @@
+
+/* Admin subsection CSS */
+.wpna-subsections-wrapper {
+	margin-top: 8px;
+}
+
+.wpna-subsections-wrapper ul {
+}
+
+.wpna-subsections-wrapper li {
+	display: inline-block;
+}
+
+.wpna-subsections-wrapper ul li a {
+	text-decoration: none;
+}
+
+.wpna-subsections-wrapper ul li.active a {
+	font-weight: bold;
+	color: #23282d;
+}
+
+/* WPNA Labels */
+
 .wpna-label {
 	text-transform: uppercase;
 	display: inline;

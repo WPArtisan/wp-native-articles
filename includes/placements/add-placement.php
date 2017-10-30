@@ -65,19 +65,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<!-- <option value=""></option> -->
 						</select>
 
+						<br /><br />
+
 						<?php do_action( 'wpna_add_placement_form_before_content' ); ?>
 
-						<div id="wpna-placement-custom" class="wpna-placement-content-form">
-							<label for="wpna-placement-custom-content">
-								<h4><?php esc_html( 'Custom Content', 'wp-native-articles' ); ?></h4>
+						<div id="wpna-placement-related-posts" class="wpna-placement-content-form">
+							<label>
+								<input id="wpna-placement-related-posts-title" placeholder="<?php esc_html_e( 'Related Posts Title', 'wp-native-articles' ); ?>" type="text" name="related_posts_title" class="regular-text" value="" />
+								<p class="description">
+									<?php esc_html_e( 'An (optional) title for the Related Posts block', 'wp-native-articles' ); ?>
+								</p>
 							</label>
+						</div>
+
+						<div id="wpna-placement-custom" class="wpna-placement-content-form">
 							<label>
 								<textarea id="wpna-placement-custom-content" name="content" class="large-text code" rows="10" cols="50" ></textarea>
 								<p class="description">
 									<?php echo wp_kses(
-										__( 'The code you wish to insert. This should be in <strong>valid</strong> Instant Article format.', 'wp-native-articles' ),
+										__( 'The code you wish to insert. This should be in <strong>valid</strong> Instant Article format. Available template tags:', 'wp-native-articles' ),
 										array( 'strong' => array() )
 									);?>
+									<br />
+									{name} - <?php esc_html_e( 'Your site name', 'wp-native-articles' ); ?>
+									<br />
+									{description} - <?php esc_html_e( 'Your site description', 'wp-native-articles' ); ?>
+									<br />
+									{url} - <?php esc_html_e( 'Your site URL', 'wp-native-articles' ); ?>
+									<br />
+									{stylesheet_directory} - <?php esc_html_e( 'URL to the directory of your active theme (child themes take precedence)', 'wp-native-articles' ); ?>
+									<br />
+									{template_url} - <?php esc_html_e( 'URL to the directory of your active theme (parent theme if using a child theme)', 'wp-native-articles' ); ?>
+									<br />
+									{plugins_url} - <?php esc_html_e( 'URL to your plugins directory', 'wp-native-articles' ); ?>
+									<br />
+									{content_url} - <?php esc_html_e( 'URL to your wp-content directory', 'wp-native-articles' ); ?>
+									<br />
+									{post_permalink} - <?php esc_html_e( 'Permalink of the current post', 'wp-native-articles' ); ?>
+									<br />
+									{post_title} - <?php esc_html_e( 'Title of the current post', 'wp-native-articles' ); ?>
 								</p>
 							</label>
 							<hr />

@@ -286,14 +286,14 @@ class WPNA_Admin_Placements_List_Table extends WP_List_Table {
 		// Pagination options.
 		$per_page = $this->get_items_per_page( 'placements_per_page', 5 );
 
-		// 1 should default to 0.
+		// Grab the current page.
 		$current_page = $this->get_pagenum();
-		if ( 1 === $current_page ) {
-			$current_page = 0;
-		}
+
+		// Record set to show is -1 from the current page.
+		$page_to_show = absint( $current_page - 1 );
 
 		// Add the pagination stuff into the query.
-		$query .= $wpdb->prepare( ' LIMIT %d, %d', $current_page, $per_page );
+		$query .= $wpdb->prepare( ' LIMIT %d, %d', ( $page_to_show * $per_page ), $per_page );
 
 		// Construct the select query.
 		$select_query = 'SELECT * ' . $query;

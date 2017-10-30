@@ -150,11 +150,17 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform_node_p',          array( $this, 'remove_element_keep_content' ), 10, 2 );
 
 		// Transform headings. Only <h1> & <h2> allowed.
+		add_filter( 'wpna_facebook_article_content_transform_node_h1',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h1',         array( $this, 'transform_heading' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_h2',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h2',         array( $this, 'transform_heading' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_h3',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h3',         array( $this, 'transform_heading' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_h4',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h4',         array( $this, 'transform_heading' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_h5',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h5',         array( $this, 'transform_heading' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_h6',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_h6',         array( $this, 'transform_heading' ), 10, 2 );
 
 		add_filter( 'wpna_facebook_article_content_transform_node_table',      array( $this, 'transform_table' ), 10, 2 );
@@ -169,12 +175,23 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform_node_li',         array( $this, 'transform_list_element' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_dl',         array( $this, 'transform_description' ), 10, 2 );
 
+		add_filter( 'wpna_facebook_article_content_transform_node_code',       array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_code',       array( $this, 'transform_to_italics' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_em',         array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_em',         array( $this, 'transform_to_italics' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_samp',       array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_samp',       array( $this, 'transform_to_italics' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_var',        array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_var',        array( $this, 'transform_to_italics' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_del',        array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_del',        array( $this, 'transform_to_italics' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_s',          array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_s',          array( $this, 'transform_to_italics' ), 10, 2 );
+
+		add_filter( 'wpna_facebook_article_content_transform_node_strong',     array( $this, 'check_not_empty' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_b',          array( $this, 'check_not_empty' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_i',          array( $this, 'check_not_empty' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_strike',     array( $this, 'check_not_empty' ), 10, 2 );
 
 		add_filter( 'wpna_facebook_article_content_transform_node_address',    array( $this, 'transform_address' ), 10, 2 );
 
@@ -188,6 +205,7 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform_node_img',        array( $this, 'check_image_unique' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_img',        array( $this, 'transform_image' ), 10, 2 );
 
+		add_filter( 'wpna_facebook_article_content_transform_node_blockquote', array( $this, 'check_not_empty' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_blockquote', array( $this, 'transform_blockquote' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_iframe',     array( $this, 'transform_iframe' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_pre',        array( $this, 'transform_pre' ), 10, 2 );

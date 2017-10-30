@@ -317,7 +317,7 @@ class WPNA_Facebook_Post {
 	 * @return string
 	 */
 	public function get_publish_date_iso() {
-		$publish_date = get_the_date( 'c', $this->get_the_ID() );
+		$publish_date = get_post_time( 'c', true, $this->get_the_ID(), false );
 
 		/**
 		 * Filter the publish date ISO format.
@@ -339,7 +339,7 @@ class WPNA_Facebook_Post {
 	 * @return string
 	 */
 	public function get_publish_date() {
-		$publish_date = get_the_date( get_option( 'date_format' ), $this->get_the_ID() );
+		$publish_date = get_post_time( get_option( 'date_format' ), true, $this->get_the_ID(), false );
 
 		/**
 		 * Filter the publish date.
@@ -359,7 +359,7 @@ class WPNA_Facebook_Post {
 	 * @return string
 	 */
 	public function get_modified_date_iso() {
-		$modified_date = get_the_modified_date( 'c', $this->get_the_ID() );
+		$modified_date = get_post_modified_time( 'c', true, $this->get_the_ID(), false );
 
 		/**
 		 * Filter the modified date ISO format.
@@ -381,7 +381,7 @@ class WPNA_Facebook_Post {
 	 * @return string
 	 */
 	public function get_modified_date() {
-		$modified_date = get_the_modified_date( get_option( 'date_format' ), $this->get_the_ID() );
+		$modified_date = get_post_modified_time( get_option( 'date_format' ), true, $this->get_the_ID(), false );
 
 		/**
 		 * Filter the modified date.
@@ -452,6 +452,7 @@ class WPNA_Facebook_Post {
 		// Ensure it's set to 1. Shows the whole post.
 		$more = 1;
 
+		// Respect the <!--noteaser--> tag.
 		$content = get_the_content( null, false );
 
 		// Reset the $more value just incase.

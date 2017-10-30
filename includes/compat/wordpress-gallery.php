@@ -84,10 +84,105 @@ if ( ! function_exists( 'wpna_wordpress_gallery_shortcode_override' ) ) :
 			return '';
 		}
 
+		// If enabled Likes or Comments on images has been enabled.
+		$figure_attr = array();
+
+		// Image likes. Check for post override then use global.
+		$image_likes = wpna_get_post_option( get_the_ID(), 'fbia_image_likes' );
+
+		if ( wpna_switch_to_boolean( $image_likes ) ) {
+			$figure_attr[] = 'fb:likes';
+		}
+
+		// Image comments. Check for post override then use global.
+		$image_comments = wpna_get_post_option( get_the_ID(), 'fbia_image_comments' );
+
+		if ( wpna_switch_to_boolean( $image_comments ) ) {
+			$figure_attr[] = 'fb:comments';
+		}
+
+		// Get the caption options.
+		$caption_settings = array_filter( array(
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_font_size', null ),
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_vertical_position', null ),
+			wpna_get_post_option( get_the_ID(), 'fbia_caption_horizontal_position', null ),
+		) );
+
+		// Whether to use the caption title.
+		$caption_title_enabled = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_caption_title' ) );
+
+		// Get the caption title options.
+		if ( $caption_title_enabled ) {
+			$caption_title_settings = array_filter( array(
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_font_size', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_vertical_position', null ),
+				wpna_get_post_option( get_the_ID(), 'fbia_caption_title_horizontal_position', null ),
+			) );
+		}
+
 		$output = '<figure class="op-slideshow">' . PHP_EOL;
 		foreach ( $attachments as $att_id => $attachment ) {
-			$output .= '<figure>' . PHP_EOL;
+
+			// Start of output.
+			$output .= '<figure';
+
+			/**
+			 * Allows filtering of the attributes set on the image figure.
+			 *
+			 * @since 1.0.0
+			 * @param array $figure_attr Attributes for the figure element.
+			 */
+			$figure_attr = apply_filters( 'wpna_facebook_article_image_figure_attr', $figure_attr );
+
+			if ( ! empty( $figure_attr ) ) {
+				$output .= ' data-feedback="' . implode( ', ', $figure_attr ) . '"';
+			}
+
+			// Close the figure element.
+			$output .= '>';
+
 			$output .= sprintf( '<img src="%s" />', wp_get_attachment_image_url( $att_id, 'full', false ) ) . PHP_EOL;
+
+			// Added in 4.6.
+			if ( function_exists( 'wp_get_attachment_caption' ) ) {
+				$attachment_caption = wp_get_attachment_caption( $att_id );
+			} else {
+				$attachment_caption = get_the_excerpt( $att_id );
+			}
+
+			if ( ! empty( $attachment_caption ) ) {
+
+				// Set the caption settings, position, size etc.
+				if ( ! empty( $caption_settings ) ) {
+					$output .= '<figcaption class="' . implode( ' ', $caption_settings ) . '">';
+				} else {
+					$output .= '<figcaption>';
+				}
+
+				if ( $caption_title_enabled && $caption_title = get_the_title( $att_id ) ) {
+
+					// Set the caption title settings.
+					if ( ! empty( $caption_title_settings ) ) {
+						$output .= '<h1 class="' . implode( ' ', $caption_title_settings ) . '">';
+					} else {
+						$output .= '<h1>';
+					}
+
+					// Add in the caption title.
+					$output .= $caption_title;
+
+					// Close the tag.
+					$output .= '</h1>';
+
+				}
+
+				// Add in the caption.
+				$output .= $atts['caption'];
+
+				// Close the tag.
+				$output .= '</figcaption>';
+			}
+
 			$output .= '</figure>' . PHP_EOL;
 		}
 		$output .= '</figure>';

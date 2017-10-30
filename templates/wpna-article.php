@@ -36,7 +36,7 @@
 			<meta property="fb:use_automatic_ad_placement" content="enable=true ad_density=<?php echo esc_attr( $density ); ?>">
 			<?php endif; ?>
 
-			<?php if ( $recirculation_ad = wpna_get_option( 'fbia_recirculation_ad' ) ) : ?>
+			<?php if ( $recirculation_ad = wpna_get_post_option( $post->get_the_ID(), 'fbia_recirculation_ad' ) ) : ?>
 			<meta property="fb:op-recirculation-ads" content="placement_id=<?php echo esc_attr( $recirculation_ad ); ?>">
 			<?php endif; ?>
 
@@ -59,10 +59,10 @@
 				?>
 				<?php
 				// Check if it should be shown for this article or not.
-				$show_media = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_media', 'on' ) );
+				$show_media = wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_show_media', 'on' ) );
 				?>
 				<?php if ( $show_media ) : ?>
-					<?php if ( $video_url = get_post_meta( get_the_ID(), '_wpna_fbia_video_header', true ) ) : ?>
+					<?php if ( $video_url = get_post_meta( $post->get_the_ID(), '_wpna_fbia_video_header', true ) ) : ?>
 						<figure>
 							<video>
 								<?php
@@ -104,7 +104,7 @@
 				?>
 				<?php
 				// Check if it should be shown for this article or not.
-				$show_subtitle = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_subtitle', 'on' ) );
+				$show_subtitle = wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_show_subtitle', 'on' ) );
 				?>
 				<?php if ( $show_subtitle && $post->get_the_excerpt() ) : ?>
 					<h2><?php echo wp_kses_post( $post->get_the_excerpt() ); ?></h2>
@@ -120,7 +120,7 @@
 				?>
 				<?php
 				// Check if it should be shown for this article or not.
-				$show_kicker = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_kicker', 'on' ) );
+				$show_kicker = wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_show_kicker', 'on' ) );
 				?>
 				<?php if ( $show_kicker && $post->get_the_kicker() ) : ?>
 					<h3 class="op-kicker"><?php echo esc_html( $post->get_the_kicker() ); ?></h3>
@@ -134,7 +134,7 @@
 
 				<?php
 				// Check if it should be shown for this article or not.
-				$show_authors = wpna_switch_to_boolean( wpna_get_post_option( get_the_ID(), 'fbia_show_authors', 'on' ) );
+				$show_authors = wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_show_authors', 'on' ) );
 				?>
 				<?php if ( $show_authors ) : ?>
 

@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.8.2
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -140,6 +140,17 @@ through the WordPress support forum, found on the Plugin download page.
 7. Multisite options page.
 
 == Changelog ==
+
+= 1.3.3 =
+* Feature. Default to Version 2 parser
+* Feature. V2 Parser. Remove empty elements
+* Feature. WordPress Galleries now support image captions
+* Feature. Override Ad Type for individual posts
+* Fix. Use GMT date for posts instead of local one
+* Fix. Broken link to the support forums
+* Fix. Stop MediaAce LazyLoad in IA
+* Fix. Stop NewRelic Browser Injection Script in Crawler Ingestion layout
+* Fix. Stop the TVE editor duplicating content
 
 = 1.3.2 =
 * Feature. Content Parser V2 (beta)

@@ -132,10 +132,10 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 	 * @return void
 	 */
 	public function enqueue_create_placement_scripts( $page_hook = '' ) {
-		wp_enqueue_script( 'wpna-select2-js', plugins_url( '/assets/js/select2.min.js', dirname( dirname( __FILE__ ) ) ), array(), '4.0.4', true );
-		wp_enqueue_script( 'wpna-placements-js', plugins_url( '/assets/js/placements.js', dirname( dirname( __FILE__ ) ) ), array( 'wpna-select2-js' ), '1.0.0', true );
+		wp_enqueue_script( 'wpna-select2-js', plugins_url( '/assets/js/select2.min.js', WPNA_BASE_FILE ), array(), '4.0.4', true );
+		wp_enqueue_script( 'wpna-placements-js', plugins_url( '/assets/js/placements.js', WPNA_BASE_FILE ), array( 'wpna-select2-js' ), '1.0.0', true );
 
-		wp_enqueue_style( 'wpna-select2-css', plugins_url( '/assets/css/select2.min.css', dirname( dirname( __FILE__ ) ) ), array(), '4.0.4', 'all' );
+		wp_enqueue_style( 'wpna-select2-css', plugins_url( '/assets/css/select2.min.css', WPNA_BASE_FILE ), array(), '4.0.4', 'all' );
 	}
 
 	/**
