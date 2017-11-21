@@ -65,9 +65,35 @@ class WPNA_Activator {
 	public static function add_default_options() {
 		if ( false === get_option( 'wpna_options' ) ) {
 
+			// Default to showing the subtitle.
+			$fbia_show_subtitle = 'on';
+
+			// Get the most recent published post.
+			$args = array(
+				'no_found_rows'          => true,
+				'update_post_term_cache' => false,
+				'update_post_meta_cache' => false,
+				'ignore_sticky_posts'    => true,
+				'post_status'            => 'publish',
+				'orderby'                => 'date',
+				'order'                  => 'desc',
+				'fields'                 => 'ids',
+				'posts_per_page'         => 1,
+			);
+
+			$query = new WP_Query( $args );
+
+			if ( $query->have_posts() ) {
+				// Check if it has an excerpt set or not.
+				if ( ! has_excerpt( $recent_posts[0]->ID ) ) {
+					$fbia_show_subtitle = 'off';
+				}
+			}
+
 			$default_options = array(
 				'fbia_enable'            => 'on',
 				'fbia_authorise_id'      => '0',
+				'fbia_content_parser'    => 'v2',
 				'fbia_style'             => 'default',
 				'fbia_sponsored'         => 'off',
 				'fbia_image_likes'       => 'off',
@@ -79,7 +105,7 @@ class WPNA_Activator {
 				'fbia_auto_ad_placement' => 'off',
 				'fbia_ad_code'           => '',
 
-				'fbia_show_subtitle'     => 'on',
+				'fbia_show_subtitle'     => $fbia_show_subtitle,
 				'fbia_show_authors'      => 'on',
 				'fbia_show_kicker'       => 'on',
 				'fbia_show_media'        => 'on',
@@ -93,7 +119,7 @@ class WPNA_Activator {
 				'fbia_app_id'            => '',
 				'fbia_app_secret'        => '',
 				'fbia_sync_articles'     => 'on',
-				'fbia_sync_cron'         => '1',
+				'fbia_sync_cron'         => '0',
 				'fbia_enviroment'        => 'development',
 			);
 

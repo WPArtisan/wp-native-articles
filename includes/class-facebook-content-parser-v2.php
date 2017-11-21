@@ -144,6 +144,7 @@ class WPNA_Facebook_Content_Parser {
 		add_filter( 'wpna_facebook_article_content_transform_node_ins',        array( $this, 'remove_element_keep_content' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_figure',     array( $this, 'remove_element_keep_content' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_mark',       array( $this, 'remove_element_keep_content' ), 10, 2 );
+		add_filter( 'wpna_facebook_article_content_transform_node_center',     array( $this, 'remove_element_keep_content' ), 10, 2 );
 
 		// Add line breaks in after <p> tag content to ensure it's no covnerted to <br /> later.
 		add_filter( 'wpna_facebook_article_content_transform_node_p',          array( $this, 'add_line_break' ), 9, 2 );
@@ -638,15 +639,17 @@ class WPNA_Facebook_Content_Parser {
 		// Construct a new element to ensure attributes are removed.
 		// Only h1 & h2 are allowed. Default to h2.
 		if ( 'h1' === $node->nodeName ) {
-			$new_node = $dom_document->createElement( 'h1' );
+			$fragment = $dom_document->createElement( 'h1' );
 		} else {
-			$new_node = $dom_document->createElement( 'h2' );
+			$fragment = $dom_document->createElement( 'h2' );
 		}
 
-		// Copy the contents of the original node but without html tags.
-		$new_node->nodeValue = $node->textContent;
+		// Add all the element's children to the fragment.
+		while ( $node->childNodes->length > 0 ) {
+			$fragment->appendChild( $node->childNodes->item( 0 ) );
+		}
 
-		$placeholder = wpna_content_parser_get_placeholder_node( $new_node );
+		$placeholder = wpna_content_parser_get_placeholder_node( $fragment );
 
 		// Replace old the element with the placeholder element.
 		$node->parentNode->replaceChild( $placeholder, $node );
@@ -1032,7 +1035,7 @@ class WPNA_Facebook_Content_Parser {
 				$featured_image_path = wp_parse_url( $image[0], PHP_URL_PATH );
 				$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
 				$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
-				$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
+				$regex = sprintf( '/%s(?:-\d+[Xx]\d+){0,1}%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
 				if ( preg_match( $regex, $node->getAttribute( 'src' ) ) ) {
 
@@ -1091,12 +1094,9 @@ class WPNA_Facebook_Content_Parser {
 					// If it's a success update the $image_source.
 					$possible_large_image = $img_props[0];
 
-					$possible_large_image_wo_ext = substr( $possible_large_image, 0, strrpos( $possible_large_image, '.' ) );
-					$image_source_wo_ext = substr( $image_source, 0, strrpos( $image_source, '.' ) );
-
 					// If we're reasonably confident that it's the same image.
 					// (Some sites use a CDN, this is a sanity check).
-					if ( strcmp( $possible_large_image_wo_ext, $image_source_wo_ext ) <= 0  ) {
+					if ( strcmp( dirname( $possible_large_image ), dirname( $image_source ) ) === 0  ) {
 						$image_src_large = $possible_large_image;
 					}
 				}

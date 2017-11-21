@@ -61,7 +61,10 @@ if ( ! function_exists( 'wpna_yoast_featured_image' ) ) :
 	 */
 	function wpna_yoast_featured_image( $image ) {
 		// Check the post meta for opengraph image.
-		if ( $image_url = get_post_meta( get_the_ID(), '_yoast_wpseo_opengraph-image', true ) ) {
+		$image_url = get_post_meta( get_the_ID(), '_yoast_wpseo_opengraph-image', true );
+
+		// Check it's a valid URL.
+		if ( filter_var( $image_url, FILTER_VALIDATE_URL ) !== false ) {
 			$image['url'] = $image_url;
 
 			// If we've found an image let's update the caption.

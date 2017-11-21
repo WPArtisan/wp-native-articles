@@ -777,6 +777,13 @@ class WPNA_Facebook_Post {
 			$analytics_code = sprintf( '<figure class="op-tracker">%s</figure>', $analytics_code );
 		}
 
+		$post_placeholders = wpna_get_post_placeholders();
+
+		// Replace all possible post placeholders.
+		foreach ( $post_placeholders as $placeholder => $replacement ) {
+			$analytics_code = str_replace( sprintf( '{%s}', esc_js( $placeholder ) ), $replacement, $analytics_code );
+		}
+
 		/**
 		 * Filter the analytics code for the article.
 		 *

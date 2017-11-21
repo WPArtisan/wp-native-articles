@@ -906,7 +906,15 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public function analytics_callback() {
 		?>
 		<textarea name="wpna_options[fbia_analytics]" rows="10" cols="50"  id="fbia_analytics" class="large-text code"><?php echo esc_textarea( wpna_get_option( 'fbia_analytics' ) ); ?></textarea>
-		<p class="description"><?php esc_html_e( 'Analytics code to be used in every article. Auto wrapped in an iFrame', 'wp-native-articles' ); ?></p>
+		<p class="description">
+			<?php esc_html_e( 'Analytics code to be used in every article. Auto wrapped in an iFrame. Available template tags:', 'wp-native-articles' ); ?>
+
+			<?php $post_placeholders = wpna_get_post_placeholders(); ?>
+			<?php foreach ( (array) $post_placeholders as $placeholder => $value ) : ?>
+				<br />
+				<?php echo esc_html( sprintf( '{%s}', $placeholder ) ); ?>
+			<?php endforeach; ?>
+		</p>
 
 		<?php
 		// Show a notice if the option has been overridden.
@@ -1435,8 +1443,16 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		// Get the post type.
 		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
 
+		// Get post types we want to add the box to.
+		$allowed_post_types = wpna_allowed_post_types();
+
+		// Check this is a valid post type.
+		if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
+			return;
+		}
+
 		// Make sure the user has permissions to post.
-		if ( ! $post_type && 'post' === $post_type && ! current_user_can( 'edit_post', $post_id ) ) {
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 

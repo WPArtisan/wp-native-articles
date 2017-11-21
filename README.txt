@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.8.2
-Stable tag: 1.3.3
+Tested up to: 4.9
+Stable tag: 1.3.4
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -140,6 +140,15 @@ through the WordPress support forum, found on the Plugin download page.
 7. Multisite options page.
 
 == Changelog ==
+
+= 1.3.4 =
+* Feature. Set Content Parser V2 as default upon activation
+* Feature. Auto detected if excerpt is used and enable subtitle automatically
+* Feature. Stricter regex for checking for the featured image
+* Feature. Stricter featured image URL validation for Yoast
+* Feature. Compatibility with the Spider Facebook plugin
+* Fix. Headings containing ampasands now covert properly
+* Fix. Amin tabs no longer broken when the plugin is disabled
 
 = 1.3.3 =
 * Feature. Default to Version 2 parser

@@ -185,3 +185,42 @@ if ( ! function_exists( 'wpna_allowed_post_types' ) ) :
 	}
 
 endif;
+
+if ( ! function_exists( 'wpna_get_post_placeholders' ) ) :
+
+	/**
+	 * Returns placeholders with values that can be substituted.
+	 *
+	 * This jsut returns a key value array. The substitution needs to be
+	 * applied elsewhere.
+	 *
+	 * @since 1.3.4
+	 *
+	 * @return array Keys with values that can be substituted.
+	 */
+	function wpna_get_post_placeholders() {
+		$values = array(
+			'post_title'          => get_the_title(),
+			'post_id'             => get_the_ID(),
+			'post_type'           => get_post_type(),
+			'post_status'         => get_post_status(),
+			'post_published_date' => get_post_time( get_option( 'date_format' ), true, get_the_ID(), false ),
+			'post_modified_date'  => get_post_modified_time( get_option( 'date_format' ), true, get_the_ID(), false ),
+			'post_author'         => get_the_author_meta( 'display_name' ),
+			'post_author_id'      => get_the_author_meta( 'ID' ),
+			'blog_id'             => get_current_blog_id(),
+		);
+
+		/**
+		 * Filter all the values before they're returned
+		 *
+		 * @since 1.3.0
+		 *
+		 * @param array $values Post types to convert.
+		 */
+		$values = apply_filters( 'wpna_get_post_placeholders', $values );
+
+		return $values;
+	}
+
+endif;

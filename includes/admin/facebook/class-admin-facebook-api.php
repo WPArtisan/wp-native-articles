@@ -611,8 +611,16 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 		// Get the post type.
 		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
 
+		// Get post types we want to add the box to.
+		$allowed_post_types = wpna_allowed_post_types();
+
+		// Check this is a valid post type.
+		if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
+			return;
+		}
+
 		// Make sure the user has permissions to post.
-		if ( ! $post_type && 'post' === $post_type && ! current_user_can( 'edit_post', $post_id ) ) {
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
