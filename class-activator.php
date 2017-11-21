@@ -85,7 +85,7 @@ class WPNA_Activator {
 
 			if ( $query->have_posts() ) {
 				// Check if it has an excerpt set or not.
-				if ( ! has_excerpt( $recent_posts[0]->ID ) ) {
+				if ( ! has_excerpt( $query->posts[0] ) ) {
 					$fbia_show_subtitle = 'off';
 				}
 			}

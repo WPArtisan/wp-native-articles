@@ -147,6 +147,7 @@ through the WordPress support forum, found on the Plugin download page.
 * Feature. Stricter regex for checking for the featured image
 * Feature. Stricter featured image URL validation for Yoast
 * Feature. Compatibility with the Spider Facebook plugin
+* Feature. Custom params added to analytics
 * Fix. Headings containing ampasands now covert properly
 * Fix. Amin tabs no longer broken when the plugin is disabled
 

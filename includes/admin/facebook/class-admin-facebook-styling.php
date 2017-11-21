@@ -306,7 +306,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 	 */
 	public function general_section_callback() {
 		?>
-		<p></p>
+		<p><?php esc_html_e( 'Set default article layout options. These can all be overridden on a per post basis.', 'wp-native-articles' ); ?></p>
 		<?php
 	}
 
@@ -326,7 +326,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		?>
 		<label for="fbia_show_subtitle">
 			<?php $this->generate_styling_select_element( 'fbia_show_subtitle', $values, wpna_get_option( 'fbia_show_subtitle' ) ); ?>
-			<?php esc_html_e( 'Show the subtitle.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'The post excerpt', 'wp-native-articles' ); ?>
 		</label>
 
 		<?php
@@ -352,7 +352,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		?>
 		<label for="fbia_show_authors">
 			<?php $this->generate_styling_select_element( 'fbia_show_authors', $values, wpna_get_option( 'fbia_show_authors' ) ); ?>
-			<?php esc_html_e( 'Show the authors.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'The post authors', 'wp-native-articles' ); ?>
 		</label>
 
 		<?php
@@ -379,7 +379,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		?>
 		<label for="fbia_show_kicker">
 			<?php $this->generate_styling_select_element( 'fbia_show_kicker', $values, wpna_get_option( 'fbia_show_kicker' ) ); ?>
-			<?php esc_html_e( 'Show the kicker.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'The post categories', 'wp-native-articles' ); ?>
 		</label>
 
 		<?php
@@ -406,7 +406,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 		?>
 		<label for="fbia_show_media">
 			<?php $this->generate_styling_select_element( 'fbia_show_media', $values, wpna_get_option( 'fbia_show_media' ) ); ?>
-			<?php esc_html_e( 'Show the media.', 'wp-native-articles' ); ?>
+			<?php esc_html_e( 'The post featured image (or video if set)', 'wp-native-articles' ); ?>
 		</label>
 
 		<?php
