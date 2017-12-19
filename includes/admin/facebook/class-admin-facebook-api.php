@@ -77,7 +77,6 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	public function hooks() {
 		add_action( 'admin_init',               array( $this, 'setup_settings' ), 10, 0 );
 		add_action( 'wpna_admin_facebook_tabs', array( $this, 'setup_tabs' ), 10, 1 );
-		add_action( 'save_post',                array( $this, 'save_post_meta' ), 10, 3 );
 		add_action( 'load-native-articles_page_' . $this->page_slug,  array( $this, 'facebook_cb' ), 10, 0 );
 		add_action( 'load-native-articles_page_' . $this->page_slug,  array( $this, 'facebook' ), 15, 0 );
 
@@ -94,6 +93,7 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 
 		// Add tabs to post edit screen.
 		add_filter( 'wpna_post_meta_box_content_tabs', array( $this, 'post_meta_box_facebook_status' ), 15, 1 );
+		add_filter( 'wpna_post_meta_box_fields', array( $this, 'post_meta_box_fields' ), 10, 1 );
 	}
 
 	/**
@@ -120,6 +120,21 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	}
 
 	/**
+	 * Reigster fields that should be saved in the post meta.
+	 *
+	 * @since 1.3.5
+	 * @access public
+	 * @param  array $fields Fields that should be saved.
+	 * @return array $fields
+	 */
+	public function post_meta_box_fields( $fields ) {
+		$fields[] = 'fbia_sync_articles';
+		$fields[] = 'fbia_import_as_drafts';
+
+		return $fields;
+	}
+
+	/**
 	 * Output HTML for the Facebook status post meta box tab.
 	 *
 	 * Just a heading. Stats are loaded in via javascript.
@@ -142,7 +157,7 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 			<fieldset>
 				<div class="wpna-form-control">
 					<label for="fbia_sync_articles"><?php esc_html_e( 'Sync Post', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_sync_articles" id="fbia_sync_articles" disabled="disabled">
+					<select name="wpna_options[fbia_sync_articles]" id="fbia_sync_articles" disabled="disabled">
 						<option></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_sync_articles', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_sync_articles', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
@@ -157,7 +172,7 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 			<fieldset>
 				<div class="wpna-form-control">
 					<label for="fbia_import_as_drafts"><?php esc_html_e( 'Import status', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_import_as_drafts" id="fbia_import_as_drafts" disabled="disabled">
+					<select name="wpna_options[fbia_import_as_drafts]" id="fbia_import_as_drafts" disabled="disabled">
 						<option></option>
 						<option value="draft"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_import_as_drafts', true ), 'draft' ); ?>><?php esc_html_e( 'Draft', 'wp-native-articles' ); ?></option>
 						<option value="publish"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_import_as_drafts', true ), 'publish' ); ?>><?php esc_html_e( 'Publish', 'wp-native-articles' ); ?></option>
@@ -184,7 +199,6 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 			do_action( 'wpna_post_meta_box_facebook_status_footer' );
 			?>
 
-			<?php wp_nonce_field( 'wpna_save_post_meta-' . get_the_ID(), '_wpna_nonce' ); ?>
 		</div>
 
 		<?php
@@ -570,144 +584,6 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	 */
 	public function sanitize_fbia_environment( $input ) {
 		return 'production' === $input ? 'production' : 'development';
-	}
-
-	/**
-	 * Save the new post meta field data.
-	 *
-	 * Creates a unique filter for each value that then uses hooks to provide
-	 * sanitization. Values are then stored in the post meta.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @param  int  $post_id The post ID.
-	 * @param  post $post    The post object.
-	 * @param  bool $update  Whether this is an existing post being updated or not.
-	 * @return void
-	 */
-	public function save_post_meta( $post_id, $post, $update ) {
-
-		// Don't save if it's an autosave.
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
-
-		// Don't save if it's a revision.
-		if ( wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// Get the nonce.
-		$nonce = filter_input( INPUT_POST, '_wpna_nonce', FILTER_SANITIZE_STRING );
-
-		// Verify that the input is coming from the proper form.
-		// Since an nonce will only include alpha-numeric characters, we use sanitize_key() to sanitize it.
-		// Automatically strips out any quotes or slashes so unslash isn't needed.
-		if ( ! $nonce || ! wp_verify_nonce( sanitize_key( $nonce ), 'wpna_save_post_meta-' . $post_id ) ) {
-			return;
-		}
-
-		// Get the post type.
-		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
-
-		// Get post types we want to add the box to.
-		$allowed_post_types = wpna_allowed_post_types();
-
-		// Check this is a valid post type.
-		if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
-			return;
-		}
-
-		// Make sure the user has permissions to post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Nothing fancy, let's just build our own data array.
-		$field_keys = array(
-			'_wpna_fbia_sync_articles',
-			'_wpna_fbia_import_as_drafts',
-		);
-
-		/**
-		 * Use this filter to add any custom fields to the data.
-		 *
-		 * @since 1.2.3
-		 *
-		 * @var array  $field_keys The keys to check.
-		 * @var object $post       Whether this is an existing post being updated or not.
-		 * @var bool   $update     Whether it's an update or new post.
-		 */
-		$field_keys = apply_filters( 'wpna_post_meta_box_facebook_status_field_keys', $field_keys, $post, $update );
-
-		// Return all the values from $_POST that have keys in field_keys.
-		$values = array_intersect_key( wp_unslash( $_POST ), array_flip( $field_keys ) ); // Input var okay.
-
-		// Sanitize using the same hook / filter method as the global options.
-		// Each key has a unique filter that can be hooked into to validate.
-		$sanitized_values = array();
-
-		foreach ( $values as $key => $value ) {
-
-			// If the value is empty then remove any post meta for this key.
-			// This means it will inherit the global defaults.
-			if ( empty( $value ) ) {
-				continue;
-			}
-
-			// Workout the correct filtername from the $key.
-			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
-
-			// Check if a filter exists.
-			if ( has_filter( $filter_name ) ) {
-
-				/**
-				 * Use filters to allow sanitizing of individual options.
-				 *
-				 * All sanitization hooks should be registerd in the hooks() method.
-				 *
-				 * @since 1.0.0
-				 *
-				 * @param mixed  $value  The value to sanitize
-				 * @param string $key    The options name
-				 * @param array  $values All options
-				 */
-				$sanitized_values[ $key ] = apply_filters( $filter_name, $value, $key, $values );
-			} else {
-				// If no filter was found then throw an error.
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					// @codingStandardsIgnoreLine
-					trigger_error( esc_html( sprintf( 'Filter missing for `%s`', $filter_name ) ) );
-				}
-			}
-		}
-
-		// Only save the data that has actually been set.
-		// Otherwise we create unnecessary meta rows.
-		$sanitized_values = array_filter( $sanitized_values );
-
-		/**
-		 * Filter the values before they're saved.
-		 *
-		 * @since 1.1.4
-		 * @var array Postmeta to save for this post.
-		 */
-		$sanitized_values = apply_filters( 'wpna_sanitize_post_meta_facebook', $sanitized_values, $field_keys, $post );
-
-		// Work out which valeus haven't been set so they can be removed.
-		$remove_fields = array_diff( $field_keys, array_keys( $sanitized_values ) );
-
-		// Remove these fields. They will inherit the global values.
-		foreach ( $remove_fields as $meta_key ) {
-			delete_post_meta( $post_id, $meta_key );
-		}
-
-		// Save the new meta.
-		foreach ( $sanitized_values as $key => $value ) {
-			update_post_meta( $post_id, $key, $value );
-		}
-
 	}
 
 }

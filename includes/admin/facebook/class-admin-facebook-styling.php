@@ -46,9 +46,9 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
-			add_action( 'save_post',                array( $this, 'save_post_meta' ), 10, 3 );
 
 			add_filter( 'wpna_post_meta_box_content_tabs', array( $this, 'post_meta_box_styling_settings' ), 10, 1 );
+			add_filter( 'wpna_post_meta_box_fields', array( $this, 'post_meta_box_fields' ), 10, 1 );
 		}
 
 		// Sanitize the main options.
@@ -720,6 +720,32 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 	}
 
 	/**
+	 * Reigster fields that should be saved in the post meta.
+	 *
+	 * @since 1.3.5
+	 * @access public
+	 * @param  array $fields Fields that should be saved.
+	 * @return array $fields
+	 */
+	public function post_meta_box_fields( $fields ) {
+		$fields[] = 'fbia_show_subtitle';
+		$fields[] = 'fbia_show_authors';
+		$fields[] = 'fbia_show_kicker';
+		$fields[] = 'fbia_show_media';
+		$fields[] = 'fbia_caption_title';
+		$fields[] = 'fbia_caption_title_font_size';
+		$fields[] = 'fbia_caption_title_vertical_position';
+		$fields[] = 'fbia_caption_title_horizontal_position';
+		$fields[] = 'fbia_caption_font_size';
+		$fields[] = 'fbia_caption_vertical_position';
+		$fields[] = 'fbia_caption_horizontal_position';
+		$fields[] = 'fbia_caption_credit_vertical_position';
+		$fields[] = 'fbia_caption_credit_horizontal_position';
+
+		return $fields;
+	}
+
+	/**
 	 * Output HTML for the Styling post meta box tab.
 	 *
 	 * These values are set per article and override global defaults.
@@ -770,8 +796,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Show Subtitle', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_show_subtitle', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_subtitle', true ) ); ?>
+					<label for="fbia_show_subtitle"><?php esc_html_e( 'Show Subtitle', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_show_subtitle', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_subtitle', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_show_subtitle' );
@@ -780,8 +806,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			</fieldset>
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Show Authors', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_show_authors', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_authors', true ) ); ?>
+					<label for="fbia_show_authors"><?php esc_html_e( 'Show Authors', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_show_authors', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_authors', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_show_authors' );
@@ -790,8 +816,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			</fieldset>
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Show Kicker', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_show_kicker', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_kicker', true ) ); ?>
+					<label for="fbia_show_kicker"><?php esc_html_e( 'Show Kicker', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_show_kicker', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_kicker', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_show_kicker' );
@@ -800,8 +826,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			</fieldset>
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Show Media', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_show_media', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_media', true ) ); ?>
+					<label for="fbia_show_media"><?php esc_html_e( 'Show Media', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_show_media', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_show_media', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_show_media' );
@@ -813,8 +839,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Attachment Title', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title', true ) ); ?>
+					<label for="fbia_caption_title"><?php esc_html_e( 'Attachment Title', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_title', $switch_values, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_title' );
@@ -824,8 +850,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Title Font Size', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_font_size', true ) ); ?>
+					<label for="fbia_caption_title_font_size"><?php esc_html_e( 'Title Font Size', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_title_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_font_size', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'caption_title_font_size' );
@@ -835,8 +861,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Title Vertical Position', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_vertical_position', true ) ); ?>
+					<label for="fbia_caption_title_vertical_position"><?php esc_html_e( 'Title Vertical Position', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_title_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_vertical_position', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_title_vertical_position' );
@@ -846,8 +872,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Title Horizontal Position', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_title_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_horizontal_position', true ) ); ?>
+					<label for="fbia_caption_title_horizontal_position"><?php esc_html_e( 'Title Horizontal Position', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_title_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_title_horizontal_position', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_title_horizontal_position' );
@@ -857,8 +883,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Font Size', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_font_size', true ) ); ?>
+					<label for="fbia_caption_font_size"><?php esc_html_e( 'Caption Font Size', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_font_size', $font_sizes, get_post_meta( get_the_ID(), '_wpna_fbia_caption_font_size', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_font_size' );
@@ -868,8 +894,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Vertical Position', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_vertical_position', true ) ); ?>
+					<label for="fbia_caption_vertical_position"><?php esc_html_e( 'Caption Vertical Position', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_vertical_position', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_vertical_position' );
@@ -879,8 +905,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Caption Horizontal Position', 'wp-native-articles' ); ?></label>
-					<?php $this->generate_styling_select_element( '_wpna_fbia_caption_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_horizontal_position', true ) ); ?>
+					<label for="fbia_caption_horizontal_position"><?php esc_html_e( 'Caption Horizontal Position', 'wp-native-articles' ); ?></label>
+					<?php $this->generate_styling_select_element( 'fbia_caption_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_horizontal_position', true ) ); ?>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_caption_horizontal_position' );
@@ -895,8 +921,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 				<fieldset>
 					<div class="pure-control-group">
-						<label for="fbia_sponsored"><?php esc_html_e( 'Credit Vertical Position', 'wp-native-articles' ); ?></label>
-						<?php $this->generate_styling_select_element( '_wpna_fbia_caption_credit_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_vertical_position', true ) ); ?>
+						<label for="fbia_caption_credit_vertical_position"><?php esc_html_e( 'Credit Vertical Position', 'wp-native-articles' ); ?></label>
+						<?php $this->generate_styling_select_element( 'fbia_caption_credit_vertical_position', $vertical_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_vertical_position', true ) ); ?>
 						<?php
 						// Show a notice if the option has been overridden.
 						wpna_post_option_overridden_notice( 'fbia_caption_credit_vertical_position' );
@@ -906,8 +932,8 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 
 				<fieldset>
 					<div class="pure-control-group">
-						<label for="fbia_sponsored"><?php esc_html_e( 'Credit Horizontal Position', 'wp-native-articles' ); ?></label>
-						<?php $this->generate_styling_select_element( '_wpna_fbia_caption_credit_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_horizontal_position', true ) ); ?>
+						<label for="fbia_caption_credit_horizontal_position"><?php esc_html_e( 'Credit Horizontal Position', 'wp-native-articles' ); ?></label>
+						<?php $this->generate_styling_select_element( 'fbia_caption_credit_horizontal_position', $horizontal_positions, get_post_meta( get_the_ID(), '_wpna_fbia_caption_credit_horizontal_position', true ) ); ?>
 						<?php
 						// Show a notice if the option has been overridden.
 						wpna_post_option_overridden_notice( 'fbia_caption_credit_horizontal_position' );
@@ -927,164 +953,9 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 			do_action( 'wpna_post_meta_box_facebook_styling_footer' );
 			?>
 
-			<?php wp_nonce_field( 'wpna_save_post_meta-' . get_the_ID(), '_wpna_nonce' ); ?>
 		</div>
 
 		<?php
-	}
-
-	/**
-	 * Save the new post meta field data.
-	 *
-	 * Creates a unique filter for each value that then uses hooks to provide
-	 * sanitization. Values are then stored in the post meta.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @param  int  $post_id The post ID.
-	 * @param  post $post    The post object.
-	 * @param  bool $update  Whether this is an existing post being updated or not.
-	 * @return void
-	 */
-	public function save_post_meta( $post_id, $post, $update ) {
-
-		// Don't save if it's an autosave.
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
-
-		// Don't save if it's a revision.
-		if ( wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// Get the nonce.
-		$nonce = filter_input( INPUT_POST, '_wpna_nonce', FILTER_SANITIZE_STRING );
-
-		// Verify that the input is coming from the proper form.
-		// Since an nonce will only include alpha-numeric characters, we use sanitize_key() to sanitize it.
-		// Automatically strips out any quotes or slashes so unslash isn't needed.
-		if ( ! $nonce || ! wp_verify_nonce( sanitize_key( $nonce ), 'wpna_save_post_meta-' . $post_id ) ) {
-			return;
-		}
-
-		// Get the post type.
-		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
-
-		// Get post types we want to add the box to.
-		$allowed_post_types = wpna_allowed_post_types();
-
-		// Check this is a valid post type.
-		if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
-			return;
-		}
-
-		// Make sure the user has permissions to post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Nothing fancy, let's just buid our own data array.
-		$field_keys = array(
-			'_wpna_fbia_show_subtitle',
-			'_wpna_fbia_show_authors',
-			'_wpna_fbia_show_kicker',
-			'_wpna_fbia_show_media',
-			'_wpna_fbia_caption_title',
-			'_wpna_fbia_caption_title_font_size',
-			'_wpna_fbia_caption_title_vertical_position',
-			'_wpna_fbia_caption_title_horizontal_position',
-			'_wpna_fbia_caption_font_size',
-			'_wpna_fbia_caption_vertical_position',
-			'_wpna_fbia_caption_horizontal_position',
-			'_wpna_fbia_caption_credit_vertical_position',
-			'_wpna_fbia_caption_credit_horizontal_position',
-		);
-
-		/**
-		 * Use this filter to add any custom fields to the data.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @var array  $field_keys The keys to check.
-		 * @var object $post       Whether this is an existing post being updated or not.
-		 * @var bool   $update     Whether it's an update or new post.
-		 */
-		$field_keys = apply_filters( 'wpna_post_meta_box_facebook_styling_field_keys', $field_keys, $post, $update );
-
-		// All the options are inside the wpna_options array so let's get that.
-		$post_data = filter_input( INPUT_POST, 'wpna_options', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
-
-		// Return all the values from $_POST that have keys in field_keys.
-		$values = array_intersect_key( wp_unslash( $post_data ), array_flip( $field_keys ) );
-
-		// Sanitize using the same hook / filter method as the global options.
-		// Each key has a unique filter that can be hooked into to validate.
-		$sanitized_values = array();
-
-		foreach ( $values as $key => $value ) {
-
-			// If the value is empty then remove any post meta for this key.
-			// This means it will inherit the global defaults.
-			if ( empty( $value ) ) {
-				continue;
-			}
-
-			// Workout the correct filtername from the $key.
-			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
-
-			// Check if a filter exists.
-			if ( has_filter( $filter_name ) ) {
-
-				/**
-				 * Use filters to allow sanitizing of individual options.
-				 *
-				 * All sanitization hooks should be registerd in the hooks() method.
-				 * This is more for correct sanitization than setting default values.
-				 * Use the hooks below for that.
-				 *
-				 * @since 1.0.0
-				 *
-				 * @param mixed  $value  The value to sanitize
-				 * @param string $key    The options name
-				 * @param array  $values All options
-				 */
-				$sanitized_values[ $key ] = apply_filters( $filter_name, $value, $key, $values );
-			} else {
-				// If no filter was found then throw an error.
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					// @codingStandardsIgnoreLine
-					trigger_error( esc_html( sprintf( 'Filter missing for `%s`', $filter_name ) ) );
-				}
-			}
-		}
-
-		// Only save the data that has actually been set.
-		// Otherwise we create unnecessary meta rows.
-		$sanitized_values = array_filter( $sanitized_values );
-
-		/**
-		 * Filter the values before they're saved.
-		 *
-		 * @since 1.1.4
-		 * @var array Postmeta to save for this post.
-		 */
-		$sanitized_values = apply_filters( 'wpna_sanitize_post_meta_facebook_styling', $sanitized_values, $field_keys, $post );
-
-		// Work out which valeus haven't been set so they can be removed.
-		$remove_fields = array_diff( $field_keys, array_keys( $sanitized_values ) );
-
-		// Remove these fields. They will inherit the global values.
-		foreach ( $remove_fields as $meta_key ) {
-			delete_post_meta( $post_id, $meta_key );
-		}
-
-		// Save the new meta.
-		foreach ( $sanitized_values as $key => $value ) {
-			update_post_meta( $post_id, $key, $value );
-		}
-
 	}
 
 	/**

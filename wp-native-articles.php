@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.3.4
+ * Version: 1.3.5
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.3.4' );
+	define( 'WPNA_VERSION', '1.3.5' );
 }
 
 // Define the plugin base file.
@@ -47,9 +47,6 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		// Holds all the classes initialized.
 		$classes = new stdClass();
 
-		// Preparation for when we re-factor the pro plugin.
-		$GLOBALS['wpna_pro'] = new stdClass();
-
 		// Require the class if it doesn't exist.
 		if ( ! class_exists( 'WPNA_Activator' ) ) {
 			require WPNA_BASE_PATH . '/class-activator.php';
@@ -73,18 +70,14 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		// Load the helper class.
 		require WPNA_BASE_PATH . '/includes/functions-helper.php';
 
-		/**
-		 * Setup the global options array.
-		 * Although they are stored in here they are never accessed
-		 * directly, only through the helper functions.
-		 */
-		$GLOBALS['wpna_options'] = wpna_get_options();
-
 		// Load the sanitization function.
 		require WPNA_BASE_PATH . '/includes/functions-sanitization.php';
 
 		// Load the variable functions.
 		require WPNA_BASE_PATH . '/includes/functions-variables.php';
+
+		// Load the deprecated file.
+		require WPNA_BASE_PATH . '/includes/deprecated.php';
 
 		/**
 		 * Action files.
@@ -186,13 +179,13 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-crawler-ingestion.php';
 		}
 		// Preparation for pro refactor.
-		$GLOBALS['wpna_pro']->wpna_admin_facebook_crawler_ingestion = new WPNA_Admin_Facebook_Crawler_Ingestion();
+		$classes->wpna_admin_facebook_crawler_ingestion = new WPNA_Admin_Facebook_Crawler_Ingestion();
 
 		if ( ! class_exists( 'WPNA_Admin_Placements' ) ) {
 			require WPNA_BASE_PATH . '/includes/placements/class-admin-placements.php';
 		}
 		// Preparation for pro refactor.
-		$GLOBALS['wpna_pro']->wpna_admin_placements = new WPNA_Admin_Placements();
+		$classes->wpna_admin_placements = new WPNA_Admin_Placements();
 
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Custom_Content' ) ) {
 			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-custom-content.php';
@@ -247,6 +240,7 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/newrelic.php';
 		include WPNA_BASE_PATH . '/includes/compat/media-ace.php';
 		include WPNA_BASE_PATH . '/includes/compat/spider-facebook.php';
+		include WPNA_BASE_PATH . '/includes/compat/easy-video-player.php';
 
 		// Load the plugin text domain. For i18n.
 		add_action( 'plugins_loaded', 'wpna_load_textdomain', 10, 0 );
@@ -258,8 +252,29 @@ endif;
 // Check the pro version isn't active then kick everything off.
 // Assign all instantiated classes to a variable. If anyone needs
 // to unhook anything then they can simply grab it.
-if ( ! function_exists( 'wpna_initialise_pro' ) ) {
-	$wpna = wpna_initialise();
+if ( ! function_exists( 'wpna_initialise_pro' ) && ! function_exists( 'wpna' ) ) {
+
+	/**
+	 * Global function that starts everything and can then be used
+	 * to grab classes as is needed.
+	 *
+	 * @since 1.3.5
+	 * @return object
+	 */
+	function wpna() {
+		// Globalise a variable.
+		// This is for backwards compatibility.
+		global $wpna;
+
+		// Grab the inialising function.
+		$wpna = wpna_initialise();
+
+		return $wpna;
+	}
+
+	// Kick everything off.
+	wpna();
+
 }
 
 /**

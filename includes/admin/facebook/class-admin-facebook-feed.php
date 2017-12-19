@@ -513,6 +513,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 
 			// Should help speed up the query a bit.
 			$query->set( 'ignore_sticky_posts', true );
+			$query->set( 'has_password', false );
 			$query->set( 'no_found_rows', true );
 
 			// Set the post type.

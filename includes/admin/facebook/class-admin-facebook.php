@@ -53,10 +53,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_action( 'admin_init',            array( $this, 'setup_settings' ), 10, 0 );
 		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 10, 2 );
 		add_action( 'save_post',             array( $this, 'flush_content_cache' ), 10, 1 );
-		add_action( 'save_post',             array( $this, 'save_post_meta' ), 10, 3 );
-
-		// After the Facebook options are updated flush the permalink rules.
-		add_action( 'update_option_wpna_options', 'flush_rewrite_rules', 10, 0 );
 
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
@@ -64,6 +60,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		}
 
 		add_filter( 'wpna_post_meta_box_content_tabs', array( $this, 'post_meta_box_facebook_settings' ), 10, 1 );
+		add_filter( 'wpna_post_meta_box_fields', array( $this, 'post_meta_box_fields' ), 10, 1 );
 
 		// Form sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
@@ -93,10 +90,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		add_filter( 'wpna_sanitize_post_meta_fbia_image_comments',       'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_credits',              'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_copyright',            'sanitize_text_field', 10, 1 );
+		// Stops missing validation function warning.
+		add_filter( 'wpna_sanitize_post_meta_fbia_analytics',            'trim', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_enable_ads',           'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_auto_ad_placement',    'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_ad_density',           'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_ad_code_type',         'sanitize_text_field', 10, 1 );
+		// Stops missing validation function warning.
+		add_filter( 'wpna_sanitize_post_meta_fbia_ad_code',              'trim', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_ad_code_placement_id', 'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_recirculation_ad',     'sanitize_text_field', 10, 1 );
 	}
@@ -369,26 +370,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		);
 
 		// Unique ID for this section.
-		$section_general_analytics = 'wpna_facebook-general-analytics';
-
-		register_setting( $section_general_analytics, 'wpna_options', 'wpna_sanitize_options' );
-
-		add_settings_section(
-			$section_general_analytics,
-			esc_html__( 'Analytics', 'wp-native-articles' ),
-			array( $this, 'section_general_analytics_callback' ),
-			$section_general_analytics
-		);
-
-		add_settings_field(
-			'fbia_analytics',
-			'<label for="fbia_analytics">' . esc_html__( 'Analytics Code', 'wp-native-articles' ) . '</label>',
-			array( $this, 'analytics_callback' ),
-			$section_general_analytics,
-			$section_general_analytics
-		);
-
-		// Unique ID for this section.
 		$section_general_ads = 'wpna_facebook-general-ads';
 
 		register_setting( $section_general_ads, 'wpna_options', 'wpna_sanitize_options' );
@@ -602,12 +583,12 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<label for="fbia_content_parser">
 			<select name="wpna_options[fbia_content_parser]" id="fbia-content-parser">
 				<option value="v1"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v1' ); ?>><?php esc_html_e( 'Version One', 'wp-native-articles' ); ?></option>
-				<option value="v2"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v2' ); ?>><?php esc_html_e( 'Version Two (beta)', 'wp-native-articles' ); ?></option>
+				<option value="v2"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v2' ); ?>><?php esc_html_e( 'Version Two', 'wp-native-articles' ); ?></option>
 			</select>
 			<p class="description">
 				<?php echo sprintf(
 					wp_kses(
-						__( 'Version Two of the content parser is up to 10x faster, uses fewer resources, and is better at transforming content. However it is still in beta. If you have any problems with content it can’t parse please let us <a target="_blank" href="%s">know here</a>.', 'wp-native-articles' ),
+						__( 'Version Two of the content parser is up to 10x faster, uses fewer resources, and is better at transforming content.', 'wp-native-articles' ),
 						array( 'a' => array( 'href' => array(), 'target' => array() ) )
 					),
 					esc_url( 'http://docs.wp-native-articles.com/contact' )
@@ -886,52 +867,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * @access public
 	 * @return void
 	 */
-	public function section_general_analytics_callback() {
-		?>
-		<p></p>
-		<?php
-	}
-
-	/**
-	 * Outputs the HTML for the 'fbia_analytics' settings field.
-	 *
-	 * Sets the analytics code to use in each article. Can be overridden on a
-	 * per article basis.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function analytics_callback() {
-		?>
-		<textarea name="wpna_options[fbia_analytics]" rows="10" cols="50"  id="fbia_analytics" class="large-text code"><?php echo esc_textarea( wpna_get_option( 'fbia_analytics' ) ); ?></textarea>
-		<p class="description">
-			<?php esc_html_e( 'Analytics code to be used in every article. Auto wrapped in an iFrame. Available template tags:', 'wp-native-articles' ); ?>
-
-			<?php $post_placeholders = wpna_get_post_placeholders(); ?>
-			<?php foreach ( (array) $post_placeholders as $placeholder => $value ) : ?>
-				<br />
-				<?php echo esc_html( sprintf( '{%s}', $placeholder ) ); ?>
-			<?php endforeach; ?>
-		</p>
-
-		<?php
-		// Show a notice if the option has been overridden.
-		wpna_option_overridden_notice( 'fbia_analytics' );
-		?>
-
-		<?php
-	}
-
-	/**
-	 * Outputs the HTML displayed at the top of the settings section.
-	 *
-	 * @since 1.3.3
-	 *
-	 * @access public
-	 * @return void
-	 */
 	public function section_general_ads_callback() {
 		?>
 		<p></p>
@@ -1165,6 +1100,34 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	}
 
 	/**
+	 * Reigster fields that should be saved in the post meta.
+	 *
+	 * @since 1.3.5
+	 * @access public
+	 * @param  array $fields Fields that should be saved.
+	 * @return array $fields
+	 */
+	public function post_meta_box_fields( $fields ) {
+		$fields[] = 'fbia_style';
+		$fields[] = 'fbia_rtl';
+		$fields[] = 'fbia_sponsored';
+		$fields[] = 'fbia_image_likes';
+		$fields[] = 'fbia_image_comments';
+		$fields[] = 'fbia_credits';
+		$fields[] = 'fbia_copyright';
+		$fields[] = 'fbia_analytics';
+		$fields[] = 'fbia_enable_ads';
+		$fields[] = 'fbia_auto_ad_placement';
+		$fields[] = 'fbia_ad_density';
+		$fields[] = 'fbia_ad_code_type';
+		$fields[] = 'fbia_ad_code_placement_id';
+		$fields[] = 'fbia_ad_code';
+		$fields[] = 'fbia_recirculation_ad';
+
+		return $fields;
+	}
+
+	/**
 	 * Output HTML for the Facebook settings post meta box tab.
 	 *
 	 * These values are set per article and override global defaults.
@@ -1191,7 +1154,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-style"><?php esc_html_e( 'Override Style Template', 'wp-native-articles' ); ?></label>
-					<input type="text" name="_wpna_fbia_style" id="fbia-style" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_style' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_style', true ) ); ?>">
+					<input type="text" name="wpna_options[fbia_style]" id="fbia-style" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_style' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_style', true ) ); ?>">
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_style' );
@@ -1201,8 +1164,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_rtl"><?php esc_html_e( 'RTL', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_rtl" id="fbia-rtl">
+					<label for="fbia-rtl"><?php esc_html_e( 'RTL', 'wp-native-articles' ); ?></label>
+					<select name="wpna_options[fbia_rtl]" id="fbia-rtl">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_rtl', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_rtl', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1216,8 +1179,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia_sponsored"><?php esc_html_e( 'Sponsored Article', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_sponsored" id="fbia-sponsored">
+					<label for="fbia-sponsored"><?php esc_html_e( 'Sponsored Article', 'wp-native-articles' ); ?></label>
+					<select name="wpna_options[fbia_sponsored]" id="fbia-sponsored">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_sponsored', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_sponsored', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1232,7 +1195,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-image-likes"><?php esc_html_e( 'Image Likes', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_image_likes" id="fbia-image-likes">
+					<select name="wpna_options[fbia_image_likes]" id="fbia-image-likes">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_image_likes', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_image_likes', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1247,7 +1210,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-image-comments"><?php esc_html_e( 'Image Comments', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_image_comments" id="fbia-image-comments">
+					<select name="wpna_options[fbia_image_comments]" id="fbia-image-comments">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_image_comments', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_image_comments', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1262,7 +1225,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-credits"><?php esc_html_e( 'Credits', 'wp-native-articles' ); ?></label>
-					<input type="text" name="_wpna_fbia_credits" id="fbia-credits" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_credits' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_credits', true ) ); ?>">
+					<input type="text" name="wpna_options[fbia_credits]" id="fbia-credits" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_credits' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_credits', true ) ); ?>">
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_credits' );
@@ -1273,7 +1236,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-copyright"><?php esc_html_e( 'Copyright', 'wp-native-articles' ); ?></label>
-					<input type="text" name="_wpna_fbia_copyright" id="fbia-copyright" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_copyright' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_copyright', true ) ); ?>">
+					<input type="text" name="wpna_options[fbia_copyright]" id="fbia-copyright" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_copyright' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_copyright', true ) ); ?>">
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_copyright' );
@@ -1284,7 +1247,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-analytics"><?php esc_html_e( 'Analytics', 'wp-native-articles' ); ?></label>
-					<textarea name="_wpna_fbia_analytics" rows="6" cols="50" class="code" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_analytics' ) ); ?>"><?php echo esc_textarea( get_post_meta( get_the_ID(), '_wpna_fbia_analytics', true ) ); ?></textarea>
+					<textarea name="wpna_options[fbia_analytics]" id="fbia-analytics" rows="6" cols="50" class="code" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_analytics' ) ); ?>"><?php echo esc_textarea( get_post_meta( get_the_ID(), '_wpna_fbia_analytics', true ) ); ?></textarea>
+					<p style="margin-left:11em;font-style:italic;"><?php esc_html_e( 'Appended to the global analytics. Does not override.', 'wp-native-articles' ); ?></p>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_analytics' );
@@ -1294,8 +1258,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia-enable-ads-override"><?php esc_html_e( 'Enable Ads', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_enable_ads" id="fbia-enable-ads">
+					<label for="fbia-enable-ads"><?php esc_html_e( 'Enable Ads', 'wp-native-articles' ); ?></label>
+					<select name="wpna_options[fbia_enable_ads]" id="fbia-enable-ads">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_enable_ads', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_enable_ads', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1310,7 +1274,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-auto-ad-placement"><?php esc_html_e( 'Auto Place Ads', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_auto_ad_placement" id="fbia-auto-ad-placement">
+					<select name="wpna_options[fbia_auto_ad_placement]" id="fbia-auto-ad-placement">
 						<option></option>
 						<option value="off"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_auto_ad_placement', true ), 'off' ); ?>><?php esc_html_e( 'Disabled', 'wp-native-articles' ); ?></option>
 						<option value="on"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_auto_ad_placement', true ), 'on' ); ?>><?php esc_html_e( 'Enabled', 'wp-native-articles' ); ?></option>
@@ -1325,7 +1289,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-ad-density"><?php esc_html_e( 'Ad Density', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_ad_density" id="fbia-ad-density">
+					<select name="wpna_options[fbia_ad_density]" id="fbia-ad-density">
 						<option></option>
 						<option value="default"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_density', true ), 'default' ); ?>><?php esc_html_e( 'Default (250 word gap)', 'wp-native-articles' ); ?></option>
 						<option value="medium"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_density', true ), 'medium' ); ?>><?php esc_html_e( 'Medium (350 word gap)', 'wp-native-articles' ); ?></option>
@@ -1342,7 +1306,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset>
 				<div class="pure-control-group">
 					<label for="fbia-ad-code-type"><?php esc_html_e( 'Ad Type', 'wp-native-articles' ); ?></label>
-					<select name="_wpna_fbia_ad_code_type" id="fbia-ad-code-type">
+					<select name="wpna_options[fbia_ad_code_type]" id="fbia-ad-code-type">
 						<option></option>
 						<option value="audience_network"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code_type', true ), 'audience_network' ); ?>><?php esc_html_e( 'Audience Network', 'wp-native-articles' ); ?></option>
 						<option value="custom"<?php selected( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code_type', true ), 'custom' ); ?>><?php esc_html_e( 'Custom', 'wp-native-articles' ); ?></option>
@@ -1358,7 +1322,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset id="wpna-ad-code-template-audience_network" class="wpna-ad-code-template">
 				<div class="pure-control-group">
 					<label for="fbia-ad-code-placement-id"><?php esc_html_e( 'Placement ID', 'wp-native-articles' ); ?></label>
-					<input type="text" name="_wpna_fbia_ad_code_placement_id" id="fbia-ad-code-placement-id" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_ad_code_placement_id' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code_placement_id', true ) ); ?>">
+					<input type="text" name="wpna_options[fbia_ad_code_placement_id]" id="fbia-ad-code-placement-id" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_ad_code_placement_id' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code_placement_id', true ) ); ?>">
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_ad_code_placement_id' );
@@ -1369,7 +1333,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			<fieldset id="wpna-ad-code-template-custom" class="wpna-ad-code-template">
 				<div class="pure-control-group">
 					<label for="fbia-ad-code"><?php esc_html_e( 'Ad Code', 'wp-native-articles' ); ?></label>
-					<textarea name="_wpna_fbia_ad_code" rows="10" cols="50" class="code" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_ad_code' ) ); ?>"><?php echo esc_textarea( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code', true ) ); ?></textarea>
+					<textarea name="wpna_options[fbia_ad_code]" id="fbia-ad-code" rows="10" cols="50" class="code" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_ad_code' ) ); ?>"><?php echo esc_textarea( get_post_meta( get_the_ID(), '_wpna_fbia_ad_code', true ) ); ?></textarea>
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_ad_code' );
@@ -1379,8 +1343,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 			<fieldset>
 				<div class="pure-control-group">
-					<label for="fbia-ad-code"><?php esc_html_e( 'Recirculation Ad', 'wp-native-articles' ); ?></label>
-					<input type="text" name="_wpna_fbia_recirculation_ad" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_recirculation_ad' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_recirculation_ad', true ) ); ?>" />
+					<label for="fbia-recirculation-ad"><?php esc_html_e( 'Recirculation Ad', 'wp-native-articles' ); ?></label>
+					<input type="text" name="wpna_options[fbia_recirculation_ad]" id="fbia-recirculation-ad" placeholder="<?php echo esc_attr( wpna_get_option( 'fbia_recirculation_ad' ) ); ?>" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_recirculation_ad', true ) ); ?>" />
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_recirculation_ad' );
@@ -1398,178 +1362,9 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 			do_action( 'wpna_post_meta_box_facebook_settings_footer' );
 			?>
 
-			<?php wp_nonce_field( 'wpna_save_post_meta-' . get_the_ID(), '_wpna_nonce' ); ?>
 		</div>
 
 		<?php
-	}
-
-	/**
-	 * Save the new post meta field data.
-	 *
-	 * Creates a unique filter for each value that then uses hooks to provide
-	 * sanitization. Values are then stored in the post meta.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @param  int  $post_id The post ID.
-	 * @param  post $post    The post object.
-	 * @param  bool $update  Whether this is an existing post being updated or not.
-	 * @return void
-	 */
-	public function save_post_meta( $post_id, $post, $update ) {
-
-		// Don't save if it's an autosave.
-		if ( wp_is_post_autosave( $post_id ) ) {
-			return;
-		}
-
-		// Don't save if it's a revision.
-		if ( wp_is_post_revision( $post_id ) ) {
-			return;
-		}
-
-		// Get the nonce.
-		$nonce = filter_input( INPUT_POST, '_wpna_nonce', FILTER_SANITIZE_STRING );
-
-		// Verify that the input is coming from the proper form.
-		// Since an nonce will only include alpha-numeric characters, we use sanitize_key() to sanitize it.
-		// Automatically strips out any quotes or slashes so unslash isn't needed.
-		if ( ! $nonce || ! wp_verify_nonce( sanitize_key( $nonce ), 'wpna_save_post_meta-' . $post_id ) ) {
-			return;
-		}
-
-		// Get the post type.
-		$post_type = filter_input( INPUT_POST, 'post_type', FILTER_SANITIZE_STRING );
-
-		// Get post types we want to add the box to.
-		$allowed_post_types = wpna_allowed_post_types();
-
-		// Check this is a valid post type.
-		if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
-			return;
-		}
-
-		// Make sure the user has permissions to post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Nothing fancy, let's just buid our own data array.
-		$field_keys = array(
-			'_wpna_fbia_style',
-			'_wpna_fbia_rtl',
-			'_wpna_fbia_sponsored',
-			'_wpna_fbia_image_likes',
-			'_wpna_fbia_image_comments',
-			'_wpna_fbia_credits',
-			'_wpna_fbia_copyright',
-			'_wpna_fbia_analytics',
-			'_wpna_fbia_enable_ads',
-			'_wpna_fbia_auto_ad_placement',
-			'_wpna_fbia_ad_density',
-			'_wpna_fbia_ad_code_type',
-			'_wpna_fbia_ad_code_placement_id',
-			'_wpna_fbia_ad_code',
-			'_wpna_fbia_recirculation_ad',
-		);
-
-		/**
-		 * Use this filter to add any custom fields to the data.
-		 *
-		 * @since 1.0.0
-		 *
-		 * @var array  $field_keys The keys to check.
-		 * @var object $post       Whether this is an existing post being updated or not.
-		 * @var bool   $update     Whether it's an update or new post.
-		 */
-		$field_keys = apply_filters( 'wpna_post_meta_box_facebook_settings_field_keys', $field_keys, $post, $update );
-
-		// Return all the values from $_POST that have keys in field_keys.
-		$values = array_intersect_key( wp_unslash( $_POST ), array_flip( $field_keys ) ); // Input var okay.
-
-		// Sanitize using the same hook / filter method as the global options.
-		// Each key has a unique filter that can be hooked into to validate.
-		$sanitized_values = array();
-
-		foreach ( $values as $key => $value ) {
-
-			// If the value is empty then remove any post meta for this key.
-			// This means it will inherit the global defaults.
-			if ( empty( $value ) ) {
-				continue;
-			}
-
-			// Workout the correct filtername from the $key.
-			$filter_name = str_replace( '_wpna_', 'wpna_sanitize_post_meta_', $key );
-
-			/**
-			 * DEPRECATED.
-			 *
-			 * The old sanitization hook.
-			 * apply_filters_deprecated() was only introduced in 4.6.
-			 *
-			 * @since 1.0.0
-			 *
-			 * @param mixed  $value  The value to sanitize.
-			 * @param string $key    The option name.
-			 * @param array  $values All options.
-			 */
-			if ( function_exists( 'apply_filters_deprecated' ) ) {
-				// @codingStandardsIgnoreLine.
-				$sanitized_values[ $key ] = apply_filters_deprecated( 'wpna_sanitize_post_meta-' . $key, array( $value, $key, $values ), '1.1.0', $filter_name );
-			}
-
-			// Check if a filter exists.
-			if ( has_filter( $filter_name ) ) {
-
-				/**
-				 * Use filters to allow sanitizing of individual options.
-				 *
-				 * All sanitization hooks should be registerd in the hooks() method.
-				 *
-				 * @since 1.0.0
-				 *
-				 * @param mixed  $value  The value to sanitize
-				 * @param string $key    The options name
-				 * @param array  $values All options
-				 */
-				$sanitized_values[ $key ] = apply_filters( $filter_name, $value, $key, $values );
-			} else {
-				// If no filter was found then throw an error.
-				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-					// @codingStandardsIgnoreLine
-					trigger_error( esc_html( sprintf( 'Filter missing for `%s`', $filter_name ) ) );
-				}
-			}
-		}
-
-		// Only save the data that has actually been set.
-		// Otherwise we create unnecessary meta rows.
-		$sanitized_values = array_filter( $sanitized_values );
-
-		/**
-		 * Filter the values before they're saved.
-		 *
-		 * @since 1.1.4
-		 * @var array Postmeta to save for this post.
-		 */
-		$sanitized_values = apply_filters( 'wpna_sanitize_post_meta_facebook', $sanitized_values, $field_keys, $post );
-
-		// Work out which values haven't been set so they can be removed.
-		$remove_fields = array_diff( $field_keys, array_keys( $sanitized_values ) );
-
-		// Remove these fields. They will inherit the global values.
-		foreach ( $remove_fields as $meta_key ) {
-			delete_post_meta( $post_id, $meta_key );
-		}
-
-		// Save the new meta.
-		foreach ( $sanitized_values as $key => $value ) {
-			update_post_meta( $post_id, $key, $value );
-		}
-
 	}
 
 	/**

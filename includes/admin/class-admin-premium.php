@@ -132,7 +132,9 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 										<li> * <b>Real Time Sync</b> Articles synced instantly from WordPress, no waiting for FB to scrape the RSS feed.</li>
 										<li> * <b>Article Import Status</b> Instant Articles Errors &amp; import status display live in every article.</li>
 										<li> * <b>Live Analytics</b> Individual and aggregated site overview.</li>
-										<li> * <b>Premium support</b></li>
+										<li> * <b>Placement Manager</b> Automatically add custom code, embeds, ads, images to all or some of your Instant Articles.</li>
+										<li> * <b>Crawler Ingestion</b> Facebook's new method for importing Posts. A super quick way to enable Instant Articles for all your posts.</li>
+										<li> * <b>Premium support</b> We're fanatical about support. Any problems we're always here to help.</li>
 									</ul>
 								</div>
 
@@ -164,8 +166,9 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 							<div class="row">
 
 								<div class="child">
-									<h4>Live Import Status.</h4>
+									<h4>Live Import Status &amp; Selective post sync.</h4>
 									<p>When a post is published or updated the Instant Article status is retrieved live from Facebook and displayed in the Admin. Any errors with the article can be seen immediately.</p>
+									<p>Control which posts you want to convert to Instant Articles or import them as drafts until you're ready to publish.</p>
 								</div>
 
 								<div class="child">
@@ -180,14 +183,33 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 						<div class="container">
 							<div class="row">
 								<div class="child">
-									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/wp-instant-articles-comments-filters.png', WPNA_BASE_FILE ) ); ?>">
+									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/placement-manager-overview.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
+
+								<div class="child">
+									<h4>Placement Manager.</h4>
+									<p>
+										Easily add any custom code you like to some or all of your articles using the <a target="_blank" href="https://wp-native-articles.com/facebook-instant-articles/placement-manager/">Placement Manager</a>.
+									</p>
+									<p>Great for adding Share Buttons, Videos, Custom ads, Related articles etc etc. Anything that is valid in Instant Articles can be added.</p>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="features features-5">
+						<div class="container">
+							<div class="row">
 
 								<div class="child">
 									<h4>Readable Code.</h4>
 									<p>
 										Coded to WordPress standards, fully commented and contains as many filters and actions as we could possibly fit. The full documentation can be found at <a target="_blank" href="http://docs.wp-native-articles.com">docs.wp-native-articles.com</a>.
 									</p>
+								</div>
+
+								<div class="child">
+									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/wp-instant-articles-comments-filters.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
 							</div>
 						</div>

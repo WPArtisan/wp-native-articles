@@ -4,7 +4,7 @@ Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
 Tested up to: 4.9
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -16,6 +16,7 @@ Easy Facebook Instant Articles Plugin for your WordPress site with better conten
 == Description ==
 
 **Major Updates**
+_- 1.3.5 - Automatic integration with analytics plugins (Jetpack, Google Analytics, Chartbeat etc)._
 _- 1.3.2 - Content Parser V2 Released._
 _- 1.3.0 - Placement Manager, Crawler Ingestion & WP Recipe Maker Support._
 _- 1.2.5 - Specify different content for your Instant Article._
@@ -57,7 +58,7 @@ A large part of the complexity of integrating Facebook Instant Articles is the r
 
 Features planned for the near future.
 
-* Placement manager (ads, related articles, anything) - Done
+* Placement manager (ads, related articles, anything) - **Completed**
 * Sync all your old articles
 * Embed WordPress Comments
 * Advanced stats & weekly roundup email
@@ -86,7 +87,8 @@ Yes. Individual articles can be setup as branded. The author details are used an
 
 = Does it support Ads & Analytics? =
 
-Yes. Both can be added on a global level or overridden for individual articles.
+Yes. Both can be added on a global level or overridden for individual articles. It has built in support for Google Analytics, Google Tag Manager, Chartbeat, Pars.ly, SimpleReach & Jetpack.
+It also integrates with the biggest WP Google Analytics Plugins and will automatically use them to add analytics to your Instant Articles.
 
 = I use ACF or Meta Fields to display some content. Are these supported? =
 
@@ -131,15 +133,37 @@ through the WordPress support forum, found on the Plugin download page.
 
 == Screenshots ==
 
-1. Global options.
-2. Global styling options.
-3. RSS Feed options.
-4. Post options overrides.
-5. Post styling overrides.
-6. Content & related articles overrides.
-7. Multisite options page.
+1. General options.
+2. Analytics Integrations.
+3. Ad settings.
+4. General Styling Options.
+5. Image Layout Options.
+6. RSS Feed options.
+7. Post override general options.
+8. Post override styling options.
+9. Post content options.
+10. Multisite options page.
 
 == Changelog ==
+
+= 1.3.5 =
+* Feature. Complete Analytics re-write
+* Feature. Compatibility with the GA Google Analytics plugin
+* Feature. Compatibility with the Google Analytics Dashboard for WP plugin
+* Feature. Compatibility with the Google Analytics plugin
+* Feature. Compatibility with the Google Analytics by MonsterInsights plugin
+* Feature. Compatibility with the Chartbeat plugin
+* Feature. Compatibility with the Jetpack plugin
+* Feature. Compatibility with the Parse.ly plugin
+* Feature. Compatibility with the SimpleReach plugin
+* Feature. Compatibility with the Easy Video Player plugin
+* Feature. Remove global wpna_options variable
+* Feature. Make wp_parse_url compatible with lower WP versions
+* Feature. Switch to global function to kick everything off
+* Feature. Better saving for post meta fields
+* Fix. Correctly parse images wrapped in headings
+* Fix. Correctly parse elements inside italics
+* Fix. Stop passworded posts appearing via the RSS feed
 
 = 1.3.4 =
 * Feature. Set Content Parser V2 as default upon activation

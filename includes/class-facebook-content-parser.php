@@ -361,7 +361,7 @@ class WPNA_Facebook_Content_Parser {
 		}
 
 		// Parse the URL.
-		$parsed_url = wp_parse_url( $atts['src'] );
+		$parsed_url = wpna_parse_url( $atts['src'] );
 
 		$video_id = null;
 
@@ -1058,38 +1058,45 @@ class WPNA_Facebook_Content_Parser {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
 			// Make sure we've got an image.
 			if ( $image ) {
-				$featured_image_path = wp_parse_url( $image[0], PHP_URL_PATH );
-				$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
-				$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
-				$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-				$elements = $dom_document->getElementsByTagName( 'img' );
+				// Parse the URL into parts.
+				$url_parts = wpna_parse_url( $image[0] );
 
-				$i = $elements->length - 1;
+				if ( ! empty( $url_parts['path'] ) ) {
+					$featured_image_path = $url_parts['path'];
 
-				// Using a regressive loop. Removing elements with a foreach can get confused
-				// when the index changes.
-				while ( $i > -1 ) {
-					// Setup the current element.
-					$element = $elements->item( $i );
+					$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
+					$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
+					$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
-					// Check if the src is the same as the featured image.
-					if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
+					$elements = $dom_document->getElementsByTagName( 'img' );
 
-						// Get the parent node.
-						$parent_node = $element->parentNode;
+					$i = $elements->length - 1;
 
-						// If the image has a caption remove that as well.
-						if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
-							$element = $parent_node;
-							$parent_node = $parent_node->parentNode;
+					// Using a regressive loop. Removing elements with a foreach can get confused
+					// when the index changes.
+					while ( $i > -1 ) {
+						// Setup the current element.
+						$element = $elements->item( $i );
+
+						// Check if the src is the same as the featured image.
+						if ( preg_match( $regex, $element->getAttribute( 'src' ) ) ) {
+
+							// Get the parent node.
+							$parent_node = $element->parentNode;
+
+							// If the image has a caption remove that as well.
+							if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
+								$element = $parent_node;
+								$parent_node = $parent_node->parentNode;
+							}
+
+							// Remove the element.
+							$parent_node->removeChild( $element );
 						}
 
-						// Remove the element.
-						$parent_node->removeChild( $element );
+						$i--;
 					}
-
-					$i--;
 				}
 			}
 		}

@@ -70,7 +70,7 @@ if ( ! function_exists( 'wpna_fvplayer_shortcode_override' ) ) :
 		}
 
 		// Parse the URL.
-		$parsed_url = wp_parse_url( $atts['src'] );
+		$parsed_url = wpna_parse_url( $atts['src'] );
 
 		$video_id = null;
 

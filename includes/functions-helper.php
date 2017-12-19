@@ -650,3 +650,27 @@ if ( ! function_exists( 'wpna_premium_feature_notice' ) ) :
 		<?php
 	}
 endif;
+
+if ( ! function_exists( 'wpna_parse_url' ) ) :
+
+	/**
+	 * WP function wp_prase_url() wasn't added until WP 4.4.
+	 * The $component parameter wasn't added until 4.7.
+	 *
+	 * @param  string $url The URL to parse.
+	 * @return array
+	 */
+	function wpna_parse_url( $url ) {
+		// Preferable as it has extreme compatibility.
+		if ( function_exists( 'wp_parse_url' ) ) {
+
+			// Explode the URL into parts.
+			$url_parts = wp_parse_url( $url );
+		} else {
+			// @codingStandardsIgnoreLine
+			$url_parts = @parse_url( $url );
+		}
+
+		return $url_parts;
+	}
+endif;
