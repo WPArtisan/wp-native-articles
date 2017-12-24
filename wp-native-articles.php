@@ -159,6 +159,11 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		}
 		$classes->wpna_admin_facebook = new WPNA_Admin_Facebook();
 
+		if ( ! class_exists( 'WPNA_Admin_Facebook_Analytics' ) ) {
+			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-analytics.php';
+		}
+		$classes->wpna_admin_facebook_analytics = new WPNA_Admin_Facebook_Analytics();
+
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Styling' ) ) {
 			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-styling.php';
 		}
