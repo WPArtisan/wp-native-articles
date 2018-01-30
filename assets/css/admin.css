@@ -25,8 +25,8 @@
 .wpna-label {
 	text-transform: uppercase;
 	display: inline;
-	padding: .2em .6em .3em;
-	font-size: 75%;
+	padding: .4em .6em;
+	font-size: .8em;
 	font-weight: 700;
 	line-height: 1;
 	color: #fff;
@@ -64,4 +64,33 @@
 	font-weight: 400;
 	padding: 1rem 1rem 1rem 0;
 	border-bottom: 1px solid rgba(0,0,0,.2);
+}
+
+.wpna-status {
+	margin-left: 6px;
+	line-height: 28px;
+	display: none;
+}
+
+.wpna-progress-wrapper {
+	margin: 10px 0px;
+	width: 600px;
+}
+.wpna-progress {
+	float: left;
+	font-size: 12px;
+	line-height: 20px;
+	color: #fff;
+	text-align: left;
+	height: 20px;
+	width: 100%;
+	margin-top: 15px;
+}
+.wpna-progress div {
+	width: 1px;
+	height: 100%;
+	background-color: #337ab7;
+	-webkit-transition: width .6s ease;
+	-o-transition: width .6s ease;
+	transition: width .6s ease;
 }

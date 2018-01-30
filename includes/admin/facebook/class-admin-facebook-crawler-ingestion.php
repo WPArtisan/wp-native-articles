@@ -12,10 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Sets up the Facebook Instant Article RSS Feed.
+ * Sets up the Facebook Instant Article Crawler Ingestion.
  *
  * Registers a settings tab in the admin Facebook IA Page.
- * Creates the RSS feed to be consumed by Facebook.
  *
  * @since  1.0.0
  */

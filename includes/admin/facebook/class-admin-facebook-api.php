@@ -85,7 +85,7 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 		add_filter( 'wpna_sanitize_option_fbia_app_secret',    'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_page_id',       'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_option_fbia_sync_articles', 'wpna_switchval', 10, 1 );
-		add_filter( 'wpna_sanitize_option_fbia_environment',    array( $this, 'sanitize_fbia_enviroment' ), 10, 1 );
+		add_filter( 'wpna_sanitize_option_fbia_environment',    array( $this, 'sanitize_fbia_environment' ), 10, 1 );
 
 		// Post meta sanitization filters.
 		add_filter( 'wpna_sanitize_post_meta_fbia_sync_articles', 'wpna_switchval', 10, 1 );
@@ -293,9 +293,9 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 		);
 
 		add_settings_field(
-			'fbia_enviroment',
-			'<label for="fbia_enviroment">' . esc_html__( 'Enviroment', 'wp-native-articles' ) . '</label>',
-			array( $this, 'enviroment_callback' ),
+			'fbia_environment',
+			'<label for="fbia_environment">' . esc_html__( 'environment', 'wp-native-articles' ) . '</label>',
+			array( $this, 'environment_callback' ),
 			$option_group,
 			'wpna_facebook-api_section_1'
 		);
@@ -522,25 +522,25 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	}
 
 	/**
-	 * Outputs the HTML for the 'fbia_enviroment' settings field.
+	 * Outputs the HTML for the 'fbia_environment' settings field.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function enviroment_callback() {
+	public function environment_callback() {
 		?>
-		<label for="fbia_enviroment">
-			<select name="wpna_options[fbia_enviroment]" id="fbia_enviroment" disabled="disabled">
-				<option value="development"<?php selected( wpna_get_option( 'fbia_enviroment' ), 'development' ); ?>><?php esc_html_e( 'Development', 'wp-native-articles' ); ?></option>
-				<option value="production"<?php selected( wpna_get_option( 'fbia_enviroment' ), 'production' ); ?>><?php esc_html_e( 'Production', 'wp-native-articles' ); ?></option>
+		<label for="fbia_environment">
+			<select name="wpna_options[fbia_environment]" id="fbia_environment" disabled="disabled">
+				<option value="development"<?php selected( wpna_get_option( 'fbia_environment' ), 'development' ); ?>><?php esc_html_e( 'Development', 'wp-native-articles' ); ?></option>
+				<option value="production"<?php selected( wpna_get_option( 'fbia_environment' ), 'production' ); ?>><?php esc_html_e( 'Production', 'wp-native-articles' ); ?></option>
 			</select>
 		</label>
 
 		<?php
 		// Show a notice if the option has been overridden.
-		wpna_option_overridden_notice( 'fbia_enviroment' );
+		wpna_option_overridden_notice( 'fbia_environment' );
 		?>
 
 		<?php

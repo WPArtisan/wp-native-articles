@@ -248,21 +248,163 @@ if ( ! function_exists( 'wpna_wp_recipe_maker_get_template' ) ) :
 			<?php endif; // Notes. ?>
 
 			<?php if ( WPRM_Settings::get( 'show_nutrition_label' ) ) : ?>
-				<figure class="op-interactive">
-					<iframe class="column-width">
-						<?php // @codingStandardsIgnoreLine ?>
-						<link rel="stylesheet" type="text/css" href="<?php echo esc_url( WPRMP_URL . 'assets/css/public/public.min.css' ); ?>"/>
-						<style>
-						.wprm-nutrition-label, html body .wprm-recipe-container .wprm-nutrition-label {
-							max-width: 100%;
-							width: 350px;
-							padding: 5px;
-							margin: 0 auto;
+
+				<?php
+				/**
+				 * Template for the Nutrition Label.
+				 *
+				 * @link   http://bootstrapped.ventures
+				 * @since  1.0.0
+				 *
+				 * @package WP_Recipe_Maker_Premium
+				 * @subpackage WP_Recipe_Maker_Premium/templates/public
+				 */
+
+				$nutrition = $recipe->nutrition();
+
+				$has_nutritional_information = false;
+				$main_info = false;
+				$sub_info = false;
+
+				foreach ( WPRMP_Nutrition_Label::$nutrition_units as $field => $unit ) {
+					if ( isset( $nutrition[ $field ] ) && false !== $nutrition[ $field ] ) {
+						$$field = $nutrition[ $field ];
+
+						if ( isset( WPRMP_Nutrition_Label::$daily_values[ $field ] ) ) {
+							$perc_field = $field . '_perc';
+							$$perc_field = round( floatval( $$field ) / WPRMP_Nutrition_Label::$daily_values[ $field ] * 100 );
 						}
-						</style>
-						<?php echo do_shortcode( WPRM_Template_Helper::nutrition_label( $recipe->id() ) ); ?>
-					</iframe>
-				</figure>
+
+						// Flags to know what to output.
+						$has_nutritional_information = true;
+						if ( in_array( $field, array( 'fat', 'cholesterol', 'sodium', 'potassium', 'carbohydrate', 'protein' ), true ) ) {
+							$main_info = true;
+						} elseif ( in_array( $field, array( 'vitamin_a', 'vitamin_c', 'calcium', 'iron' ), true ) ) {
+							$sub_info = true;
+						}
+					}
+				}
+
+				if ( $has_nutritional_information ) :
+
+					// Calculate calories if not set.
+					$fat_calories = isset( $fat ) ? round( floatval( $fat ) * 9 ) : 0;
+
+					if ( ! isset( $calories ) ) {
+						$proteins = isset( $protein ) ? $protein : 0;
+						$carbs = isset( $carbohydrates ) ? $carbohydrates : 0;
+
+						$calories = ( ( $proteins + $carbs ) * 4 ) + $fat_calories;
+					}
+				?>
+
+					<h2><?php esc_html_e( 'Nutrition Facts', 'wp-recipe-maker-premium' ); ?></h2>
+					<p>
+						<?php esc_html_e( 'Amount Per Serving', 'wp-recipe-maker-premium' ); ?>
+						<?php
+						if ( isset( $serving_size ) ) {
+							$unit = isset( $nutrition['serving_unit'] ) && $nutrition['serving_unit'] ? $nutrition['serving_unit'] : 'g';
+							echo ' (' . esc_html( $serving_size ) . ' ' . esc_html( $unit ) . ')';
+						}
+						?>
+					</p>
+					<p>
+						<strong><?php esc_html_e( 'Calories', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $calories ); ?>kcal
+					</p>
+					<?php if ( $fat_calories ) : ?>
+						<p>
+							-&nbsp;<?php esc_html_e( 'Calories from Fat', 'wp-recipe-maker-premium' ); ?> <?php echo esc_html( $fat_calories ); ?>kcal
+						</p>
+					<?php endif; // Fat calories. ?>
+					<?php if ( $main_info ) : ?>
+						<?php if ( isset( $fat ) ) : ?>
+							<p>
+								<strong><?php esc_html_e( 'Total Fat', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $fat ); ?>g <i>(<?php echo esc_html( $fat_perc ); ?>%)</i>
+							</p>
+							<?php if ( isset( $saturated_fat ) ) : ?>
+							<p>
+								-&nbsp;<?php esc_html_e( 'Saturated Fat', 'wp-recipe-maker-premium' ); ?> <?php echo esc_html( $saturated_fat ); ?>g <i>(<?php echo esc_html( $saturated_fat_perc ); ?>%)</i>
+							</p>
+							<?php endif; // Saturated Fat. ?>
+							<?php if ( isset( $trans_fat ) ) : ?>
+							<p>
+								-&nbsp;<?php esc_html_e( 'Trans Fat', 'wp-recipe-maker-premium' ); ?> <?php echo esc_html( $trans_fat ); ?>g
+							</p>
+							<?php endif; // Trans Fat. ?>
+							<?php if ( isset( $polyunsaturated_fat ) ) : ?>
+							<p>
+								-&nbsp;<?php esc_html_e( 'Polyunsaturated Fat', 'wp-recipe-maker-premium' ); ?> <?php echo esc_html( $polyunsaturated_fat ); ?>g
+							</p>
+							<?php endif; // Polyunsaturated Fat. ?>
+							<?php if ( isset( $monounsaturated_fat ) ) : ?>
+							<p>
+								-&nbsp;<?php esc_html_e( 'Monounsaturated Fat', 'wp-recipe-maker-premium' ); ?> <?php echo esc_html( $monounsaturated_fat ); ?>g
+							</p>
+							<?php endif; // Monounsaturated Fat. ?>
+						<?php endif; // Fat. ?>
+						<?php if ( isset( $cholesterol ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Cholesterol', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $cholesterol ); ?>mg <i>(<?php echo esc_html( $cholesterol_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Cholesterol. ?>
+						<?php if ( isset( $sodium ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Sodium', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $sodium ); ?>mg <i>(<?php echo esc_html( $sodium_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Sodium. ?>
+						<?php if ( isset( $potassium ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Potassium', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $potassium ); ?>mg <i>(<?php echo esc_html( $potassium_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Potassium. ?>
+						<?php if ( isset( $carbohydrates ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Total Carbohydrates', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $carbohydrates ); ?>g <i>(<?php echo esc_html( $carbohydrates_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Carbohydrates. ?>
+						<?php if ( isset( $fiber ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Dietary Fiber', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $fiber ); ?>g <i>(<?php echo esc_html( $fiber_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Fiber. ?>
+						<?php if ( isset( $sugar ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Sugars', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $sugar ); ?>g
+						</p>
+						<?php endif; // Sugar. ?>
+						<?php if ( isset( $protein ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Protein', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $protein ); ?>g <i>(<?php echo esc_html( $protein_perc ); ?>%)</i>
+						</p>
+						<?php endif; // Protein. ?>
+					<?php endif; // Main info. ?>
+					<?php if ( $sub_info ) : ?>
+						<?php if ( isset( $vitamin_a ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Vitamin A', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $vitamin_a ); ?>%
+						</p>
+						<?php endif; // Vitamin A. ?>
+						<?php if ( isset( $vitamin_c ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Vitamin C', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $vitamin_c ); ?>%
+						</p>
+						<?php endif; // Vitamin C. ?>
+						<?php if ( isset( $calcium ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Calcium', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $calcium ); ?>%
+						</p>
+						<?php endif; // Calcium. ?>
+						<?php if ( isset( $iron ) ) : ?>
+						<p>
+							<strong><?php esc_html_e( 'Iron', 'wp-recipe-maker-premium' ); ?></strong> <?php echo esc_html( $iron ); ?>%
+						</p>
+						<?php endif; // Iron. ?>
+					<?php endif; // Sub info. ?>
+
+					<p><i>* <?php esc_html_e( 'Percent Daily Values are based on a 2000 calorie diet.', 'wp-recipe-maker-premium' ); ?></i></p>
+
+				<?php endif; // Has nutritional information. ?>
+
 			<?php endif; ?>
 
 		<?php

@@ -177,7 +177,11 @@ if ( ! function_exists( 'wpna_wordpress_gallery_shortcode_override' ) ) :
 				}
 
 				// Add in the caption.
-				$output .= $atts['caption'];
+				if ( ! empty( $atts['caption'] ) ) {
+					$output .= $atts['caption'];
+				} else {
+					$output .= $attachment_caption;
+				}
 
 				// Close the tag.
 				$output .= '</figcaption>';

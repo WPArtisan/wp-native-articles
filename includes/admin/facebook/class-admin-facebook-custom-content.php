@@ -41,6 +41,7 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 		add_filter( 'wpna_sanitize_post_meta_fbia_video_header',                    'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content_enable',           'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_custom_content',                  'wpna_sanitize_unsafe_html', 10, 1 );
+		add_filter( 'wpna_sanitize_post_meta_fbia_custom_sponsor',                  'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_one',             'esc_url_raw', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_one_sponsored',   'wpna_switchval', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_related_article_two',             'esc_url_raw', 10, 1 );
@@ -87,6 +88,7 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 		$fields[] = 'fbia_video_header';
 		$fields[] = 'fbia_custom_content_enable';
 		$fields[] = 'fbia_custom_content';
+		$fields[] = 'fbia_custom_sponsor';
 		$fields[] = 'fbia_related_article_one';
 		$fields[] = 'fbia_related_article_one_sponsored';
 		$fields[] = 'fbia_related_article_two';
@@ -128,6 +130,11 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 					<label for="fbia_video_header"><?php esc_html_e( 'Video URL', 'wp-native-articles' ); ?></label>
 					<input type="url" name="wpna_options[fbia_video_header]" id="fbia_video_header" class="" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_video_header', true ) ); ?>" />
 
+					<p class="wpna-video-type-warning" style="display: none;">
+						<span class="wpna-label wpna-label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+						<i><b><?php esc_html_e( 'Video headers have to link directly to a video file and cannot be embeds (e.g. YouTube).', 'wp-native-articles' ); ?></b></i>
+					</p>
+
 					<?php
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_video_header' );
@@ -157,6 +164,21 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 					// Show a notice if the option has been overridden.
 					wpna_post_option_overridden_notice( 'fbia_custom_content' );
 					?>
+				</div>
+			</fieldset>
+
+			<h3><?php esc_html_e( 'Sponsor', 'wp-native-articles' ); ?></h3>
+			<p class="description"><?php esc_html_e( 'Set a custom article sponsor. Should be a link to a Facebook Page.', 'wp-native-articles' ); ?></p>
+			<fieldset>
+				<div class="pure-control-group">
+					<label for="fbia_custom_sponsor"><?php esc_html_e( 'Facebook Page URL', 'wp-native-articles' ); ?></label>
+					<input type="text" name="wpna_options[fbia_custom_sponsor]" id="fbia_custom_sponsor" class="" value="<?php echo esc_attr( get_post_meta( get_the_ID(), '_wpna_fbia_custom_sponsor', true ) ); ?>" />
+
+					<p class="wpna-custom-sponser-warning" style="display: none;">
+						<span class="wpna-label wpna-label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+						<i><b><?php esc_html_e( 'Sponsor URL should be a direct link to this Facebook page.', 'wp-native-articles' ); ?></b></i>
+					</p>
+
 				</div>
 			</fieldset>
 

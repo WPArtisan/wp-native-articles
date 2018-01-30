@@ -9,7 +9,20 @@
  * @package wp-native-articles
  */
 
-add_filter( 'pre_option_playbuzz', 'wpna_enable_playbuzz', 10, 1 );
+if ( ! function_exists( 'wpna_enable_playbuzz_hook' ) ) :
+
+	/**
+	 * Add the playbuzz hook in for Instant Articles only.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @return void
+	 */
+	function wpna_enable_playbuzz_hook() {
+		add_filter( 'pre_option_playbuzz', 'wpna_enable_playbuzz', 10, 1 );
+	}
+endif;
+add_action( 'wpna_pre_get_fbia_post', 'wpna_enable_playbuzz_hook', 10 );
 
 if ( ! function_exists( 'wpna_enable_playbuzz' ) ) :
 
@@ -27,12 +40,7 @@ if ( ! function_exists( 'wpna_enable_playbuzz' ) ) :
 	 * @return array
 	 */
 	function wpna_enable_playbuzz( $playbuzz ) {
-
-		$feed_slug = wpna_get_option( 'fbia_feed_slug' );
-
-		if ( is_feed( $feed_slug ) ) {
-			$playbuzz['embeddedon'] = 'all';
-		}
+		$playbuzz['embeddedon'] = 'all';
 
 		return $playbuzz;
 	}

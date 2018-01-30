@@ -56,7 +56,7 @@ class WPNA_Shortcodes extends WPNA_Admin_Base {
 	}
 
 	/**
-	 * This method deals with the shortcode in a regualr WordPress post.
+	 * This method deals with the shortcode in a regular WordPress post.
 	 *
 	 * Checks to see if any content should be hidden.
 	 *
@@ -79,7 +79,7 @@ class WPNA_Shortcodes extends WPNA_Admin_Base {
 	}
 
 	/**
-	 * This method deals with the shortcode in a regualr WordPress post.
+	 * This method deals with the shortcode in a regular WordPress post.
 	 *
 	 * Checks to see if any content should be hidden.
 	 *

@@ -164,23 +164,31 @@
 				// Sponsored code for the article.
 				if ( wpna_switch_to_boolean( wpna_get_post_option( $post->get_the_ID(), 'fbia_sponsored' ) ) ) : ?>
 					<?php
-					// The authors of your article.
-					$authors = $post->get_authors();
-					if ( ! empty( $authors ) ) : ?>
+					// Check if there's a custom sponsor.
+					$custom_sponsor_url = get_post_meta( $post->get_the_ID(), '_wpna_fbia_custom_sponsor', true );
+
+					// If it's not overriden try the post author.
+					if ( ! $custom_sponsor_url ) {
+						// The authors of your article.
+						$authors = $post->get_authors();
+						// Get the Facebook URL of the author is it exists.
+						$custom_sponsor_url = get_the_author_meta( 'facebook', $authors[0]->ID );
+					}
+					?>
+
+					<?php if ( ! empty( $custom_sponsor_url ) ) : ?>
+						<?php
+						// If it's not already a URL then make it one.
+						if ( false === filter_var( $custom_sponsor_url, FILTER_VALIDATE_URL ) ) {
+							$custom_sponsor_url = 'https://www.facebook.com/' . ltrim( $custom_sponsor_url, '/' );
+						}
+						?>
+
 						<ul class="op-sponsors">
-						<?php foreach ( (array) $authors as $author ) : ?>
-							<?php if ( $fb_url = get_the_author_meta( 'facebook', $author->ID ) ) : ?>
-								<?php
-								// If it's not already a URL make it one.
-								if ( false === filter_var( $fb_url, FILTER_VALIDATE_URL ) ) {
-									$fb_url = 'https://www.facebook.com/' . ltrim( $fb_url, '/' );
-								}
-								?>
-								<li><a href="<?php echo esc_url( $fb_url ); ?>" rel="facebook"></a></li>
-							<?php endif;?>
-						<?php endforeach; ?>
+							<li><a href="<?php echo esc_url( $custom_sponsor_url ); ?>" rel="facebook"></a></li>
 						</ul>
 					<?php endif; ?>
+
 				<?php endif; ?>
 
 				<?php

@@ -14,6 +14,8 @@ var WPNA_ADMIN_FBIA = (function($) {
 		$(function() {
 			setupAuthToggle();
 			setupAdsToggle();
+			setupAdsCheckDifferent();
+			setupApiDraftToggle();
 		});
 	};
 
@@ -81,6 +83,85 @@ var WPNA_ADMIN_FBIA = (function($) {
 		// Watch the checkbox for changes.
 		jQuery( '.wpna select#fbia_ad_code_type' ).on( 'change', function() {
 			toggleAdsFields( this );
+		});
+	}
+
+	/**
+	 * Check the regular Ad Placement & the Recirculation Ad are different.
+	 * Show a warning if not.
+	 *
+	 * @return function
+	 */
+	var setupAdsCheckDifferent = function setupAdsCheckDifferent() {
+
+		// Check the element is visible.
+		if ( ! $( '.wpna input#fbia_recirculation_ad' ).length ) {
+			return;
+		}
+
+		// Type of ad.
+		var adType = $( '.wpna select#fbia_ad_code_type' );
+
+		// Regular ad ID.
+		var normalAd = $( '.wpna input#fbia_ad_code_placement_id' );
+
+		// Recirculation Ad ID.
+		var recirculationAd = $( '.wpna input#fbia_recirculation_ad' );
+
+		var doAdswWarning = function() {
+
+			// If they're the same show the warning.
+			if ( 'audience_network' === adType.val() && normalAd.val().length > 0 && normalAd.val() == recirculationAd.val() ) {
+				$( '.wpna .recirculation-ad-warning' ).show();
+			} else {
+				$( ' .wpna .recirculation-ad-warning' ).hide();
+			}
+		}
+
+		adType.on( 'change', function() {
+			doAdswWarning();
+		});
+
+		// Using add() should be slightly quicker.
+		normalAd.add( recirculationAd ).keyup( function() {
+			doAdswWarning();
+		} );
+
+		// Fire it initally.
+		doAdswWarning();
+
+	}
+
+	/**
+	 * If basic auth is enabled on the RSS feed then toggle the
+	 * username / password fields.
+	 *
+	 * @return function
+	 */
+	var setupApiDraftToggle = function setupApiDraftToggle() {
+
+		// Check the element is visible.
+		if ( ! $( '.wpna select#fbia-environment' ).length ) {
+			return;
+		}
+
+		// Inline function for toggling the rows.
+		var toggleDraft = function( el ) {
+
+			// n.b. Only show / hide & fade are support on table rows.
+			if ( 'production' === el.value ) {
+				$( '.wpna input#fbia-import-as-drafts' ).parents('tr').show();
+			} else {
+				$( '.wpna input#fbia-import-as-drafts' ).parents('tr').hide();
+			}
+		}
+
+		// Fire as soon as the page is loaded.
+		toggleDraft( $( '.wpna select#fbia-environment' )[ 0 ] );
+
+		// Watch the checkbox for changes.
+		jQuery( '.wpna select#fbia-environment' ).on( 'change', function() {
+			toggleDraft( this );
 		});
 	};
 

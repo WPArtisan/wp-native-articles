@@ -608,6 +608,9 @@ if ( ! function_exists( 'wpna_content_parser_get_placeholder_node' ) ) :
 		// Save the node content.
 		$output = $node->ownerDocument->saveXML( $node );
 
+		// Remove CDATA tags.
+		$output = str_replace( array( '<![CDATA[', ']]>' ), '', $output );
+
 		// Get a unique palceholder marker for this content.
 		$placeholder = wpna_content_parser_get_placeholder( $output );
 

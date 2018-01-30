@@ -544,7 +544,7 @@ class WPNA_Facebook_Post {
 					</head>' . $content;
 			}
 
-			$dom_document->loadHTML( '<!doctype html><html>' . $content . '</html>' );
+			$dom_document->loadHTML( '<!doctype html public "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml">' . $content . '</html>' );
 			libxml_clear_errors();
 			libxml_use_internal_errors( $libxml_previous_state );
 

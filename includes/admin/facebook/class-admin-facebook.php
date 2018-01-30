@@ -177,7 +177,6 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public function output_callback() {
 		?>
 		<div class="wrap">
-			<?php settings_errors(); ?>
 			<div id="icon-tools" class="icon32"></div>
 			<h1><?php esc_html_e( 'Facebook Instant Articles', 'wp-native-articles' ); ?></h1>
 			<div class="wrap wpna">
@@ -1055,6 +1054,11 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public function recirculation_ad_callback() {
 		?>
 		<input type="text" name="wpna_options[fbia_recirculation_ad]" id="fbia_recirculation_ad" class="regular-text" value="<?php echo esc_attr( wpna_get_option( 'fbia_recirculation_ad' ) ); ?>">
+
+		<p class="recirculation-ad-warning" style="display:none;">
+			<span class="wpna-label wpna-label-warning"><?php esc_html_e( 'Warning', 'wp-native-articles' ); ?></span>
+			<i><b><?php esc_html_e( 'Recirculation Ad ID must be different to your Audience Network ID', 'wp-native-articles' ); ?></b></i>
+		</p>
 		<p class="description"><?php esc_html_e( 'The ad placement ID (different to your standard Audience Network Placement ID)', 'wp-native-articles' ); ?></p>
 		<p class="description"><?php esc_html_e( 'Facebook is experimenting with placing native ads within the recirculation unit at the bottom of articles. Adding a placement ID in here will enable it.', 'wp-native-articles' ); ?></p>
 		<p class="description">

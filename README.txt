@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.9
-Stable tag: 1.3.5
+Tested up to: 4.9.2
+Stable tag: 1.4.0
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -43,6 +43,7 @@ A large part of the complexity of integrating Facebook Instant Articles is the r
 > [WP Native Articles Pro](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-a) comes with full [Facebook Instant Articles API](https://wp-native-articles.com/?utm_source=fplugin&utm_medium=readme-b#features) integration and has more advanced features such as:
 >
 > * **Full API integration**
+> * **[Mass Post Syncer](https://wp-native-articles.com/facebook-instant-articles/mass-post-syncer/?utm_source=fplugin&utm_medium=readme-syncer)** Mass convert ALL your WordPress posts to Instant Articles.
 > * **[Placement Manager](https://wp-native-articles.com/facebook-instant-articles/placement-manager/?utm_source=fplugin&utm_medium=readme-placements)** Add custom code anywhere within your Instant Articles.
 > * **[Crawler Ingestion](https://wp-native-articles.com/facebook-instant-articles/crawler-ingestion/?utm_source=fplugin&utm_medium=readme-crawler)** Auto set all your articles to become Instant Articles the moment they're shared on Facebook.
 > * **Manage Articles** Publish, unpublish and manage Instant Articles directly from the WordPress post page.
@@ -145,6 +146,20 @@ through the WordPress support forum, found on the Plugin download page.
 10. Multisite options page.
 
 == Changelog ==
+
+= 1.4.0 =
+* Feature. Show warning for invalid video headers
+* Feature. Show warning for invalid ad codes
+* Feature. Compatibility with ThemeShop themes with LazyLoad
+* Feature. Compatibility with WP Rocket
+* Feature. Compatibility with NextGen Gallery
+* Feature. Better WP Recipe Maker nutrition label compatibility
+* Feature. Check data-src & data-lazy-src on images as well incase of lazyload
+* Feature. Manually set post sponsor if different to the author
+* Feature. Better admin notices
+* Fix. Strip CDATA tags from post content
+* Fix. Stop self closing iFrames
+* Fix. Bug with PlayBuzz check firing too early
 
 = 1.3.5 =
 * Feature. Complete Analytics re-write

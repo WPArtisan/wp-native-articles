@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for Wordpress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.3.5
+ * Version: 1.4.0
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define the current version.
 if ( ! defined( 'WPNA_VERSION' ) ) {
-	define( 'WPNA_VERSION', '1.3.5' );
+	define( 'WPNA_VERSION', '1.4.0' );
 }
 
 // Define the plugin base file.
@@ -186,16 +186,21 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		// Preparation for pro refactor.
 		$classes->wpna_admin_facebook_crawler_ingestion = new WPNA_Admin_Facebook_Crawler_Ingestion();
 
-		if ( ! class_exists( 'WPNA_Admin_Placements' ) ) {
-			require WPNA_BASE_PATH . '/includes/placements/class-admin-placements.php';
+		if ( ! class_exists( 'WPNA_Admin_Facebook_Post_Syncer' ) ) {
+			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-post-syncer.php';
 		}
-		// Preparation for pro refactor.
-		$classes->wpna_admin_placements = new WPNA_Admin_Placements();
+		$classes->wpna_admin_facebook_post_syncer = new WPNA_Admin_Facebook_Post_Syncer();
 
 		if ( ! class_exists( 'WPNA_Admin_Facebook_Custom_Content' ) ) {
 			require WPNA_BASE_PATH . '/includes/admin/facebook/class-admin-facebook-custom-content.php';
 		}
 		$classes->wpna_facebook_custom_content = new WPNA_Admin_Facebook_Custom_Content();
+
+		if ( ! class_exists( 'WPNA_Admin_Placements' ) ) {
+			require WPNA_BASE_PATH . '/includes/placements/class-admin-placements.php';
+		}
+		// Preparation for pro refactor.
+		$classes->wpna_admin_placements = new WPNA_Admin_Placements();
 
 		// Load the Facebook post content parser.
 		if ( ! class_exists( 'WPNA_Facebook_Content_Parser' ) ) {
@@ -246,6 +251,9 @@ if ( ! function_exists( 'wpna_initialise' ) ) :
 		include WPNA_BASE_PATH . '/includes/compat/media-ace.php';
 		include WPNA_BASE_PATH . '/includes/compat/spider-facebook.php';
 		include WPNA_BASE_PATH . '/includes/compat/easy-video-player.php';
+		include WPNA_BASE_PATH . '/includes/compat/nextgen-gallery.php';
+		include WPNA_BASE_PATH . '/includes/compat/wp-rocket.php';
+		include WPNA_BASE_PATH . '/includes/compat/mythemeshop.php';
 
 		// Load the plugin text domain. For i18n.
 		add_action( 'plugins_loaded', 'wpna_load_textdomain', 10, 0 );
@@ -271,8 +279,10 @@ if ( ! function_exists( 'wpna_initialise_pro' ) && ! function_exists( 'wpna' ) )
 		// This is for backwards compatibility.
 		global $wpna;
 
-		// Grab the inialising function.
-		$wpna = wpna_initialise();
+		if ( ! $wpna ) {
+			// Grab the inialising function.
+			$wpna = wpna_initialise();
+		}
 
 		return $wpna;
 	}

@@ -1217,16 +1217,30 @@ class WPNA_Facebook_Content_Parser {
 			return false;
 		}
 
-		// Check if it's been used before in this post.
-		if ( in_array( $node->getAttribute( 'src' ), $this->images_in_post, true ) ) {
-			// Remove the element completely.
-			$node->parentNode->removeChild( $node );
+		$src = $node->getAttribute( 'src' );
 
-			return false;
+		if ( empty( $src ) ) {
+			$src = $node->getAttribute( 'data-src' );
 		}
 
-		// Add it to the array of images used.
-		$this->images_in_post[] = $node->getAttribute( 'src' );
+		if ( empty( $src ) ) {
+			$src = $node->getAttribute( 'data-lazy-src' );
+		}
+
+		if ( $src ) {
+
+			// Check if it's been used before in this post.
+			if ( in_array( $src, $this->images_in_post, true ) ) {
+				// Remove the element completely.
+				$node->parentNode->removeChild( $node );
+
+				return false;
+			}
+
+			// Add it to the array of images used.
+			$this->images_in_post[] = $src;
+
+		}
 
 		return $node;
 	}
@@ -1281,8 +1295,21 @@ class WPNA_Facebook_Content_Parser {
 		// Construct a new element to ensure there are no unneeded attributes.
 		$new_node = $dom_document->createElement( 'img' );
 
+		// Try for the image src.
+		$src = $node->getAttribute( 'src' );
+
+		// If it doesn't exist try the data-src.
+		if ( empty( $src ) ) {
+			$src = $node->getAttribute( 'data-src' );
+		}
+
+		// If it doesn't exist try the data-lazy-src.
+		if ( empty( $src ) ) {
+			$src = $node->getAttribute( 'data-lazy-src' );
+		}
+
 		// Set the image src.
-		$new_node->setAttribute( 'src', $node->getAttribute( 'src' ) );
+		$new_node->setAttribute( 'src', $src );
 
 		// Add the img to the figure template.
 		$figure->appendChild( $new_node );

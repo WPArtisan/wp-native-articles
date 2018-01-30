@@ -78,7 +78,6 @@ class WPNA_Multisite_Admin {
 	 */
 	public function hooks() {
 		add_action( 'admin_init',              array( $this, 'setup_settings' ), 10, 0 );
-		add_action( 'network_admin_notices',   array( $this, 'notices' ), 10, 0 );
 		add_action( 'network_admin_menu',      array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'wpmu_new_blog',           array( $this, 'new_blog_defaults' ), 10, 6 );
 		add_action( 'network_admin_edit_' . $this->page_slug,         array( $this, 'save_options_callback' ), 10, 1 );
@@ -148,84 +147,6 @@ class WPNA_Multisite_Admin {
 	}
 
 	/**
-	 * Shows multisite admin notices.
-	 *
-	 * After saving the settings the user is then redirected to ensure
-	 * everything is cleared. URL params are added depending on the notice
-	 * we wish to show. The native WordPress function add_settings_error() is
-	 * then used to show the notice.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function notices() {
-		$notice = filter_input( INPUT_GET, 'notice', FILTER_SANITIZE_STRING );
-
-		if ( ! $notice ) {
-			return;
-		}
-
-		switch ( $notice ) {
-			case 'wpna_multisite_options_success':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_options_success', esc_html__( 'Multisite settings updated successfully.', 'wp-native-articles' ), 'updated' );
-				break;
-
-			case 'wpna_multisite_options_error':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_options_error', esc_html__( 'Error updating multisite settings.', 'wp-native-articles' ), 'error' );
-				break;
-
-			case 'wpna_multisite_reset_success':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_reset_success', esc_html__( 'Blog settings successfully reset.', 'wp-native-articles' ), 'updated' );
-				break;
-
-			case 'wpna_multisite_reset_error_missing_id':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_reset_error_missing_id', esc_html__( 'Error: Please provide a blog ID to reset.', 'wp-native-articles' ), 'error' );
-				break;
-
-			case 'wpna_multisite_save_license_success':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_save_license_success', esc_html__( 'License key successfully updated.', 'wp-native-articles' ), 'updated' );
-				break;
-
-			case 'wpna_multisite_save_license_error':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_save_license_error', esc_html__( 'Error: Could not update license key.', 'wp-native-articles' ), 'error' );
-				break;
-
-			case 'wpna_multisite_activate_license_success':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_activate_license_success', esc_html__( 'License successfully activated. You are now receiving updates.', 'wp-native-articles' ), 'updated' );
-				break;
-
-			case 'wpna_multisite_deactivate_license_success':
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_deactivate_license_success', esc_html__( 'License successfully deactivated.', 'wp-native-articles' ), 'updated' );
-				break;
-
-			case 'wpna_multisite_activate_license_error':
-				if ( $message = filter_input( INPUT_GET, 'message', FILTER_SANITIZE_STRING ) ) {
-					// Make sure it's correctly escaped.
-					$message = esc_html( rawurldecode( $message ) );
-				} else {
-					$message = esc_html__( 'Error: Your license could not be activated. Please try again.', 'wp-native-articles' );
-				}
-
-				add_settings_error( 'wp-native-articles-notices', 'wpna_multisite_activate_license_error', $message, 'error' );
-				break;
-
-			default:
-
-				/**
-				 * Use this action to scan for any custom notices.
-				 *
-				 * @since 1.0.0
-				 * @param string The notice key.
-				 */
-				do_action( 'wpna_multisite_notices', $notice );
-
-				break;
-		}
-	}
-
-	/**
 	 * Setups up menu items for the multisite dashboard.
 	 *
 	 * This adds the top level menu page for the plugin.
@@ -265,9 +186,8 @@ class WPNA_Multisite_Admin {
 			network_admin_url( 'edit.php' )
 		);
 		?>
-		<h1><?php esc_html_e( 'Multisite Settings', 'wp-native-articles' ); ?></h1>
-		<?php settings_errors(); ?>
 		<div class="wrap">
+			<h1><?php esc_html_e( 'Multisite Settings', 'wp-native-articles' ); ?></h1>
 			<form action="<?php echo esc_url_raw( $page_url ); ?>" method="post">
 				<?php settings_fields( $this->option_group_general ); ?>
 				<?php do_settings_sections( $this->option_group_general ); ?>
@@ -392,6 +312,7 @@ class WPNA_Multisite_Admin {
 	 * @return void
 	 */
 	public function save_options_callback() {
+
 		// Check if we want to save the options.
 		$save_options = filter_input( INPUT_POST, 'wpna_save_options', FILTER_SANITIZE_STRING );
 
@@ -408,7 +329,7 @@ class WPNA_Multisite_Admin {
 		check_admin_referer( $this->option_group_general . '-options' );
 
 		// Grab the data from $_POST.
-		$unfiltered_input = filter_input( INPUT_POST, 'wpna_options', FILTER_UNSAFE_RAW );
+		$unfiltered_input = filter_input( INPUT_POST, 'wpna_options', FILTER_UNSAFE_RAW, FILTER_REQUIRE_ARRAY );
 
 		/**
 		 * This filter is used to validate & santize the data. It is called by
@@ -426,7 +347,7 @@ class WPNA_Multisite_Admin {
 		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
-				array( 'page' => $this->page_slug, 'notice' => $updated ? 'wpna_multisite_options_success' : 'wpna_multisite_options_error' ),
+				array( 'page' => $this->page_slug, 'wpna-message' => $updated ? 'multisite_options_update_success' : 'multisite_options_update_error' ),
 				network_admin_url( 'admin.php' )
 			)
 		);
@@ -530,7 +451,7 @@ class WPNA_Multisite_Admin {
 
 		// If no ID was passed set an error message.
 		if ( empty( $values['id'] ) ) {
-			$notice = 'wpna_multisite_reset_error_missing_id';
+			$notice = 'multisite_reset_error_missing_id';
 		} else {
 			// Get the ID of the blog to copy the options from.
 			$options = get_site_option( 'wpna_options' );
@@ -540,13 +461,13 @@ class WPNA_Multisite_Admin {
 			$this->set_blog_defaults( $souce_blog_id, $values['id'] );
 
 			// Set the success notice.
-			$notice = 'wpna_multisite_reset_success';
+			$notice = 'multisite_reset_success';
 		}
 
 		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
-				array( 'page' => $this->page_slug, 'notice' => $notice ),
+				array( 'page' => $this->page_slug, 'wpna-message' => $notice ),
 				network_admin_url( 'admin.php' )
 			)
 		);
