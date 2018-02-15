@@ -215,6 +215,17 @@ if ( ! function_exists( 'wpna_hook_overridden_notice' ) ) :
 				foreach ( $callbacks as $callback_id => $callback ) {
 					if ( is_array( $callback['function'] ) ) {
 						$hooked_callbacks[] = get_class( $callback['function'][0] ) . '::' . $callback['function'][1];
+					} elseif ( is_object( $callback['function'] ) ) {
+						// Default to object name.
+						$name = get_class( $callback['function'] );
+
+						if ( class_exists( 'ReflectionFunction' ) ) {
+							$func = new ReflectionFunction( $callback['function'] );
+							$name .= ': ' . basename( $func->getFileName() ) . ':' . $func->getStartLine();
+						}
+
+						$hooked_callbacks[] = $name;
+
 					} else {
 						$hooked_callbacks[] = $callback['function'];
 					}

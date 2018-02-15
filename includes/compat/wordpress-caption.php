@@ -113,7 +113,7 @@ if ( ! function_exists( 'wpna_wordpress_caption_shortcode_override' ) ) :
 		$html .= '>';
 
 		// The image element. Run do_shortcode over it just incase.
-		$html .= do_shortcode( $content );
+		$html .= strip_tags( do_shortcode( $content ), '<img>' );
 
 		if ( ! empty( $atts['caption'] ) ) {
 
