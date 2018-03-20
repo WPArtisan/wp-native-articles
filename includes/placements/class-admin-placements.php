@@ -36,6 +36,13 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 	public $page_slug = 'wpna_placements';
 
 	/**
+	 * Holds an instance of the List Table.
+	 *
+	 * @var WPNA_Admin_Placements_List_Table
+	 */
+	public $placements_list_table;
+
+	/**
 	 * Hooks registered in this class.
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
@@ -47,10 +54,8 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 	 */
 	public function hooks() {
 		add_action( 'wpna_admin_menu_items', array( $this, 'add_menu_items' ), 14, 2 );
-		add_action( 'wpna_admin_placements_menu_items', array( $this, 'page_hooks' ), 10, 2 );
 		add_action( 'wpna_add_placement', array( $this, 'add_placement_action' ), 10, 1 );
 		add_action( 'wpna_edit_placement', array( $this, 'edit_placement_action' ), 10, 1 );
-
 		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
 	}
 
@@ -76,6 +81,8 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 			array( $this, 'route_output' )
 		);
 
+		add_action( "load-{$menu_id}", array( $this, 'page_hooks' ), 1, 0 );
+
 		/**
 		 * Custom action for adding more menu items.
 		 *
@@ -92,11 +99,9 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 	 * The advantage of this is we never have to hard code the $page_hook anywhere.
 	 *
 	 * @access public
-	 * @param  string $menu_id   The menu id page hook for this page.
-	 * @param  string $page_hook The uniqiue page hook for this page.
 	 * @return void
 	 */
-	public function page_hooks( $menu_id, $page_hook ) {
+	public function page_hooks() {
 		// @todo Add better help.
 		if ( 1 === 2 ) {
 			add_action( "load-{$menu_id}", 'wpna_placements_contextual_help', 10, 0 );
@@ -105,23 +110,12 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 		// Only run these on the main page.
 		// @codingStandardsIgnoreLine
 		if ( empty( $_GET['wpna-action'] ) ) {
-			add_action( "load-{$menu_id}", array( $this, 'setup_admin_placements_list_table' ), 10, 0 );
-			add_action( 'load-{$menu_id}', array( $this, 'setup_meta_boxes' ), 10, 0 );
-			add_action( "load-{$menu_id}", array( $this, 'add_screen_options' ), 10, 0 );
+			add_action( current_action(), array( $this, 'setup_admin_placements_list_table' ), 10, 0 );
+			add_action( current_action(), array( $this, 'setup_meta_boxes' ), 10, 0 );
+			add_action( current_action(), array( $this, 'add_screen_options' ), 10, 0 );
 		} else {
-			add_action( "load-{$menu_id}", array( $this, 'enqueue_create_placement_scripts_hook' ), 10, 0 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10, 0 );
 		}
-	}
-
-	/**
-	 * Fire the enqueue scripts and styles for the Add/Edit placement page.
-	 * This hook doesn't fire on the placement table screen.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function enqueue_create_placement_scripts_hook() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_create_placement_scripts' ), 10, 1 );
 	}
 
 	/**
@@ -131,9 +125,9 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 	 * @param string $page_hook Name of the current page hook.
 	 * @return void
 	 */
-	public function enqueue_create_placement_scripts( $page_hook = '' ) {
+	public function enqueue_scripts( $page_hook = '' ) {
 		wp_enqueue_script( 'wpna-select2-js', plugins_url( '/assets/js/select2.min.js', WPNA_BASE_FILE ), array(), '4.0.4', true );
-		wp_enqueue_script( 'wpna-placements-js', plugins_url( '/assets/js/placements.js', WPNA_BASE_FILE ), array( 'wpna-select2-js' ), '1.0.0', true );
+		wp_enqueue_script( 'wpna-placements-js', plugins_url( '/assets/js/placements.js', WPNA_BASE_FILE ), array( 'wpna-select2-js' ), WPNA_VERSION, true );
 
 		wp_enqueue_style( 'wpna-select2-css', plugins_url( '/assets/css/select2.min.css', WPNA_BASE_FILE ), array(), '4.0.4', 'all' );
 	}
@@ -226,9 +220,11 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 				<?php esc_html_e( 'Placements', 'wp-native-articles' ); ?>
 				<a href="<?php echo esc_url( add_query_arg( array( 'wpna-action' => 'add_placement' ), admin_url( 'admin.php?page=wpna_placements' ) ) ); ?>" class="add-new-h2"><?php esc_html_e( 'Add New', 'wp-native-articles' ); ?></a>
 			</h1>
-			<?php  ?>
-			<?php wpna_premium_feature_notice(); ?>
-			<?php  ?>
+			<?php
+
+				wpna_premium_feature_notice();
+
+			?>
 			<h4>
 				<?php esc_html_e( 'Placements are an easy way to add extra code to your Instant Articles.', 'wp-native-articles' ); ?>
 			</h4>
@@ -284,7 +280,12 @@ class WPNA_Admin_Placements extends WPNA_Admin_Base implements WPNA_Admin_Interf
 		do_action( 'add_meta_boxes', $screen->id, null );
 
 		// Add screen option: user can choose between 1 or 2 columns (default 2).
-		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
+		add_screen_option( 'layout_columns',
+			array(
+				'max'     => 2,
+				'default' => 2,
+			)
+		);
 	}
 
 	/**

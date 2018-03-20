@@ -48,12 +48,12 @@ if ( ! function_exists( 'wpna_wordpress_gallery_shortcode_override' ) ) :
 		}
 
 		$html5 = current_theme_supports( 'html5', 'gallery' );
-		$atts = shortcode_atts( array(
+		$atts  = shortcode_atts( array(
 			'order'      => 'ASC',
 			'orderby'    => 'menu_order ID',
 			'id'         => $post ? $post->ID : 0,
-			'itemtag'    => $html5 ? 'figure'     : 'dl',
-			'icontag'    => $html5 ? 'div'        : 'dt',
+			'itemtag'    => $html5 ? 'figure' : 'dl',
+			'icontag'    => $html5 ? 'div' : 'dt',
 			'captiontag' => $html5 ? 'figcaption' : 'dd',
 			'columns'    => 3,
 			'size'       => 'thumbnail',

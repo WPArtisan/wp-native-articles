@@ -82,8 +82,14 @@ class WPNA_Analytics_Chartbeat {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'Chartbeat Plugin found but no <a target="_blank" href="%s">Account ID</a> has been set.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/options-general.php?page=chartbeat-options' ) )
 						); ?>

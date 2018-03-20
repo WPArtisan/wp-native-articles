@@ -35,7 +35,7 @@ if ( ! function_exists( 'wpna_yoast_fb_link' ) ) :
 					// @codingStandardsIgnoreLine
 					$fb_url = get_user_meta( get_the_author_meta( 'ID' ), 'facebook', true );
 				}
-				$author->user_url = $fb_url;
+				$author->user_url     = $fb_url;
 				$author->user_url_rel = 'facebook';
 			}
 		}

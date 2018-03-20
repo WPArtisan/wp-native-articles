@@ -713,7 +713,7 @@ class WPNA_Facebook_Post {
 	 * @access public
 	 * @return object WP_Query
 	 */
-	public function get_related_articles() {
+	public function get_related_articles( $args = null ) {
 
 		// Get the categories of the post.
 		// get_the_category() is cached, wp_get_the_category() is not.
@@ -722,7 +722,7 @@ class WPNA_Facebook_Post {
 
 		// Nothing fancy here. Just get the four latest posts.
 		// that are in any of the same categories.
-		$query_args = array(
+		$default_query_args = array(
 			'category__in'           => $post_categories_ids,
 			'post__not_in'           => array( $this->get_the_ID() ),
 			'posts_per_page'         => 4, // FB uses 4 related articles.
@@ -736,6 +736,9 @@ class WPNA_Facebook_Post {
 			'post_type'              => wpna_allowed_post_types(),
 			'post_status'            => 'publish',
 		);
+
+		// Merge the passed arguments with the defaults.
+		$query_args = wp_parse_args( $args, $default_query_args );
 
 		/**
 		 * Filter the query arguments used to generate the related posts links.

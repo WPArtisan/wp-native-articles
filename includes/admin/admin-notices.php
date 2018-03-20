@@ -26,10 +26,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 function wpna_admin_notices() {
 
 	// No message set, bail early.
+	// @codingStandardsIgnoreLine
 	if ( empty( $_GET['wpna-message'] ) ) { // Input var okay.
 		return;
 	}
 
+	// @codingStandardsIgnoreLine
 	switch ( $_GET['wpna-message'] ) { // Input var okay.
 
 		// Placements.
@@ -47,6 +49,23 @@ function wpna_admin_notices() {
 			break;
 		case 'placement_delete_success':
 			add_settings_error( 'wpna-notices', 'wpna-placement-delete-success', esc_html__( 'Placement(s) successfully deleted.', 'wp-native-articles' ), 'updated' );
+			break;
+
+		// Transformer.
+		case 'transformer_validation_fail':
+			add_settings_error( 'wpna-notices', 'wpna-transformer-validation-fail', esc_html__( 'Transformer could not be added as one or more fields were empty or failed validation.', 'wp-native-articles' ), 'error' );
+			break;
+		case 'transformer_added_error':
+			add_settings_error( 'wpna-notices', 'wpna-transformer-added-error', esc_html__( 'There was a problem adding this transformer. Please try again.', 'wp-native-articles' ), 'error' );
+			break;
+		case 'transformer_added_success':
+			add_settings_error( 'wpna-notices', 'wpna-transformer-added-success', esc_html__( 'Transformer successfully added.', 'wp-native-articles' ), 'updated' );
+			break;
+		case 'transformer_update_success':
+			add_settings_error( 'wpna-notices', 'wpna-transformer-updated-success', esc_html__( 'Transformer(s) successfully updated.', 'wp-native-articles' ), 'updated' );
+			break;
+		case 'transformer_delete_success':
+			add_settings_error( 'wpna-notices', 'wpna-transformer-delete-success', esc_html__( 'Transformer(s) successfully deleted.', 'wp-native-articles' ), 'updated' );
 			break;
 
 		// Post Syncer.
@@ -107,7 +126,6 @@ function wpna_admin_notices() {
 			break;
 
 		default:
-
 			/**
 			 * Use this action to scan for any custom notices.
 			 *
@@ -190,11 +208,8 @@ function wpna_dismiss_notices() {
 	}
 
 	switch ( $_GET['wpna-notice'] ) { // Input var okay.
-
-		// License notices.
 		case 'expired_license':
 		case 'invalid_license':
-
 			// Hide the notice for two weeks.
 			set_transient( 'wpna_license_notice', true, 2 * WEEK_IN_SECONDS );
 
@@ -203,12 +218,11 @@ function wpna_dismiss_notices() {
 		// They've already rated the app, kill all rating prompts.
 		case 'rating_permanent':
 			delete_site_option( 'wpna_rating_prompts' );
-		break;
+			break;
 
 		// They don't want to be bugged anymore at the moment.
 		// Remove the current interval prompt.
 		case 'rating_temporary':
-
 			$prompts = (array) get_site_option( 'wpna_rating_prompts' );
 
 			// 1 or fewer intervals and just remove the whole option.
@@ -222,10 +236,9 @@ function wpna_dismiss_notices() {
 				update_site_option( 'wpna_rating_prompts', $prompts );
 			}
 
-		break;
+			break;
 
-		default;
-
+		default:
 			/**
 			 * Use this action to dismiss any custom notices.
 			 *
@@ -260,7 +273,7 @@ function wpna_rating_notices() {
 
 	// Get the plugin activation time & rating prompts intervals.
 	$activation_time = get_site_option( 'wpna_activation_time' );
-	$prompts = (array) get_site_option( 'wpna_rating_prompts' );
+	$prompts         = (array) get_site_option( 'wpna_rating_prompts' );
 
 	// Sort the prompts to ensure they're in order.
 	sort( $prompts, SORT_NUMERIC );
@@ -270,12 +283,30 @@ function wpna_rating_notices() {
 		if ( strtotime( $activation_time ) < strtotime( "-{$prompt} days" ) ) {
 
 			// Show the rating prompt.
-			$message = '<div class="notice notice-info">';
+			$message  = '<div class="notice notice-info">';
 			$message .= '<p>' . esc_html__( "Hey, we noticed you've been using WP Native Articles for a little while now – that’s brilliant! Could you please do me a BIG favor and give it a 5-star rating on WordPress? It really helps us spread the word and boosts our motivation.", 'wp-native-articles' ) . '</p>';
 			$message .= '<p>- Edward</p>';
 			$message .= '<p><a href="https://wordpress.org/support/plugin/wp-native-articles/reviews/" target="_blank">' . esc_html__( 'Sure, you deserve it', 'wp-native-articles' ) . '</a></p>';
-			$message .= '<p><a href="' . wp_nonce_url( add_query_arg( array( 'wpna-action' => 'dismiss_notices', 'wpna-notice' => 'rating_permanent' ) ), 'wpna-dismiss-notice', 'wpna-dismiss-notice-nonce' ) . '">' . esc_html__( 'I already have', 'wp-native-articles' ) . '</a></p>';
-			$message .= '<p><a href="' . wp_nonce_url( add_query_arg( array( 'wpna-action' => 'dismiss_notices', 'wpna-notice' => 'rating_temporary' ) ), 'wpna-dismiss-notice', 'wpna-dismiss-notice-nonce' ) . '">' . esc_html__( 'Nope, not right now', 'wp-native-articles' ) . '</a><p>';
+			$message .= '<p><a href="' . wp_nonce_url(
+				add_query_arg(
+					array(
+						'wpna-action' => 'dismiss_notices',
+						'wpna-notice' => 'rating_permanent',
+					)
+				),
+				'wpna-dismiss-notice',
+				'wpna-dismiss-notice-nonce'
+			) . '">' . esc_html__( 'I already have', 'wp-native-articles' ) . '</a></p>';
+			$message .= '<p><a href="' . wp_nonce_url(
+				add_query_arg(
+					array(
+						'wpna-action' => 'dismiss_notices',
+						'wpna-notice' => 'rating_temporary',
+					)
+				),
+				'wpna-dismiss-notice',
+				'wpna-dismiss-notice-nonce'
+			) . '">' . esc_html__( 'Nope, not right now', 'wp-native-articles' ) . '</a><p>';
 			$message .= '</div>';
 
 			// @codingStandardsIgnoreLine

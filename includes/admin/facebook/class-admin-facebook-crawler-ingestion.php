@@ -121,10 +121,11 @@ class WPNA_Admin_Facebook_Crawler_Ingestion extends WPNA_Admin_Base implements W
 		<form action="options.php" method="post">
 			<?php settings_fields( 'wpna_facebook-crawler-ingestion' ); ?>
 			<?php do_settings_sections( 'wpna_facebook-crawler-ingestion' ); ?>
-<?php  ?>
-			<?php submit_button( null, 'primary', null, null, array( 'disabled' => 'true' ) ); ?>
-<?php  ;?>
-<?php  ;?>
+			<?php
+
+			submit_button( null, 'primary', null, null, array( 'disabled' => 'true' ) );
+
+			?>
 		</form>
 		<?php
 	}
@@ -143,7 +144,11 @@ class WPNA_Admin_Facebook_Crawler_Ingestion extends WPNA_Admin_Base implements W
 			<?php esc_html_e( 'A great way to quickly enable Instant Articles for every post on your site.', 'wp-native-articles' ); ?>
 		</h4>
 		<p>
-			<?php printf( esc_html__( 'The first time a post is shared on Facebook, the crawler will visit your post and check for the %s meta tag. If present, it will follow the link provided and ingest the Instant Article from content.', 'wp-native-articles' ), '<code>ia:markup_url</code>' ); ?>
+			<?php printf(
+				// translators: Placeholder is example code.
+				esc_html__( 'The first time a post is shared on Facebook, the crawler will visit your post and check for the %s meta tag. If present, it will follow the link provided and ingest the Instant Article from content.', 'wp-native-articles' ),
+				'<code>ia:markup_url</code>'
+			); ?>
 		</p>
 		<p>
 			<?php esc_html_e( 'Read more about it in the official documentation here:', 'wp-native-articles' ); ?>

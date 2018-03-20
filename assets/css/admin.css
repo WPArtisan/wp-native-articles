@@ -1,3 +1,98 @@
+.wpna-dashboard {
+	position: relative;
+	margin: 25px 40px 0 20px;
+	max-width: 1050px;
+	font-size: 15px;
+}
+.wpna-dashboard h1 {
+	margin: .2em 200px 0 0;
+	padding: 0;
+	color: #32373c;
+	line-height: 1.2em;
+	font-size: 2.8em;
+	font-weight: 400;
+}
+.wpna-dashboard .wpna-plam-icon {
+	float: right;
+	border-radius: 4px;
+	margin: 0 0 15px 15px;
+	max-width: 100px;
+	height: auto;
+	vertical-align: middle;
+}
+.wpna-dashboard .wpna-subtitle {
+	font-weight: 400;
+	line-height: 1.6em;
+	font-size: 19px;
+	color: #555d66;
+}
+.wpna-dashboard p {
+	font-size: 15px;
+}
+.wpna-dashboard li {
+	font-size: 15px;
+	line-height: 1.5;
+}
+.wpna-dashboard h5 {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.wpna-updates-featured {
+	margin-bottom: 40px;
+}
+.wpna-updates-featured-image {
+	float: right;
+	width: 480px;
+	border: 2px solid white;
+	margin-bottom: 20px;
+	margin-left: 20px;
+}
+.wpna-updates-featured-image img {
+	margin: 0;
+	width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+
+.wpna-updates .wpna-other-updates-wrap {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+	align-content: flex-start;
+}
+
+.wpna-updates .wpna-other-updates-wrap .wpna-other-update {
+	width: 30%;
+}
+
+.wpna-getting-started {
+
+}
+
+.wpna-step {
+	margin-bottom: 40px;
+}
+
+.wpna-step-media {
+	float: right;
+	width: 50%;
+	box-sizing: border-box;
+	border: 2px solid white;
+}
+.wpna-step-media img {
+	margin: 0;
+	width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+.wpna-step-instructions {
+	float: left;
+	width: 50%;
+	padding-right: 20px;
+	box-sizing: border-box;
+}
+
 
 /* Admin subsection CSS */
 .wpna-subsections-wrapper {
@@ -48,6 +143,15 @@
 	background: #5cb85c;
 }
 
+.wpna-status-enabled {
+	font-weight: bold;
+	color: #5cb85c;
+}
+.wpna-status-disabled {
+	font-weight: bold;
+	color: #d9534f;
+}
+
 .wpna-facebook-api-errors-table {
 	margin-top: 15px;
 	width: 80%;
@@ -93,4 +197,13 @@
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;
 	transition: width .6s ease;
+}
+
+.wpna-premium-feature {
+	background: #96ccff;
+	padding: 4px 6px;
+	font-weight: bold;
+	color: #fff;
+	font-size: 10px;
+	border-radius: 4px;
 }

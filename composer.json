@@ -1,0 +1,40 @@
+{
+    "name": "wpartisan/wp-native-articles",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Edward D",
+            "email": "edward@wpartisan.me"
+        }
+    ],
+    "scripts": {
+        "build": "./vendor/bin/wpartisan build && composer install -d=./build/wp-native-articles --no-dev && composer install -d=./build/wp-native-articles-pro --no-dev",
+        "php-lint": "./vendor/jakub-onderka/php-parallel-lint/parallel-lint ./build",
+        "php-sniff-free": "\"vendor/bin/phpcs\" -s -p --standard=ruleset.xml --runtime-set testVersion 5.2- --extensions=php ./build/wp-native-articles",
+        "php-sniff-pro": "\"vendor/bin/phpcs\" -s -p --standard=ruleset.xml --runtime-set testVersion 5.2- --extensions=php ./build/wp-native-articles-pro",
+        "php-sniff": [
+            "@php-sniff-free",
+            "@php-sniff-pro"
+        ]
+    },
+    "require": {
+        "symfony/css-selector": "^2.8",
+        "facebook/facebook-instant-articles-sdk-php": "^1.8"
+    },
+    "require-dev": {
+        "WPArtisan/source-generator": "1.*",
+        "squizlabs/php_codesniffer": "^2.2 || ^3.0.2",
+        "wimg/php-compatibility": "*",
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "wp-coding-standards/wpcs": "*",
+        "jakub-onderka/php-parallel-lint": "^0.9.2",
+        "jakub-onderka/php-console-highlighter": "^0.3.2"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:WPArtisan/source-generator.git"
+        }
+    ],
+    "prefer-stable" : true
+}

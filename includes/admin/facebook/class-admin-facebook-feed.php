@@ -262,7 +262,7 @@ class WPNA_Admin_Facebook_Feed extends WPNA_Admin_Base implements WPNA_Admin_Int
 	 */
 	public function posts_per_feed_callback() {
 		?>
-		<input type="number" min="0" step="1" name="wpna_options[fbia_posts_per_feed]" id="fbia_posts_per_feed" class="regular-text" value="<?php echo intval( wpna_get_option( 'fbia_posts_per_feed' ) ); ?>" />
+		<input type="number" min="0" step="1" max="100" name="wpna_options[fbia_posts_per_feed]" id="fbia_posts_per_feed" class="regular-text" value="<?php echo intval( wpna_get_option( 'fbia_posts_per_feed' ) ); ?>" />
 		<p class="description"><?php esc_html_e( 'Limit the maximum amount of articles in the feed.', 'wp-native-articles' ); ?></p>
 
 		<?php

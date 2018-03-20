@@ -60,11 +60,13 @@ jQuery(function() {
 			}
 		}
 
-		jQuery( '#fbia_video_header' ).keyup( function() {
-			wpnaCheckVideoHeaderType();
-		});
+		if ( jQuery( '#fbia_video_header' ).length ) {
+			jQuery( '#fbia_video_header' ).keyup( function() {
+				wpnaCheckVideoHeaderType();
+			});
 
-		wpnaCheckVideoHeaderType();
+			wpnaCheckVideoHeaderType();
+		}
 
 		function checkCustomSponsorURL() {
 			// Grab the extenson from the file URL.
@@ -83,11 +85,13 @@ jQuery(function() {
 
 		}
 
-		jQuery( '#fbia_custom_sponsor' ).keyup( function() {
-			checkCustomSponsorURL();
-		});
+		if ( jQuery( '#fbia_custom_sponsor' ).length ) {
+			jQuery( '#fbia_custom_sponsor' ).keyup( function() {
+				checkCustomSponsorURL();
+			});
 
-		checkCustomSponsorURL();
+			checkCustomSponsorURL();
+		}
 
 	});
 

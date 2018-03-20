@@ -66,7 +66,7 @@ if ( ! function_exists( 'wpna_evp_shortcode_override' ) ) :
 		}
 
 		// Format the output.
-		$output = '<figure data-feedback="fb:likes, fb:comments">' . PHP_EOL;
+		$output  = '<figure data-feedback="fb:likes, fb:comments">' . PHP_EOL;
 		$output .= sprintf( '<video%s>', $video_attrs ) . PHP_EOL;
 		$output .= sprintf( '<source src="%s" type="video/mp4" />', esc_url( $url ) ) . PHP_EOL;
 		$output .= '</video>' . PHP_EOL;

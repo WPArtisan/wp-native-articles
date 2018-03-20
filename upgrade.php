@@ -23,6 +23,11 @@ if ( ! function_exists( 'wpna_update_db_check' ) ) :
 		// If there's no DB version or it's less than the current version, upgrade.
 		if ( ! $db_version || version_compare( $db_version, WPNA_VERSION, '<' ) ) {
 			WPNA_Activator::run_database_scripts();
+
+			// Add the transient to redirect after install. Don't bother if network activated.
+			if ( ! is_network_admin() && ! isset( $_GET['activate-multi'] ) ) { // WPCS: CSRF ok.
+				set_transient( '_wpna_activation_redirect', true, MINUTE_IN_SECONDS / 2 );
+			}
 		}
 	}
 endif;
@@ -55,7 +60,7 @@ if ( ! function_exists( 'wpna_update_analytics_check' ) ) :
 			if ( ! empty( $current_analytics ) ) {
 				// Workout the new options.
 				$new_analytics = array(
-					'fbia_analytics_custom' => $current_analytics,
+					'fbia_analytics_custom'    => $current_analytics,
 					'fbia_analytics_providers' => array( 'custom-analytics' ),
 				);
 

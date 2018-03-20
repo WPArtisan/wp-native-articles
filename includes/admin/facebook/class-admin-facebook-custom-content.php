@@ -188,8 +188,14 @@ class WPNA_Admin_Facebook_Custom_Content extends WPNA_Admin_Base implements WPNA
 				<?php esc_html_e( 'Manually specify the first four related articles for this post. Has to be a link to a post on the same site.', 'wp-native-articles' ); ?>
 				<?php echo sprintf(
 					wp_kses(
+						// translators: Placeholder is the URL to the document page.
 						__( 'See the <a target="_blank" href="%s">Official Documentation</a> for more information on related articles.', 'wp-native-articles' ),
-						array( 'a' => array( 'href' => array(), 'target' => array() ) )
+						array(
+							'a' => array(
+								'href'   => array(),
+								'target' => array(),
+							),
+						)
 					),
 					esc_url( 'https://developers.facebook.com/docs/instant-articles/reference/related-articles' )
 				);?>

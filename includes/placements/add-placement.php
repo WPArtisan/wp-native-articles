@@ -60,7 +60,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<td>
 					<div id="wpna-placement-content-type">
 						<select name="content_type" class="wpna-placement-select-toggle">
+							<option value="ad"><?php esc_html_e( 'Ad', 'wp-native-articles' ); ?></option>
 							<option value="custom"><?php esc_html_e( 'Custom Content', 'wp-native-articles' ); ?></option>
+							<option value="embed"><?php esc_html_e( 'Embed (Youtube, Vimeo etc)', 'wp-native-articles' ); ?></option>
 							<option value="related_posts"><?php esc_html_e( 'Related Posts', 'wp-native-articles' ); ?></option>
 							<!-- <option value=""></option> -->
 						</select>
@@ -69,23 +71,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<?php do_action( 'wpna_add_placement_form_before_content' ); ?>
 
-						<div id="wpna-placement-related-posts" class="wpna-placement-content-form">
-							<label>
-								<input id="wpna-placement-related-posts-title" placeholder="<?php esc_html_e( 'Related Posts Title', 'wp-native-articles' ); ?>" type="text" name="related_posts_title" class="regular-text" value="" />
-								<p class="description">
-									<?php esc_html_e( 'An (optional) title for the Related Posts block', 'wp-native-articles' ); ?>
-								</p>
-							</label>
+						<div id="wpna-placement-ad" class="wpna-placement-content-form">
+							<p class="description">
+								<?php echo wp_kses(
+									sprintf(
+										// translators: Placeholder is a link to the ads settings page.
+										__( 'Uses the ad code defined on the <a href="%s" target="_blank">Ads page</a>. You <strong>must</strong> have ads enabled.', 'wp-native-articles' ),
+										esc_url(
+											add_query_arg(
+												array(
+													'page' => 'wpna_facebook',
+													'section' => 'ads',
+												),
+												admin_url( '/admin.php' )
+											)
+										)
+									),
+									array(
+										'a'      => array(
+											'href'   => true,
+											'target' => true,
+										),
+										'strong' => array(),
+									)
+								); ?>
+							</p>
+							<p class="description">
+								<?php echo wp_kses(
+									sprintf(
+										// translators: Placeholder is a link to the Facebook ads docs.
+										__( 'This is useful if you want to manually place your ads. Be aware, Facebook has strict rules. Please familiarise yourself <a href="%s" target="_blank">with them</a> first.', 'wp-native-articles' ),
+										esc_url( 'https://developers.facebook.com/docs/instant-articles/monetization' )
+									),
+									array(
+										'a' => array(
+											'href'   => true,
+											'target' => true,
+										),
+									)
+								); ?>
+							</p>
 						</div>
 
-						<div id="wpna-placement-custom" class="wpna-placement-content-form">
+						<div id="wpna-placement-custom" class="wpna-placement-content-form hidden">
 							<label>
 								<textarea id="wpna-placement-custom-content" name="content" class="large-text code" rows="10" cols="50" ></textarea>
 								<p class="description">
 									<?php echo wp_kses(
 										__( 'The code you wish to insert. This should be in <strong>valid</strong> Instant Article format. Available template tags:', 'wp-native-articles' ),
 										array( 'strong' => array() )
-									);?>
+									); ?>
 									<br />
 									{name} - <?php esc_html_e( 'Your site name', 'wp-native-articles' ); ?>
 									<br />
@@ -107,6 +142,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</p>
 							</label>
 							<hr />
+						</div>
+
+						<div id="wpna-placement-embed" class="wpna-placement-embed hidden">
+							<label>
+								<input id="wpna-placement-embed" placeholder="<?php esc_html_e( 'Embed URL', 'wp-native-articles' ); ?>" type="text" name="content" class="regular-text" value="" />
+								<p class="description">
+									<?php esc_html_e( 'URL of the video embed.', 'wp-native-articles' ); ?>
+								</p>
+							</label>
+						</div>
+
+						<div id="wpna-placement-related-posts" class="wpna-placement-content-form hidden">
+							<label>
+								<input id="wpna-placement-related-posts-title" placeholder="<?php esc_html_e( 'Related Posts Title', 'wp-native-articles' ); ?>" type="text" name="related_posts_title" class="regular-text" value="" />
+								<p class="description">
+									<?php esc_html_e( 'An (optional) title for the Related Posts block', 'wp-native-articles' ); ?>
+								</p>
+							</label>
 						</div>
 
 					</div>
@@ -196,8 +249,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><?php esc_html_e( 'Include Categories', 'wp-native-articles' ); ?></p>
 								<select name="category__in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
-									<?php foreach ( $terms as $term ) :?>
-										<option value="<?php echo esc_attr( $term->term_id );?>">
+									<?php foreach ( $terms as $term ) : ?>
+										<option value="<?php echo esc_attr( $term->term_id ); ?>">
 											<?php echo esc_html( $term->name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -208,7 +261,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>HAVE</strong> these categories.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<br />
@@ -218,8 +271,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><?php esc_html_e( 'Exclude Categories', 'wp-native-articles' ); ?></p>
 								<select name="category__not_in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
-									<?php foreach ( $terms as $term ) :?>
-										<option value="<?php echo esc_attr( $term->term_id );?>">
+									<?php foreach ( $terms as $term ) : ?>
+										<option value="<?php echo esc_attr( $term->term_id ); ?>">
 											<?php echo esc_html( $term->name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -230,7 +283,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>DO NOT HAVE</strong> these categories.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<hr />
@@ -256,7 +309,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<select name="tag__in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
 									<?php foreach ( $terms as $term ) : ?>
-										<option value="<?php echo esc_attr( $term->term_id );?>">
+										<option value="<?php echo esc_attr( $term->term_id ); ?>">
 											<?php echo esc_html( $term->name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -267,7 +320,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>HAVE</strong> these tags.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<br />
@@ -278,7 +331,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<select name="tag__not_in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
 									<?php foreach ( $terms as $term ) : ?>
-										<option value="<?php echo esc_attr( $term->term_id );?>">
+										<option value="<?php echo esc_attr( $term->term_id ); ?>">
 											<?php echo esc_html( $term->name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -289,7 +342,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>DO NOT HAVE</strong> these tags.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<hr />
@@ -306,7 +359,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 						<div id="wpna-placement-filter-author-form" class="hidden">
 
-							<?php $terms = get_users( array( 'orderby' => 'nicename', 'fields' => array( 'ID', 'display_name' ) ) ); ?>
+							<?php
+							$terms = get_users(
+								array(
+									'orderby' => 'nicename',
+									'fields'  => array( 'ID', 'display_name' ),
+								)
+							);
+							?>
 
 							<h4><?php esc_html_e( 'Author Filter', 'wp-native-articles' ); ?></h4>
 
@@ -314,8 +374,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><?php esc_html_e( 'Include Authors', 'wp-native-articles' ); ?></p>
 								<select name="author__in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
-									<?php foreach ( $terms as $term ) :?>
-										<option value="<?php echo esc_attr( $term->ID );?>">
+									<?php foreach ( $terms as $term ) : ?>
+										<option value="<?php echo esc_attr( $term->ID ); ?>">
 											<?php echo esc_html( $term->display_name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -326,7 +386,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>HAVE</strong> these authors.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<br />
@@ -336,8 +396,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<p><?php esc_html_e( 'Exclude Authors', 'wp-native-articles' ); ?></p>
 								<select name="author__not_in[]" multiple="multiple" class="select2" style="width:25em;" disabled="true">
 									<option value=""></option>
-									<?php foreach ( $terms as $term ) :?>
-										<option value="<?php echo esc_attr( $term->ID );?>">
+									<?php foreach ( $terms as $term ) : ?>
+										<option value="<?php echo esc_attr( $term->ID ); ?>">
 											<?php echo esc_html( $term->display_name ); ?>
 										</option>
 									<?php endforeach; ?>
@@ -348,7 +408,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo wp_kses(
 									__( 'Only insert this placement into posts that <strong>DO NOT HAVE</strong> these authors.', 'wp-native-articles' ),
 									array( 'strong' => array() )
-								);?>
+								); ?>
 							</p>
 
 							<hr />
@@ -390,7 +450,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="date" id="wpna-placement-start-date" name="start_date" value="<?php echo esc_attr( date( 'Y-m-d' ) ); ?>" disabled="true"/>
-					<p class="description"><?php printf( esc_html__( 'Enter the date when this placement becomes active in the format %s.', 'wp-native-articles' ), '<strong>dd/mm/yyyy</strong>' ); ?></p>
+					<p class="description">
+						<?php printf(
+							// translators: Placeholder is the example date format.
+							esc_html__( 'Enter the date when this placement becomes active in the format %s.', 'wp-native-articles' ),
+							'<strong>dd/mm/yyyy</strong>'
+						); ?>
+					</p>
 				</td>
 			</tr>
 
@@ -401,7 +467,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="date" id="wpna-placement-end-date" name="end_date" value="" min="<?php echo esc_attr( date( 'Y-m-d' ) ); ?>" disabled="true"/>
-					<p class="description"><?php printf( esc_html__( 'Enter the date when this placement becomes inactive in the format %s. For no end, leave blank.', 'wp-native-articles' ), '<strong>dd/mm/yyyy</strong>' ); ?></p>
+					<p class="description">
+						<?php printf(
+							// translators: Placeholder is the example date format.
+							esc_html__( 'Enter the date when this placement becomes inactive in the format %s. For no end, leave blank.', 'wp-native-articles' ),
+							'<strong>dd/mm/yyyy</strong>'
+						); ?>
+					</p>
 				</td>
 			</tr>
 

@@ -81,8 +81,14 @@ class WPNA_Analytics_Simple_Reach {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'SimpleReach Analytics Plugin found but no <a target="_blank" href="%s">Publisher ID</a> has been set.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/options-general.php?page=SimpleReach-Analytics' ) )
 						); ?>
@@ -142,15 +148,13 @@ class WPNA_Analytics_Simple_Reach {
 
 			$post = get_post( get_the_ID() );
 
-			$title = $post->post_title;
-			$published_date = $post->post_date_gmt;
-			$authors = array( get_the_author_meta( 'display_name' ) );
-
+			$title           = $post->post_title;
+			$published_date  = $post->post_date_gmt;
+			$authors         = array( get_the_author_meta( 'display_name' ) );
 			$post_categories = get_the_terms( $post->ID, 'category' );
-			$channels = wp_list_pluck( $post_categories, 'slug' );
-
-			$post_tags = get_the_terms( $post->ID, 'post_tag' );
-			$tags = wp_list_pluck( $post_tags, 'name' );
+			$channels        = wp_list_pluck( $post_categories, 'slug' );
+			$post_tags       = get_the_terms( $post->ID, 'post_tag' );
+			$tags            = wp_list_pluck( $post_tags, 'name' );
 
 			$simple_reach_analytics = sprintf( "
 				<script>

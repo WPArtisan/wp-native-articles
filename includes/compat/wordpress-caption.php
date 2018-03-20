@@ -17,7 +17,7 @@ if ( ! function_exists( 'wpna_wordpress_caption_add_override_shortcodes' ) ) :
 	 */
 	function wpna_wordpress_caption_add_override_shortcodes( $override_tags, $content ) {
 		$override_tags['wp_caption'] = 'wpna_wordpress_caption_shortcode_override';
-		$override_tags['caption'] = 'wpna_wordpress_caption_shortcode_override';
+		$override_tags['caption']    = 'wpna_wordpress_caption_shortcode_override';
 		return $override_tags;
 	}
 endif;
@@ -39,7 +39,7 @@ if ( ! function_exists( 'wpna_wordpress_caption_shortcode_override' ) ) :
 		// New-style shortcode with the caption inside the shortcode with the link and image tags.
 		if ( ! isset( $attr['caption'] ) ) {
 			if ( preg_match( '#((?:<a [^>]+>\s*)?<img [^>]+>(?:\s*</a>)?)(.*)#is', $content, $matches ) ) {
-				$content = $matches[1];
+				$content         = $matches[1];
 				$attr['caption'] = trim( $matches[2] );
 			}
 		} elseif ( strpos( $attr['caption'], '<' ) !== false ) {
@@ -47,9 +47,9 @@ if ( ! function_exists( 'wpna_wordpress_caption_shortcode_override' ) ) :
 		}
 
 		$atts = shortcode_atts( array(
-			'id'	  => '',
-			'align'	  => 'alignnone',
-			'width'	  => '',
+			'id'      => '',
+			'align'   => 'alignnone',
+			'width'   => '',
 			'caption' => '',
 			'class'   => '',
 		), $attr, 'caption' );

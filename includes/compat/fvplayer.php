@@ -82,10 +82,10 @@ if ( ! function_exists( 'wpna_fvplayer_shortcode_override' ) ) :
 				// Format: https://www.youtube.com/watch?v=-PVNKvIDRwI.
 				if ( false !== strripos( $parsed_url['path'], 'watch' ) ) {
 					parse_str( $parsed_url['query'], $parsed_query );
-					$video_id = ! empty( $parsed_query['v'] ) ? $parsed_query['v'] : null ;
+					$video_id = ! empty( $parsed_query['v'] ) ? $parsed_query['v'] : null;
 				} elseif ( false !== strripos( $parsed_url['path'], 'embed' ) ) {
 					// Format: https://www.youtube.com/embed/-PVNKvIDRwI.
-					$video_id = str_ireplace( 'embed' , '', $parsed_url['path'] );
+					$video_id = str_ireplace( 'embed', '', $parsed_url['path'] );
 				} else {
 					// Format: https://youtu.be/-PVNKvIDRwI.
 					$video_id = $parsed_url['path'];
@@ -134,7 +134,7 @@ if ( ! function_exists( 'wpna_fvplayer_shortcode_override' ) ) :
 				$ig_src = flowplayer::get_encoded_url( $splash );
 
 				// This is obviously less than ideal as it can be slow.
-				$response = wp_remote_head( $ig_src );
+				$response      = wp_remote_head( $ig_src );
 				$response_code = wp_remote_retrieve_response_code( $response );
 
 				// The image exists.
@@ -149,7 +149,7 @@ if ( ! function_exists( 'wpna_fvplayer_shortcode_override' ) ) :
 				$ig_src = flowplayer::get_encoded_url( $flowplayer_options['splash'] );
 
 				// This is obviously less than ideal as it can be slow.
-				$response = wp_remote_head( $ig_src );
+				$response      = wp_remote_head( $ig_src );
 				$response_code = wp_remote_retrieve_response_code( $response );
 
 				// The image exists.

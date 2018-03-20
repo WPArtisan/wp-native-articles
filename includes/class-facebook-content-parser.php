@@ -193,9 +193,11 @@ class WPNA_Facebook_Content_Parser {
 				continue;
 			} elseif ( isset( $override_tags[ $tag ] ) ) {
 				// If the tag has a custom callback, set that.
+				// @codingStandardsIgnoreLine
 				$shortcode_tags[ $tag ] = $override_tags[ $tag ];
 			} else {
 				// Overwrite the callback function.
+				// @codingStandardsIgnoreLine
 				$shortcode_tags[ $tag ] = array( $this, 'wrap_shortcode' );
 			}
 		}
@@ -266,12 +268,13 @@ class WPNA_Facebook_Content_Parser {
 		}
 
 		$html5 = current_theme_supports( 'html5', 'gallery' );
+
 		$atts = shortcode_atts( array(
 			'order'      => 'ASC',
 			'orderby'    => 'menu_order ID',
 			'id'         => $post ? $post->ID : 0,
-			'itemtag'    => $html5 ? 'figure'     : 'dl',
-			'icontag'    => $html5 ? 'div'        : 'dt',
+			'itemtag'    => $html5 ? 'figure' : 'dl',
+			'icontag'    => $html5 ? 'div' : 'dt',
 			'captiontag' => $html5 ? 'figcaption' : 'dd',
 			'columns'    => 3,
 			'size'       => 'thumbnail',
@@ -373,10 +376,10 @@ class WPNA_Facebook_Content_Parser {
 				// Format: https://www.youtube.com/watch?v=-PVNKvIDRwI.
 				if ( false !== strripos( $parsed_url['path'], 'watch' ) ) {
 					parse_str( $parsed_url['query'], $parsed_query );
-					$video_id = ! empty( $parsed_query['v'] ) ? $parsed_query['v'] : null ;
+					$video_id = ! empty( $parsed_query['v'] ) ? $parsed_query['v'] : null;
 				} elseif ( false !== strripos( $parsed_url['path'], 'embed' ) ) {
 					// Format: https://www.youtube.com/embed/-PVNKvIDRwI.
-					$video_id = str_ireplace( 'embed' , '', $parsed_url['path'] );
+					$video_id = str_ireplace( 'embed', '', $parsed_url['path'] );
 				} else {
 					// Format: https://youtu.be/-PVNKvIDRwI.
 					$video_id = $parsed_url['path'];
@@ -425,7 +428,7 @@ class WPNA_Facebook_Content_Parser {
 				$ig_src = flowplayer::get_encoded_url( $splash );
 
 				// This is obviously less than ideal as it can be slow.
-				$response = wp_remote_head( $ig_src );
+				$response      = wp_remote_head( $ig_src );
 				$response_code = wp_remote_retrieve_response_code( $response );
 
 				// The image exists.
@@ -440,7 +443,7 @@ class WPNA_Facebook_Content_Parser {
 				$ig_src = flowplayer::get_encoded_url( $flowplayer_options['splash'] );
 
 				// This is obviously less than ideal as it can be slow.
-				$response = wp_remote_head( $ig_src );
+				$response      = wp_remote_head( $ig_src );
 				$response_code = wp_remote_retrieve_response_code( $response );
 
 				// The image exists.
@@ -742,7 +745,7 @@ class WPNA_Facebook_Content_Parser {
 				$shortcode_key = mt_rand();
 
 				// Add the instagram embed script inside the iFrame. The parser will remove the one in the content.
-				$embed_content = '<iframe>' . PHP_EOL;
+				$embed_content  = '<iframe>' . PHP_EOL;
 				$embed_content .= $dom_document->saveXML( $element ) . PHP_EOL;
 				// @codingStandardsIgnoreLine
 				$embed_content .= '<script async defer src="//platform.instagram.com/en_US/embeds.js"></script>' . PHP_EOL;
@@ -751,7 +754,7 @@ class WPNA_Facebook_Content_Parser {
 				// Cache the embed so it doesn't go through the parser.
 				$_shortcode_content[ $shortcode_key ] = $embed_content;
 
-				$figure_template = clone $figure_template_base;
+				$figure_template            = clone $figure_template_base;
 				$figure_template->nodeValue = $shortcode_key;
 
 				$element->parentNode->replaceChild( $figure_template, $element );
@@ -796,7 +799,7 @@ class WPNA_Facebook_Content_Parser {
 				$shortcode_key = mt_rand();
 
 				// Add the instagram embed script inside the iFrame. The parser will remove the one in the content.
-				$embed_content = '<iframe>' . PHP_EOL;
+				$embed_content  = '<iframe>' . PHP_EOL;
 				$embed_content .= $dom_document->saveXML( $element ) . PHP_EOL;
 				// @codingStandardsIgnoreLine
 				$embed_content .= '<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>' . PHP_EOL;
@@ -805,7 +808,7 @@ class WPNA_Facebook_Content_Parser {
 				// Cache the embed so it doesn't go through the parser.
 				$_shortcode_content[ $shortcode_key ] = $embed_content;
 
-				$figure_template = clone $figure_template_base;
+				$figure_template            = clone $figure_template_base;
 				$figure_template->nodeValue = $shortcode_key;
 
 				$element->parentNode->replaceChild( $figure_template, $element );
@@ -826,7 +829,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function gist_embeds( DOMDocument $dom_document  ) {
+	public function gist_embeds( DOMDocument $dom_document ) {
 
 		global $_shortcode_content;
 
@@ -863,7 +866,7 @@ class WPNA_Facebook_Content_Parser {
 				// Cache the embed so it doesn't go through the parser.
 				$_shortcode_content[ $shortcode_key ] = $embed_content;
 
-				$figure_template = clone $figure_template_base;
+				$figure_template            = clone $figure_template_base;
 				$figure_template->nodeValue = $shortcode_key;
 
 				$element->parentNode->replaceChild( $figure_template, $element );
@@ -884,7 +887,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function pre_tags( DOMDocument $dom_document  ) {
+	public function pre_tags( DOMDocument $dom_document ) {
 
 		global $_shortcode_content;
 
@@ -928,7 +931,7 @@ class WPNA_Facebook_Content_Parser {
 				// Cache the embed so it doesn't go through the parser.
 				$_shortcode_content[ $shortcode_key ] = $embed_content;
 
-				$figure_template = clone $figure_template_base;
+				$figure_template            = clone $figure_template_base;
 				$figure_template->nodeValue = $shortcode_key;
 
 				$element->parentNode->replaceChild( $figure_template, $element );
@@ -949,7 +952,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @param  DOMDocument $dom_document Represents the HTML of the post content.
 	 * @return object
 	 */
-	public function code_tags( DOMDocument $dom_document  ) {
+	public function code_tags( DOMDocument $dom_document ) {
 
 		global $_shortcode_content;
 
@@ -975,7 +978,7 @@ class WPNA_Facebook_Content_Parser {
 				// Cache the embed so it doesn't go through the parser.
 				$_shortcode_content[ $shortcode_key ] = $embed_content;
 
-				$figure_template = clone $figure_template_base;
+				$figure_template            = clone $figure_template_base;
 				$figure_template->nodeValue = $shortcode_key;
 
 				$element->parentNode->replaceChild( $figure_template, $element );
@@ -1066,8 +1069,8 @@ class WPNA_Facebook_Content_Parser {
 					$featured_image_path = $url_parts['path'];
 
 					$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
-					$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
-					$regex = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
+					$featured_image_path     = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
+					$regex                   = sprintf( '/%s[-x0-9]*%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
 					$elements = $dom_document->getElementsByTagName( 'img' );
 
@@ -1087,7 +1090,7 @@ class WPNA_Facebook_Content_Parser {
 
 							// If the image has a caption remove that as well.
 							if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
-								$element = $parent_node;
+								$element     = $parent_node;
 								$parent_node = $parent_node->parentNode;
 							}
 
@@ -1140,7 +1143,7 @@ class WPNA_Facebook_Content_Parser {
 			}
 
 			$response_code = wp_remote_retrieve_response_code( $response );
-			$headers = wp_remote_retrieve_headers( $response );
+			$headers       = wp_remote_retrieve_headers( $response );
 
 			// The image doesn't exist, remove it.
 			// If the image is smaller than 1024 bytes, remove it.
@@ -1151,7 +1154,7 @@ class WPNA_Facebook_Content_Parser {
 
 				// If the image has a caption remove that as well.
 				if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
-					$element = $parent_node;
+					$element     = $parent_node;
 					$parent_node = $parent_node->parentNode;
 				}
 
@@ -1268,8 +1271,8 @@ class WPNA_Facebook_Content_Parser {
 
 		// The blank elements to create the new image with.
 		$fragment_template_base = $dom_document->createDocumentFragment();
-		$figure_template_base = $dom_document->createElement( 'figure' );
-		$image_template_base = $dom_document->createElement( 'img' );
+		$figure_template_base   = $dom_document->createElement( 'figure' );
+		$image_template_base    = $dom_document->createElement( 'img' );
 
 		// If enabled Likes or Comments on images has been enabled.
 		$figure_attr = array();
@@ -1319,8 +1322,8 @@ class WPNA_Facebook_Content_Parser {
 
 			// Marginally faster than creating everytime.
 			$fragment_template = clone $fragment_template_base;
-			$figure_template = clone $figure_template_base;
-			$image_template = clone $image_template_base;
+			$figure_template   = clone $figure_template_base;
+			$image_template    = clone $image_template_base;
 
 			/**
 			 * Allows filtering of the attributes set on the image figure.
@@ -1489,7 +1492,7 @@ class WPNA_Facebook_Content_Parser {
 				if ( 'img' === $element_to_move ) {
 					// Take account of images wrapped in captions.
 					if ( in_array( $parent_node->nodeName, array( 'div', 'figure' ), true ) && false !== strpos( $parent_node->getAttribute( 'class' ), 'wp-caption' ) ) {
-						$element = $parent_node;
+						$element     = $parent_node;
 						$parent_node = $parent_node->parentNode;
 					}
 				}
@@ -1504,7 +1507,7 @@ class WPNA_Facebook_Content_Parser {
 				// Keep track of how many elements deep the image is nested.
 				$parents = array();
 				while ( 'body' !== $parent_node->nodeName ) {
-					$parents[] = sprintf( '%s>', $parent_node->nodeName );
+					$parents[]   = sprintf( '%s>', $parent_node->nodeName );
 					$parent_node = $parent_node->parentNode;
 				}
 
@@ -1521,7 +1524,7 @@ class WPNA_Facebook_Content_Parser {
 				// To replace the current parent we need to load the new node
 				// fragment into a new instance of DOMDocument.
 				$libxml_previous_state = libxml_use_internal_errors( true );
-				$dom_document_temp = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
+				$dom_document_temp     = new DOMDocument( '1.0', get_option( 'blog_charset' ) );
 
 				// Make sure it's the correct encoding.
 				if ( function_exists( 'mb_convert_encoding' ) ) {
@@ -1534,7 +1537,7 @@ class WPNA_Facebook_Content_Parser {
 				$dom_document_temp->loadHTML( '<?xml version="1.0" encoding="utf-8"?><root/>' . $parent_node_html );
 				libxml_clear_errors();
 				libxml_use_internal_errors( $libxml_previous_state );
-				$body_temp = $dom_document_temp->getElementsByTagName( 'body' )->item( 0 );
+				$body_temp     = $dom_document_temp->getElementsByTagName( 'body' )->item( 0 );
 				$imported_node = $dom_document->importNode( $body_temp, true );
 
 				// Now replace the existing element with the new element in the real DOMDocument.
@@ -1638,7 +1641,7 @@ class WPNA_Facebook_Content_Parser {
 	 * @return DOMDocument
 	 */
 	public function wrap_text( DOMDocument $dom_document ) {
-		$body = $dom_document->getElementsByTagName( 'body' )->item( 0 );
+		$body            = $dom_document->getElementsByTagName( 'body' )->item( 0 );
 		$p_template_base = $dom_document->createElement( 'p' );
 
 		foreach ( $body->childNodes as $node ) {

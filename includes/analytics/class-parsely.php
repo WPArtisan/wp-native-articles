@@ -69,7 +69,7 @@ class WPNA_Analytics_Parsely {
 	 */
 	public function callback() {
 		?>
-		<?php if ( class_exists( 'Parsely' ) ) :?>
+		<?php if ( class_exists( 'Parsely' ) ) : ?>
 			<div>
 				<h3>
 					<?php esc_html_e( 'Parsely Plugin', 'wp-native-articles' ); ?>
@@ -81,8 +81,14 @@ class WPNA_Analytics_Parsely {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'Parse.ly Plugin found but no <a target="_blank" href="%s">Parse.ly Site ID</a> has been set.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/options-general.php?page=parsely' ) )
 						); ?>

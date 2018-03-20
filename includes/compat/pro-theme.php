@@ -106,20 +106,19 @@ if ( ! function_exists( 'wpna_pro_theme_editor_override_tags' ) ) :
 	 */
 	function wpna_pro_theme_editor_override_tags( $override_tags, $content ) {
 
-		$override_tags['cs_content'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['cs_section'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['x_section'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['cs_row'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['x_row'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['cs_column'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['x_column'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['x_raw_content'] = 'wpna_pro_theme_do_shortcode';
-		$override_tags['cs_text'] = 'wpna_pro_theme_text_shortcode';
-		$override_tags['x_text'] = 'wpna_pro_theme_text_shortcode';
-
-		$override_tags['x_text_type'] = 'wpna_pro_theme_x_text_type_shortcode';
+		$override_tags['cs_content']        = 'wpna_pro_theme_do_shortcode';
+		$override_tags['cs_section']        = 'wpna_pro_theme_do_shortcode';
+		$override_tags['x_section']         = 'wpna_pro_theme_do_shortcode';
+		$override_tags['cs_row']            = 'wpna_pro_theme_do_shortcode';
+		$override_tags['x_row']             = 'wpna_pro_theme_do_shortcode';
+		$override_tags['cs_column']         = 'wpna_pro_theme_do_shortcode';
+		$override_tags['x_column']          = 'wpna_pro_theme_do_shortcode';
+		$override_tags['x_raw_content']     = 'wpna_pro_theme_do_shortcode';
+		$override_tags['cs_text']           = 'wpna_pro_theme_text_shortcode';
+		$override_tags['x_text']            = 'wpna_pro_theme_text_shortcode';
+		$override_tags['x_text_type']       = 'wpna_pro_theme_x_text_type_shortcode';
 		$override_tags['x_custom_headline'] = 'wpna_pro_theme_x_custom_headline_shortcode';
-		$override_tags['x_image'] = 'wpna_pro_theme_x_image_shortcode';
+		$override_tags['x_image']           = 'wpna_pro_theme_x_image_shortcode';
 
 		return $override_tags;
 	}

@@ -7,7 +7,19 @@
  * @package wp-native-articles
  */
 
-add_filter( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', 'wpna_visual_bakery_add_ignore_shortcodes', 10, 2 );
+/**
+ * WPBakery doesn't load the shortcodes in like a normal plugin.
+ * Have to manually register them for the API method or they won't exist.
+ *
+ * @since 1.5.0
+ * @return void
+ */
+function wpna_visual_bakery_load_shortcodes() {
+	if ( class_exists( 'WPBMap' ) ) {
+		WPBMap::addAllMappedShortcodes();
+	}
+}
+add_action( 'wpna_facebook_article_pre_the_content_transform', 'wpna_visual_bakery_load_shortcodes', 10 );
 
 if ( ! function_exists( 'wpna_visual_bakery_add_ignore_shortcodes' ) ) :
 
@@ -39,8 +51,7 @@ if ( ! function_exists( 'wpna_visual_bakery_add_ignore_shortcodes' ) ) :
 		return $disabled_tags;
 	}
 endif;
-
-add_filter( 'wpna_facebook_article_setup_wrap_shortcodes_override_tags', 'wpna_visual_bakery_add_override_shortcodes', 10, 2 );
+add_filter( 'wpna_facebook_article_setup_wrap_shortcodes_disabled_tags', 'wpna_visual_bakery_add_ignore_shortcodes', 10, 2 );
 
 if ( ! function_exists( 'wpna_visual_bakery_add_override_shortcodes' ) ) :
 
@@ -71,6 +82,7 @@ if ( ! function_exists( 'wpna_visual_bakery_add_override_shortcodes' ) ) :
 		return $override_tags;
 	}
 endif;
+add_filter( 'wpna_facebook_article_setup_wrap_shortcodes_override_tags', 'wpna_visual_bakery_add_override_shortcodes', 10, 2 );
 
 if ( ! function_exists( 'wpna_get_visual_bakery_colors' ) ) :
 
@@ -235,8 +247,6 @@ if ( ! function_exists( 'wpna_vc_separator_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_separator_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_separator', $atts );
 
@@ -289,7 +299,7 @@ if ( ! function_exists( 'wpna_vc_separator_shortcode' ) ) :
 		$output .= '<div class="' . esc_attr( $div_classes ) . '" style="width: ' . $div_width . '%; margin: ' . esc_attr( $div_margin ) . ';">' . PHP_EOL;
 
 			$output .= '<span style="min-width: 10%; height: ' . $border_width . 'px;">' . PHP_EOL;
-				$output .= '<span style="height: ' . $border_width . 'px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px; width: 100%;"></span>' . PHP_EOL;
+			$output .= '<span style="height: ' . $border_width . 'px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px; width: 100%;"></span>' . PHP_EOL;
 			$output .= '</span>' . PHP_EOL;
 
 		// Wrapper div.
@@ -297,14 +307,10 @@ if ( ! function_exists( 'wpna_vc_separator_shortcode' ) ) :
 
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -320,8 +326,6 @@ if ( ! function_exists( 'wpna_vc_text_separator_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_text_separator_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_text_separator', $atts );
 
@@ -376,7 +380,7 @@ if ( ! function_exists( 'wpna_vc_text_separator_shortcode' ) ) :
 		// Show the first rule if it's required.
 		if ( ! empty( $atts['title_align'] ) && 'separator_align_left' !== $atts['title_align'] ) {
 			$output .= '<span style="flex: 1 1 auto; min-width: 10%; height: 1px; padding-right:0.8em;">' . PHP_EOL;
-				$output .= '<span style="height: 1px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px;width: 100%;"></span>' . PHP_EOL;
+			$output .= '<span style="height: 1px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px;width: 100%;"></span>' . PHP_EOL;
 			$output .= '</span>' . PHP_EOL;
 		}
 
@@ -386,7 +390,7 @@ if ( ! function_exists( 'wpna_vc_text_separator_shortcode' ) ) :
 		// Show the second rule if it's required.
 		if ( ! empty( $atts['title_align'] ) && 'separator_align_right' !== $atts['title_align'] ) {
 			$output .= '<span style="flex: 1 1 auto; min-width: 10%; height: 1px; padding-left:0.8em;">' . PHP_EOL;
-				$output .= '<span style="height: 1px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px;width: 100%;"></span>' . PHP_EOL;
+			$output .= '<span style="height: 1px; border-top: ' . $border_style . ';display: block;position: relative;top: 1px;width: 100%;"></span>' . PHP_EOL;
 			$output .= '</span>' . PHP_EOL;
 		}
 
@@ -395,14 +399,10 @@ if ( ! function_exists( 'wpna_vc_text_separator_shortcode' ) ) :
 
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -416,8 +416,6 @@ if ( ! function_exists( 'wpna_vc_gmaps_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_gmaps_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_gmaps', $atts );
 
@@ -452,8 +450,8 @@ if ( ! function_exists( 'wpna_vc_gmaps_shortcode' ) ) :
 
 		// Construct the map.
 		$map = array(
-			'type'     => 'Feature',
-			'geometry' => array(
+			'type'       => 'Feature',
+			'geometry'   => array(
 				'type'        => 'Point',
 				'coordinates' => array(
 					$map_params['3d'],
@@ -469,7 +467,7 @@ if ( ! function_exists( 'wpna_vc_gmaps_shortcode' ) ) :
 		);
 
 		// Generate the output.
-		$output = '<script type="application/json" class="op-geotag">' . PHP_EOL;
+		$output  = '<script type="application/json" class="op-geotag">' . PHP_EOL;
 		$output .= wp_json_encode( $map ) . PHP_EOL;
 		$output .= '</script>';
 
@@ -478,14 +476,10 @@ if ( ! function_exists( 'wpna_vc_gmaps_shortcode' ) ) :
 			$output .= PHP_EOL . '<figcaption><h1>' . esc_html( $atts['title'] ) . '</h1></figcaption>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-map">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-map">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -499,8 +493,6 @@ if ( ! function_exists( 'wpna_vc_video_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_video_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_video', $atts );
 
@@ -516,14 +508,10 @@ if ( ! function_exists( 'wpna_vc_video_shortcode' ) ) :
 			$output .= PHP_EOL . '<figcaption>' . esc_html( $atts['title'] ) . '</figcaption>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -537,8 +525,6 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_single_image_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_single_image', $atts );
 
@@ -556,7 +542,6 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 		switch ( $source ) {
 			case 'media_library':
 			case 'featured_image':
-
 				if ( 'featured_image' === $source ) {
 					$post_id = get_the_ID();
 					if ( $post_id && has_post_thumbnail( $post_id ) ) {
@@ -568,14 +553,13 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 					$img_id = preg_replace( '/[^\d]/', '', $atts['image'] );
 				}
 
-				if ( $img_id ) {
-					$wp_image = wp_get_attachment_image_src( $img_id, 'full' );
+				if ( $img_id && $wp_image = wp_get_attachment_image_src( $img_id, 'full' ) ) {
 					$output .= sprintf( '<img src="%s">', esc_url( $wp_image[0] ) );
 				}
 
 				if ( 'yes' === $atts['add_caption'] ) {
 					$media_post = get_post( $img_id );
-					$caption = $media_post->post_excerpt;
+					$caption    = $media_post->post_excerpt;
 					if ( ! empty( $caption ) ) {
 						$output .= sprintf( '<figcaption>%s</figcaption>', esc_html( $caption ) );
 					}
@@ -584,7 +568,6 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 				break;
 
 			case 'external_link':
-
 				if ( ! empty( $atts['custom_src'] ) ) {
 					$output .= sprintf( '<img src="%s">', esc_url( $atts['custom_src'] ) );
 				}
@@ -597,6 +580,10 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 
 			default:
 				$img = false;
+		}
+
+		if ( empty( $output ) ) {
+			return '';
 		}
 
 		// Set the caption settings, position, size etc.
@@ -635,14 +622,10 @@ if ( ! function_exists( 'wpna_vc_single_image_shortcode' ) ) :
 			$figure_opening = '<figure>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( $figure_opening . $output . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return $figure_opening . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -656,8 +639,6 @@ if ( ! function_exists( 'wpna_vc_facebook_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_facebook_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_facebook', $atts );
 
@@ -683,14 +664,10 @@ if ( ! function_exists( 'wpna_vc_facebook_shortcode' ) ) :
 		$output .= '</div>' . PHP_EOL;
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -704,35 +681,33 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_tweetmeme_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_tweetmeme', $atts );
 
 		$output = '';
 
 		$tweet_btn_text = '';
-		$type = $atts['type'];
+		$type           = $atts['type'];
 
 		switch ( $type ) {
 			case 'follow':
-				$tweet_btn_text = __( 'Follow', 'js_composer' );
+				$tweet_btn_text = esc_html__( 'Follow', 'wp-native-articles' );
 				break;
 
 			case 'mention':
-				$tweet_btn_text = __( 'Tweet to', 'js_composer' );
+				$tweet_btn_text = esc_html__( 'Tweet to', 'wp-native-articles' );
 				break;
 
 			case 'share':
 			case 'hashtag':
-				$tweet_btn_text = __( 'Tweet', 'js_composer' );
+				$tweet_btn_text = esc_html__( 'Tweet', 'wp-native-articles' );
 				break;
 			default:
-				$type = 'share';
-				$tweet_btn_text = __( 'Tweet', 'js_composer' );
+				$type           = 'share';
+				$tweet_btn_text = esc_html__( 'Tweet', 'wp-native-articles' );
 				break;
 		}
-		$data = array();
+		$data    = array();
 		$classes = array();
 
 		if ( ! empty( $atts['large_button'] ) ) {
@@ -741,7 +716,7 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 
 		$url = 'https://twitter.com/';
 		if ( 'share' === $type ) {
-			$url = 'https://twitter.com/share';
+			$url       = 'https://twitter.com/share';
 			$classes[] = 'twitter-share-button';
 
 			if ( 'page_url' !== $atts['share_use_page_url'] ) {
@@ -760,10 +735,10 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 				$data['data-hashtags'] = $atts['share_hashtag'];
 			}
 		} elseif ( 'follow' === $type ) {
-			$url = 'https://twitter.com/';
+			$url       = 'https://twitter.com/';
 			$classes[] = 'twitter-follow-button';
 			if ( ! empty( $atts['follow_user'] ) ) {
-				$url .= esc_attr( $atts['follow_user'] );
+				$url            .= esc_attr( $atts['follow_user'] );
 				$tweet_btn_text .= ' @' . esc_attr( $atts['follow_user'] );
 			}
 			if ( 'yes' !== (string) $atts['follow_show_username'] ) {
@@ -772,11 +747,11 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 			$data['data-show-count'] = ( ! ! $atts['show_followers_count'] ) ? 'true' : 'false';
 
 		} elseif ( 'hashtag' === $type ) {
-			$url = 'https://twitter.com/intent/tweet?';
+			$url       = 'https://twitter.com/intent/tweet?';
 			$classes[] = 'twitter-hashtag-button';
-			$url_atts = array();
+			$url_atts  = array();
 			if ( ! empty( $atts['hashtag_hash'] ) ) {
-				$url_atts[] = 'button_hashtag=' . esc_attr( $atts['hashtag_hash'] );
+				$url_atts[]      = 'button_hashtag =' . esc_attr( $atts['hashtag_hash'] );
 				$tweet_btn_text .= ' #' . esc_attr( $atts['hashtag_hash'] );
 			}
 			if ( 'yes' !== $atts['hashtag_no_default'] ) {
@@ -798,11 +773,11 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 				$data['data-url'] = $atts['hashtag_custom_tweet_url'];
 			}
 		} elseif ( 'mention' === $type ) {
-			$url = 'https://twitter.com/intent/tweet?';
+			$url       = 'https://twitter.com/intent/tweet?';
 			$classes[] = 'twitter-mention-button';
-			$url_atts = array();
+			$url_atts  = array();
 			if ( ! empty( $atts['mention_tweet_to'] ) ) {
-				$url_atts[] = 'screen_name=' . esc_attr( $atts['mention_tweet_to'] );
+				$url_atts[]      = 'screen_name =' . esc_attr( $atts['mention_tweet_to'] );
 				$tweet_btn_text .= ' @' . esc_attr( $atts['mention_tweet_to'] );
 			}
 			if ( 'yes' !== $atts['mention_no_default'] ) {
@@ -839,14 +814,10 @@ if ( ! function_exists( 'wpna_vc_tweetmeme_shortcode' ) ) :
 		$output .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>' . PHP_EOL;
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -860,8 +831,6 @@ if ( ! function_exists( 'wpna_vc_googleplus_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_googleplus_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_googleplus', $atts );
 
@@ -874,7 +843,7 @@ if ( ! function_exists( 'wpna_vc_googleplus_shortcode' ) ) :
 		if ( empty( $annotation ) ) {
 			$annotation = 'bubble';
 		}
-		$params = '';
+		$params  = '';
 		$params .= ( '' !== $type ) ? ' data-size="' . $type . '"' : '';
 		$params .= ( '' !== $annotation ) ? ' data-annotation="' . $annotation . '"' : '';
 
@@ -892,14 +861,10 @@ if ( ! function_exists( 'wpna_vc_googleplus_shortcode' ) ) :
 		$output .= '<div class="g-plusone"' . $params . '></div>' . PHP_EOL;
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -913,8 +878,6 @@ if ( ! function_exists( 'wpna_vc_pinterest_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_pinterest_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $post;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_googleplus', $atts );
 
@@ -928,11 +891,11 @@ if ( ! function_exists( 'wpna_vc_pinterest_shortcode' ) ) :
 
 		if ( has_post_thumbnail() ) {
 			$img_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large' );
-			$media = ( is_array( $img_url ) ) ? '&amp;media=' . rawurlencode( $img_url[0] ) : '';
+			$media   = ( is_array( $img_url ) ) ? '&amp;media=' . rawurlencode( $img_url[0] ) : '';
 		} else {
 			$media = '';
 		}
-		$excerpt = is_object( $post ) && isset( $post->post_excerpt ) ? $post->post_excerpt : '';
+		$excerpt     = is_object( $post ) && isset( $post->post_excerpt ) ? $post->post_excerpt : '';
 		$description = ( '' !== $excerpt ) ? '&amp;description=' . rawurlencode( strip_tags( $excerpt ) ) : '';
 
 		$output .= '<iframe class="column-width" width="320" height="20" scrolling="no" frameborder="0" allowTransparency="true">' . PHP_EOL;
@@ -941,14 +904,10 @@ if ( ! function_exists( 'wpna_vc_pinterest_shortcode' ) ) :
 		$output .= '<a href="https://pinterest.com/pin/create/button/?url=' . $url . $media . $description . '" class="pin-it-button" count-layout="' . $type . '"><img border="0" src="https://assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>' . PHP_EOL;
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -979,26 +938,20 @@ if ( ! function_exists( 'wpna_vc_raw_js_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_raw_js_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_raw_js', $atts );
 
 		$content = rawurldecode( base64_decode( strip_tags( $content ) ) );
 
 		// There's very little we can do here. Just wrap it in an iFrame so it'll run.
-		$output = '<iframe class="column-width" width="320" height="20" scrolling="no" frameborder="0" allowTransparency="true">' . PHP_EOL;
+		$output  = '<iframe class="column-width" width="320" height="20" scrolling="no" frameborder="0" allowTransparency="true">' . PHP_EOL;
 		$output .= $content . PHP_EOL;
 		$output .= '</iframe>';
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -1027,8 +980,6 @@ if ( ! function_exists( 'wpna_vc_wp_search_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_wp_search_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content;
-
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_wp_search', $atts );
 
@@ -1054,14 +1005,10 @@ if ( ! function_exists( 'wpna_vc_wp_search_shortcode' ) ) :
 			$title = '<h2>' . esc_html( $atts['title'] ) . '</h2>' . PHP_EOL;
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return $title . '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -1092,7 +1039,7 @@ if ( ! function_exists( 'wpna_vc_wp_tagcloud_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_wp_tagcloud_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $wp_widget_factory;
+		global $wp_widget_factory;
 
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_wp_tagcloud', $atts );
@@ -1128,18 +1075,14 @@ if ( ! function_exists( 'wpna_vc_wp_tagcloud_shortcode' ) ) :
 		// Remove the widget title. Add the title before the cloud.
 		$title = '';
 		if ( ! empty( $atts['title'] ) ) {
-			$output = str_ireplace( '<h2 class="widgettitle">' . $atts['title'] . '</h2>', '', $output );
-			$title = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
+			$output = str_ireplace( '<h2 class ="widgettitle">' . $atts['title'] . '</h2>', '', $output );
+			$title  = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return $title . '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -1153,7 +1096,7 @@ if ( ! function_exists( 'wpna_vc_wp_categories_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_wp_categories_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $wp_widget_factory;
+		global $wp_widget_factory;
 
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_wp_categories', $atts );
@@ -1197,7 +1140,7 @@ if ( ! function_exists( 'wpna_vc_wp_archives_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_wp_archives_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $wp_widget_factory;
+		global $wp_widget_factory;
 
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_wp_archives', $atts );
@@ -1238,7 +1181,7 @@ if ( ! function_exists( 'wpna_vc_wp_calendar_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_wp_calendar_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $wp_widget_factory;
+		global $wp_widget_factory;
 
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_wp_calendar', $atts );
@@ -1274,18 +1217,14 @@ if ( ! function_exists( 'wpna_vc_wp_calendar_shortcode' ) ) :
 		// Remove the widget title. Add the title before the cloud.
 		$title = '';
 		if ( ! empty( $atts['title'] ) ) {
-			$output = str_ireplace( '<h2 class="widgettitle">' . $atts['title'] . '</h2>', '', $output );
-			$title = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
+			$output = str_ireplace( '<h2 class ="widgettitle">' . $atts['title'] . '</h2>', '', $output );
+			$title  = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return $title . '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;
 
@@ -1338,7 +1277,7 @@ if ( ! function_exists( 'wpna_vc_flickr_shortcode' ) ) :
 	 * @return string
 	 */
 	function wpna_vc_flickr_shortcode( $atts, $content = '' ) {
-		global $_shortcode_content, $wp_widget_factory;
+		global $wp_widget_factory;
 
 		// Workout the default shortcode atts.
 		$atts = vc_map_get_attributes( 'vc_flickr', $atts );
@@ -1354,23 +1293,19 @@ if ( ! function_exists( 'wpna_vc_flickr_shortcode' ) ) :
 		$output .= '<style type="text/css">.flickr_badge_image {margin:0px;display:inline;}.flickr_badge_image img {border: 0px !important; padding:1px; margin:2px;} .wpb_follow_btn { color: grey; font-size: 0.8em; text-decoration: none; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }</style>' . PHP_EOL;
 		// @codingStandardsIgnoreLine
 		$output .= '<script type="text/javascript" src="//www.flickr.com/badge_code_v2.gne?count=' . $count . '&amp;display=' . $display . '&amp;size=s&amp;layout=x&amp;source=' . $type . '&amp;' . $type . '=' . $flickr_id . '"></script>' . PHP_EOL;
-		$output .= '<p class="flickr_stream_wrap"><a class="wpb_follow_btn wpb_flickr_stream" href="//www.flickr.com/photos/' . $flickr_id . '">' . __( 'View stream on flickr', 'js_composer' ) . '</a></p>' . PHP_EOL;
+		$output .= '<p class="flickr_stream_wrap"><a class="wpb_follow_btn wpb_flickr_stream" href="//www.flickr.com/photos/' . $flickr_id . '">' . esc_html__( 'View stream on flickr', 'wp-native-articles' ) . '</a></p>' . PHP_EOL;
 		$output .= '</iframe>';
 
 		// Remove the widget title. Add the title before the cloud.
 		$title = '';
 		if ( ! empty( $atts['title'] ) ) {
-			$output = str_ireplace( '<h2 class="widgettitle">' . $atts['title'] . '</h2>', '', $output );
-			$title = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
+			$output = str_ireplace( '<h2 class ="widgettitle">' . $atts['title'] . '</h2>', '', $output );
+			$title  = '<h2>' . esc_html( $atts['title'] ) . '</h2>';
 		}
 
-		// Generate a unique key.
-		$shortcode_key = mt_rand();
+		// Get the placeholder.
+		$placeholder = wpna_content_parser_get_placeholder( '<figure class="op-interactive">' . PHP_EOL . $output . PHP_EOL . '</figure>' );
 
-		// Save the output next to the key.
-		$_shortcode_content[ $shortcode_key ] = $output;
-
-		// Return the placeholder.
-		return $title . '<figure class="op-interactive">' . PHP_EOL . $shortcode_key . PHP_EOL . '</figure>' . PHP_EOL;
+		return '<pre>' . $placeholder . '</pre>';
 	}
 endif;

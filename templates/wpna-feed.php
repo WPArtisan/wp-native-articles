@@ -20,8 +20,8 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 	<channel>
 		<title><?php bloginfo_rss( 'name' ); ?></title>
-		<link><?php bloginfo_rss( 'url' ) ?></link>
-		<description><?php bloginfo_rss( 'description' ) ?></description>
+		<link><?php bloginfo_rss( 'url' ); ?></link>
+		<description><?php bloginfo_rss( 'description' ); ?></description>
 
 		<?php
 			/**
@@ -34,7 +34,16 @@
 		?>
 
 		<?php if ( have_posts() ) : ?>
-			<?php while ( have_posts() ) : the_post(); ?>
+			<?php
+			while ( have_posts() ) :
+				the_post(); ?>
+
+				<?php
+				// Check if this post should be converted.
+				if ( ! wpna_should_convert_post_ia( get_the_ID() ) ) {
+					continue;
+				}
+				?>
 
 				<?php
 					/**

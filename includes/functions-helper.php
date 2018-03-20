@@ -213,22 +213,7 @@ if ( ! function_exists( 'wpna_hook_overridden_notice' ) ) :
 
 			foreach ( $wp_filter[ $option_hook ]->callbacks as $priority => $callbacks ) {
 				foreach ( $callbacks as $callback_id => $callback ) {
-					if ( is_array( $callback['function'] ) ) {
-						$hooked_callbacks[] = get_class( $callback['function'][0] ) . '::' . $callback['function'][1];
-					} elseif ( is_object( $callback['function'] ) ) {
-						// Default to object name.
-						$name = get_class( $callback['function'] );
-
-						if ( class_exists( 'ReflectionFunction' ) ) {
-							$func = new ReflectionFunction( $callback['function'] );
-							$name .= ': ' . basename( $func->getFileName() ) . ':' . $func->getStartLine();
-						}
-
-						$hooked_callbacks[] = $name;
-
-					} else {
-						$hooked_callbacks[] = $callback['function'];
-					}
+					$hooked_callbacks[] = wpna_get_filter_nice_name( $callback );
 				}
 			}
 
@@ -255,6 +240,45 @@ if ( ! function_exists( 'wpna_hook_overridden_notice' ) ) :
 			<?php
 			endif;
 		}
+	}
+endif;
+
+if ( ! function_exists( 'wpna_get_filter_nice_name' ) ) :
+
+	/**
+	 * Takes a callback function for a hook and constructs a unique name for it.
+	 * This can then be used later on to remove the same hook.
+	 *
+	 * @param  mixed $callback The callback function.
+	 * @return string
+	 */
+	function wpna_get_filter_nice_name( $callback ) {
+
+		$name = '';
+
+		if ( is_array( $callback['function'] ) ) {
+			// Filters added from inside classes using $this.
+			if ( is_object( $callback['function'][0] ) ) {
+				// Get the classname and method name.
+				$name = get_class( $callback['function'][0] ) . '::' . $callback['function'][1];
+			} else {
+				// Filters added from outside classes using names.
+				$name = $callback['function'][0] . '::' . $callback['function'][1];
+			}
+		} elseif ( is_object( $callback['function'] ) ) {
+			// Filters added via closures.
+			if ( $callback['function'] instanceof Closure ) {
+				if ( class_exists( 'ReflectionFunction' ) ) {
+					$func = new ReflectionFunction( $callback['function'] );
+					$name = 'Closure::' . basename( $func->getFileName() ) . '::' . $func->getStartLine();
+				}
+			}
+		} else {
+			// Filters added via functions.
+			$name = $callback['function'];
+		}
+
+		return $name;
 	}
 endif;
 
@@ -412,10 +436,14 @@ if ( ! function_exists( 'wpna_get_attachment_id_from_src' ) ) :
 
 					$meta = wp_get_attachment_metadata( $post_id );
 
+					if ( empty( $meta['sizes'] ) ) {
+						continue;
+					}
+
 					$original_file       = basename( $meta['file'] );
 					$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
 
-					if ( $original_file === $file || in_array( $file, $cropped_image_files, true ) ) {
+					if ( $original_file === $file || ( is_array( $cropped_image_files ) && in_array( $file, $cropped_image_files, true ) ) ) {
 						$attachment_id = $post_id;
 						break;
 					}
@@ -573,6 +601,60 @@ if ( ! function_exists( 'wpna_transforming_ia' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'wpna_should_convert_post_ia' ) ) :
+
+	/**
+	 * Whether a post should be converted to IA or not.
+	 * All methods (RSS, API etc) use this function.
+	 *
+	 * @param WP_Post|int $wp_post Post object or Post ID.
+	 * @return bool Whether the post should be converted or not.
+	 */
+	function wpna_should_convert_post_ia( $wp_post ) {
+		// Make sure we've got a WP_Post object.
+		$wp_post = get_post( $wp_post );
+
+		// Return true by default.
+		$return = true;
+
+		// Check if post is an autosave.
+		if ( wp_is_post_autosave( $wp_post ) ) {
+			$return = false;
+		}
+
+		// If post is a revision, return.
+		if ( wp_is_post_revision( $wp_post ) ) {
+			$return = false;
+		}
+
+		// Check the post type.
+		if ( ! in_array( get_post_type( $wp_post ), wpna_allowed_post_types(), true ) ) {
+			$return = false;
+		}
+
+		// Only sync published posts.
+		if ( 'publish' !== get_post_status( $wp_post ) ) {
+			$return = false;
+		}
+
+		// Don't publish posts with password protection.
+		if ( post_password_required( $wp_post ) ) {
+			$return = false;
+		}
+
+		/**
+		 * Whether this article should be converted to IA.
+		 * Applies to ALL methods (RSS FEED, API, Mass Covnerter etc)
+		 *
+		 * @var bool
+		 * @var WP_Post
+		 */
+		$return = apply_filters( 'wpna_should_convert_post_ia', 'wp-native-articles', $return, $wp_post );
+
+		return $return;
+	}
+endif;
+
 if ( ! function_exists( 'wpna_content_parser_get_placeholder' ) ) :
 
 	/**
@@ -643,21 +725,19 @@ if ( ! function_exists( 'wpna_premium_feature_notice' ) ) :
 	 */
 	function wpna_premium_feature_notice() {
 		?>
-		<style>
-		.wpna-premium-feature {
-			background: #96ccff;
-			padding: 4px 6px;
-			font-weight: bold;
-			color: #fff;
-			font-size: 10px;
-			border-radius: 4px;
-		}
-		</style>
 		<hr />
 		<h4>
 		<?php echo wp_kses(
-			__( '<span class="wpna-premium-feature" style="">Premium Feature</span> This a premium only feature, visit <a href="https://wp-native-articles.com?utm_source=fplugin&utm_medium=upgrade_premium_notice" target="_blank">https://wp-native-articles.com</a> to upgrade and enable it.', 'wp-native-articles' ),
-			array( 'span' => array( 'class' => true ), 'a' => array( 'href' => true, 'target' => true ) )
+			__( '<span class="wpna-premium-feature">Premium Feature</span> This a premium only feature, visit <a href="https://wp-native-articles.com?utm_source=fplugin&utm_medium=upgrade_premium_notice" target="_blank">https://wp-native-articles.com</a> to upgrade and enable it.', 'wp-native-articles' ),
+			array(
+				'span' => array(
+					'class' => true,
+				),
+				'a'    => array(
+					'href'   => true,
+					'target' => true,
+				),
+			)
 		); ?>
 		</h4>
 		<hr />

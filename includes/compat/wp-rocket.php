@@ -18,7 +18,7 @@ if ( ! function_exists( 'wpna_wp_rocket_reject_rss' ) ) :
 	 * @return array Updated array of URLs
 	 */
 	function wpna_wp_rocket_reject_rss( $urls ) {
-		$feed = '(.*)/' . $GLOBALS['wp_rewrite']->feed_base . '/';
+		$feed      = '(.*)/' . $GLOBALS['wp_rewrite']->feed_base . '/';
 		$feed_slug = wpna_get_option( 'fbia_feed_slug' );
 
 		$urls[] = $feed . $feed_slug;

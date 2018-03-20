@@ -124,6 +124,7 @@ class WPNA_Activator {
 				'fbia_sync_articles'       => 'on',
 				'fbia_sync_cron'           => '0',
 				'fbia_enviroment'          => 'development',
+				'fbia_crawler_ingestion'   => 'on',
 			);
 
 			// Check for any default analytics providers setup.
@@ -154,6 +155,11 @@ class WPNA_Activator {
 			add_site_option( 'wpna_activation_time', date( 'c' ) );
 			// When to provide prompts for plugin ratings, in days.
 			add_site_option( 'wpna_rating_prompts', array( 7, 30, 90 ) );
+
+			// Add the transient to redirect after install. Don't bother if network activated.
+			if ( ! is_network_admin() && ! isset( $_GET['activate-multi'] ) ) { // WPCS: CSRF ok.
+				set_transient( '_wpna_activation_redirect', true, MINUTE_IN_SECONDS / 2 );
+			}
 		}
 	}
 
@@ -176,6 +182,12 @@ class WPNA_Activator {
 			foreach ( $scripts as $script ) {
 				dbDelta( $scripts );
 			}
+		}
+
+		$current_version = get_site_option( 'wpna_db_version' );
+
+		if ( WPNA_VERSION !== $current_version ) {
+			update_site_option( 'wpna_previous_db_version', $current_version );
 		}
 
 		// Set the current DB version.

@@ -265,11 +265,12 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 	 * @return void
 	 */
 	public function styling_tab_callback() {
-		$section = 'general';
+		$section        = 'general';
 		$section_fields = 'wpna_facebook-styling-general';
 
+		// @codingStandardsIgnoreLine
 		if ( isset( $_GET['section'] ) && 'captions' === $_GET['section'] ) {
-			$section = 'captions';
+			$section        = 'captions';
 			$section_fields = 'wpna_facebook-styling-captions';
 		}
 		?>
@@ -941,7 +942,7 @@ class WPNA_Admin_Facebook_Styling extends WPNA_Admin_Base implements WPNA_Admin_
 					</div>
 				</fieldset>
 
-			<?php endif;?>
+			<?php endif; ?>
 
 			<?php
 			/**

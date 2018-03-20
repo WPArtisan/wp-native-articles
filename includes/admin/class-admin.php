@@ -29,7 +29,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @access public
 	 * @var string
 	 */
-	public $page_slug;
+	public $page_slug = 'wpna_general';
 
 	/**
 	 * Hooks registered in this class.
@@ -43,9 +43,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @return void
 	 */
 	public function hooks() {
-		// Done like this so the source parser can compile the seperate versions.
-		$this->page_slug = 'wpna_facebook';
-
+		add_action( 'admin_init',            array( $this, 'welcome_redirect' ), 0, 0 );
 		add_action( 'admin_menu',            array( $this, 'add_menu_items' ), 10, 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'scripts' ), 10, 1 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'styles' ), 10, 1 );
@@ -59,6 +57,41 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
 			add_action( 'load-post.php',         array( $this, 'setup_post_meta_box' ), 10, 0 );
 			add_action( 'load-post-new.php',     array( $this, 'setup_post_meta_box' ), 10, 0 );
+		}
+	}
+
+	/**
+	 * When the plugin is updated or installed, check for a redirect.
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function welcome_redirect() {
+		// Bail if no activation redirect.
+		if ( ! get_transient( '_wpna_activation_redirect' ) ) {
+			return;
+		}
+
+		// Delete the redirect transient.
+		delete_transient( '_wpna_activation_redirect' );
+
+		// Bail if activating from network, or bulk.
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // WPCS: CSRF ok.
+			return;
+		}
+
+		$previous_version = get_site_option( 'wpna_previous_db_version' );
+
+		if ( ! $previous_version ) {
+			// Flush the rewrite rules to ensure the RSS feed is setup.
+			flush_rewrite_rules();
+			// First time install.
+			wp_safe_redirect( sprintf( admin_url( 'admin.php?page=%s&tab=getting_started' ), $this->page_slug ) );
+			exit;
+		} elseif ( ! version_compare( $previous_version, WPNA_VERSION, '=' ) ) {
+			// Update.
+			wp_safe_redirect( sprintf( admin_url( 'admin.php?page=%s&tab=what_is_new' ), $this->page_slug ) );
+			exit;
 		}
 	}
 
@@ -82,10 +115,10 @@ class WPNA_Admin extends WPNA_Admin_Base {
 			'page' => 'wpna_facebook',
 		), admin_url( 'admin.php' ) );
 
-		$mylinks = array();
+		$mylinks   = array();
 		$mylinks[] = sprintf( '<a style="color:#d54e21;" href="%s" target="_blank">%s</a>', esc_url( 'https://wp-native-articles.com?utm_source=fplugin&utm_medium=plugin-settings' ), __( 'Upgrade to Premium', 'wp-native-articles' ) );
 
-		$mylinks[] = sprintf( '<a href="%s">%s</a>', esc_url( $settings_page_url ), __( 'Settings', 'wp-native-articles' ) );
+		$mylinks[] = sprintf( '<a href="%s">%s</a>', esc_url( $settings_page_url ), esc_html__( 'Settings', 'wp-native-articles' ) );
 
 		// Merge the arrays together and return.
 		return array_merge( $mylinks, $links );
@@ -140,7 +173,9 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function scripts( $hook ) {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', WPNA_BASE_FILE ), array( 'jquery', 'jquery-ui-tabs' ), WPNA_VERSION, true );
+			if ( in_array( get_post_type(), wpna_allowed_post_types(), true ) ) {
+				wp_enqueue_script( 'wpna-admin-post', plugins_url( '/assets/js/post-meta-box.js', WPNA_BASE_FILE ), array( 'jquery', 'jquery-ui-tabs' ), WPNA_VERSION, true );
+			}
 		}
 	}
 
@@ -160,12 +195,14 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	public function styles( $hook ) {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
-			wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', WPNA_BASE_FILE ), '0.6.1', true );
-			wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', WPNA_BASE_FILE ), WPNA_VERSION );
+			if ( in_array( get_post_type(), wpna_allowed_post_types(), true ) ) {
+				wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', WPNA_BASE_FILE ), '0.6.1', true );
+				wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', WPNA_BASE_FILE ), WPNA_VERSION );
+			}
 		}
 
 		// Main plugin options page CSS.
-		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'native-articles_page_wpna_facebook', 'toplevel_page_wpna_facebook' ), true ) ) {
+		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'toplevel_page_wpna_general', 'toplevel_page_wpna_facebook', 'native-articles_page_wpna_facebook', 'native-articles_page_wpna_placements', 'native-articles_page_wpna_transformers' ), true ) ) {
 			wp_enqueue_style( 'wpna-admin', plugins_url( '/assets/css/admin.css', WPNA_BASE_FILE ), WPNA_VERSION );
 		}
 
@@ -255,7 +292,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 
 		?>
 
-		<?php if ( ! empty( $tabs ) ) :?>
+		<?php if ( ! empty( $tabs ) ) : ?>
 			<div id="wpna-tabs" class="wpna-tabs">
 
 				<ul>

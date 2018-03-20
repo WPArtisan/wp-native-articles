@@ -227,7 +227,7 @@ class WPNA_Admin_Placements_List_Table extends WP_List_Table {
 		$this->items = $this->get_items();
 
 		// Pagination.
-		$per_page = $this->get_items_per_page( 'placements_per_page', 20 );
+		$per_page    = $this->get_items_per_page( 'placements_per_page', 20 );
 		$total_items = $this->total_items;
 
 		// REQUIRED. We also have to register our pagination options & calculations.
@@ -249,13 +249,14 @@ class WPNA_Admin_Placements_List_Table extends WP_List_Table {
 
 		// Ordering parameters.
 		$order = 'ASC';
+		// @codingStandardsIgnoreLine
 		if ( ! empty( $_GET['order'] ) && 'desc' === $_GET['order'] ) {
 			$order = 'DESC';
 		}
 
 		// Order by columns.
 		$valid_orderby_options = $this->get_columns();
-		$orderby = 'status, id';
+		$orderby               = 'status, id';
 		// @codingStandardsIgnoreStart
 		if ( ! empty( $_GET['orderby'] ) && isset( $valid_orderby_options[ $_GET['orderby'] ] ) ) {
 			$orderby = wp_unslash( $_GET['orderby'] );
@@ -370,7 +371,11 @@ class WPNA_Admin_Placements_List_Table extends WP_List_Table {
 
 				// Loop over the array of record IDs and update them.
 				foreach ( $placements as $id ) {
+					// todo: change to fucntion call.
 					$rows_affected[] = $wpdb->update( $this->table_name, array( 'status' => $status ), array( 'id' => $id ), array( '%s' ), array( '%d' ) );
+
+					$placement = wpna_get_placement( $id );
+					$placement->clear_cache();
 				}
 
 				break;

@@ -77,8 +77,6 @@ class WPNA_Admin_Facebook_API extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	public function hooks() {
 		add_action( 'admin_init',               array( $this, 'setup_settings' ), 10, 0 );
 		add_action( 'wpna_admin_facebook_tabs', array( $this, 'setup_tabs' ), 10, 1 );
-		add_action( 'load-native-articles_page_' . $this->page_slug,  array( $this, 'facebook_cb' ), 10, 0 );
-		add_action( 'load-native-articles_page_' . $this->page_slug,  array( $this, 'facebook' ), 15, 0 );
 
 		// Form sanitization filters.
 		add_filter( 'wpna_sanitize_option_fbia_app_id',        'sanitize_text_field', 10, 1 );

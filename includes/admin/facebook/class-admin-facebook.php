@@ -40,6 +40,15 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public $tabs;
 
 	/**
+	 * Name used for the FBIA status input.
+	 *
+	 * @since 1.5.0
+	 * @access public
+	 * @var string
+	 */
+	public $post_status_input_name = 'fbia_status';
+
+	/**
 	 * Hooks registered in this class.
 	 *
 	 * This method is auto called from WPNA_Admin_Base.
@@ -56,6 +65,9 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		// These actions are only applied if Instant Articles is enabled.
 		if ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable' ) ) ) {
+			// Register post meta fields.
+			add_action( 'init', array( $this, 'register_post_meta' ), 10, 0 );
+			// Output the Instant Articles authorisation ID.
 			add_action( 'wp_head', array( $this, 'output_authorisation_id' ), 10, 0 );
 		}
 
@@ -83,6 +95,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 
 		// Post meta sanitization filters.
 		// No express sanitization for fbia_analytics or fbia_ad_code.
+		// Post meta sanitization filters.
+		add_filter( 'wpna_sanitize_post_meta_fbia_status',               'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_style',                'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_rtl',                  'sanitize_text_field', 10, 1 );
 		add_filter( 'wpna_sanitize_post_meta_fbia_sponsored',            'wpna_switchval', 10, 1 );
@@ -222,6 +236,17 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	}
 
 	/**
+	 * Register the meta fields we're using on the posts page.
+	 *
+	 * @todo Add all the other meta fields in.
+	 *
+	 * @access public
+	 * @return void.
+	 */
+	public function register_post_meta() {
+	}
+
+	/**
 	 * Setup the screen columns.
 	 *
 	 * Do actions for registering meta boxes for this screen.
@@ -254,7 +279,12 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		do_action( 'add_meta_boxes', $screen->id, null );
 
 		// Add screen option: user can choose between 1 or 2 columns (default 2).
-		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
+		add_screen_option( 'layout_columns',
+			array(
+				'max'     => 2,
+				'default' => 2,
+			)
+		);
 	}
 
 	/**
@@ -455,12 +485,13 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		$sections = array( 'analytics', 'ads' );
 
 		// Default to gneral.
-		$section = 'general';
+		$section        = 'general';
 		$section_fields = 'wpna_facebook-general';
 
+		// @codingStandardsIgnoreLine
 		if ( isset( $_GET['section'] ) && in_array( wp_unslash( $_GET['section'] ), $sections, true ) ) {
 			// @codingStandardsIgnoreLine
-			$section = $_GET['section'];
+			$section         = $_GET['section'];
 			$section_fields .= '-' . $section;
 		}
 
@@ -585,14 +616,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 				<option value="v2"<?php selected( wpna_get_option( 'fbia_content_parser' ), 'v2' ); ?>><?php esc_html_e( 'Version Two', 'wp-native-articles' ); ?></option>
 			</select>
 			<p class="description">
-				<?php echo sprintf(
-					wp_kses(
-						__( 'Version Two of the content parser is up to 10x faster, uses fewer resources, and is better at transforming content.', 'wp-native-articles' ),
-						array( 'a' => array( 'href' => array(), 'target' => array() ) )
-					),
-					esc_url( 'http://docs.wp-native-articles.com/contact' )
-				);?>
-				<?php esc_html_e( ' ', 'wp-native-articles' ); ?>
+				<?php esc_html__( 'Version Two of the content parser is up to 10x faster, uses fewer resources, and is better at transforming content.', 'wp-native-articles' ); ?>
 			</p>
 		</label>
 
@@ -804,8 +828,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<p class="description">
 			<?php echo sprintf(
 				wp_kses(
+					// translators: Placeholder is the URL to the document page.
 					__( 'See the <a target="_blank" href="%s">date documentation</a> for more information.', 'wp-native-articles' ),
-					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
 				),
 				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )
 			);?>
@@ -843,8 +873,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<p class="description">
 			<?php echo sprintf(
 				wp_kses(
+					// translators: Placeholder is the URL to the document page.
 					__( 'See the <a target="_blank" href="%s">date documentation</a> for more information.', 'wp-native-articles' ),
-					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
 				),
 				esc_url( 'http://docs.wp-native-articles.com/article/43-date-variables' )
 			);?>
@@ -1031,7 +1067,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	public function ad_code_callback() {
 		?>
 		<textarea name="wpna_options[fbia_ad_code]" rows="10" cols="50" id="fbia_ad_code" class="large-text code"><?php echo esc_textarea( wpna_get_option( 'fbia_ad_code' ) ); ?></textarea>
-		<p class="description"><?php echo sprintf( esc_html__( 'Ad code for displaying your ads. Ensure it is wrapped in %s.', 'wp-native-articles' ), '<code>&lt;figure class="op-ad"&gt;&lt;/figure&gt;</code>' ); ?></p>
+		<p class="description">
+			<?php echo sprintf(
+				// translators: Placeholder is the example code.
+				esc_html__( 'Ad code for displaying your ads. Ensure it is wrapped in %s.', 'wp-native-articles' ),
+				'<code>&lt;figure class="op-ad"&gt;&lt;/figure&gt;</code>'
+			);
+			?>
+		</p>
 
 		<?php
 		// Show a notice if the option has been overridden.
@@ -1064,8 +1107,14 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		<p class="description">
 			<?php echo sprintf(
 				wp_kses(
+					// translators: Placeholder is the URL to the document page.
 					__( 'See the <a target="_blank" href="%s">Placing Ads in Recirculation Units Documentation</a> for more information and setup.', 'wp-native-articles' ),
-					array( 'a' => array( 'href' => array(), 'target' => array() ) )
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+						),
+					)
 				),
 				esc_url( 'https://developers.facebook.com/docs/instant-articles/monetization/ad-placement#recirculation-units' )
 			);?>
@@ -1127,6 +1176,7 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 		$fields[] = 'fbia_ad_code_placement_id';
 		$fields[] = 'fbia_ad_code';
 		$fields[] = 'fbia_recirculation_ad';
+		$fields[] = $this->post_status_input_name;
 
 		return $fields;
 	}

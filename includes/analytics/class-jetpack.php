@@ -109,14 +109,14 @@ class WPNA_Analytics_Jetpack {
 			$data = stats_build_view_data();
 		} else {
 			$blog = Jetpack_Options::get_option( 'id' );
-			$tz = get_option( 'gmt_offset' );
-			$v = 'ext';
+			$tz   = get_option( 'gmt_offset' );
+			$v    = 'ext';
 
 			$blog_url = wpna_parse_url( site_url() );
-			$srv = $blog_url['host'];
-			$j = sprintf( '%s:%s', JETPACK__API_VERSION, JETPACK__VERSION );
-			$post = $wp_the_query->get_queried_object_id();
-			$data = compact( 'v', 'j', 'blog', 'post', 'tz', 'srv' );
+			$srv      = $blog_url['host'];
+			$j        = sprintf( '%s:%s', JETPACK__API_VERSION, JETPACK__VERSION );
+			$post     = $wp_the_query->get_queried_object_id();
+			$data     = compact( 'v', 'j', 'blog', 'post', 'tz', 'srv' );
 		}
 
 		if ( ! empty( $_SERVER['HTTP_HOST'] ) ) {
@@ -124,8 +124,10 @@ class WPNA_Analytics_Jetpack {
 			$data['host'] = rawurlencode( $_SERVER['HTTP_HOST'] );
 		}
 		$data['rand'] = 'RANDOM'; // ia placeholder.
-		$data['ref'] = 'DOCUMENT_REFERRER'; // ia placeholder.
-		$data = array_map( 'rawurlencode' , $data );
+		$data['ref']  = 'DOCUMENT_REFERRER'; // ia placeholder.
+
+		// Encode the data ready for the URL.
+		$data = array_map( 'rawurlencode', $data );
 
 		return add_query_arg( $data, 'https://pixel.wp.com/g.gif' );
 	}

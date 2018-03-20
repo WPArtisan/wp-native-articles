@@ -106,12 +106,27 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 			.row .child {
 				width: 48%;
 			}
+			.child.image-wrap {
+				border: 2px solid white;
+			}
 			img {
+				margin: 0;
 				width: 100%;
+				height: auto;
+				vertical-align: middle;
 			}
 			.lead-text {
-				font-size: 18px;
-				line-height: 24px;
+				font-size: 24px;
+				line-height: 1.5;
+			}
+			.child h4 {
+				margin-top: 0;
+				line-height: 1.5;
+				font-size: 24px;
+			}
+			.child p {
+				line-height: 1.5;
+				font-size: 15px;
 			}
 		</style>
 		<div class="wrap">
@@ -126,10 +141,12 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 							<div class="row">
 
 								<div>
-									<p class="lead-text">The Premium version of WP Native Articles comes with full API support</p>
+									<p class="lead-text">Power up your Instant Articles. Go Premium.</p>
+
 									<ul>
-										<li> * <b>Manage Articles</b> Publish, unpublish and manage Instant Articles directly from the WP post page.</li>
-										<li> * <b>Real Time Sync</b> Articles synced instantly from WordPress, no waiting for FB to scrape the RSS feed.</li>
+										<li> * <b>Control your Instant Articles</b> Publish, unpublish and manage Instant Articles directly from the WP post page.</li>
+										<li> * <b>Connect via the API</b> The API method converts articles instantly, no more waiting for FaceBook to scrape the RSS feed.</li>
+										<li> * <b>Mass Post Syncer</b> Quickly convert all your WordPress posts to Instant Articles.</li>
 										<li> * <b>Article Import Status</b> Instant Articles Errors &amp; import status display live in every article.</li>
 										<li> * <b>Live Analytics</b> Individual and aggregated site overview.</li>
 										<li> * <b>Placement Manager</b> Automatically add custom code, embeds, ads, images to all or some of your Instant Articles.</li>
@@ -144,35 +161,51 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 						</div>
 					</section>
 
+					<section class="features features-5">
+						<div class="container">
+							<div class="row">
+
+								<div class="child">
+									<h4>Control which posts get converted.</h4>
+									<p>Sometimes you may not want your post to be converted to Instant Articles. With the Premium version you can easily disable or enable Instant Article for any supported post right from the post publish box.</p>
+								</div>
+
+								<div class="child">
+									<img alt="<?php esc_html_e( 'Instant Articles Post Status', 'wp-native-articles' ); ?>" src="<?php echo esc_url( plugins_url( '/assets/img/updates-ia-status.png', WPNA_BASE_FILE ) ); ?>">
+								</div>
+
+							</div>
+						</div>
+					</section>
+
 					<section class="features features-4">
 						<div class="container">
 							<div class="row">
 
 								<div class="child">
-									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/wordpress-instant-articles-api-stats.png', WPNA_BASE_FILE ) ); ?>">
+									<img alt="<?php esc_html_e( 'Mass Post Syncer', 'wp-native-articles' ); ?>" src="<?php echo esc_url( plugins_url( '/assets/img/wordpress-mass-post-syncer.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
+
+								<div class="child">
+									<h4>Convert ALL your WordPress Posts.</h4>
+									<p>Want to convert all your old WordPress posts to Instant Articles? Added a Placement? Made a change to the styling, ads or analytics? With the Mass Post syncer you can easily update Instant Articles version for all or some of your old WordPress posts.</p>
+								</div>
+
+							</div>
+						</div>
+					</section>
+
+					<section class="features features-4">
+						<div class="container">
+							<div class="row">
 
 								<div class="child">
 									<h4>Real Time Analytics.</h4>
 									<p>Live analytics straight from Facebook for each article + aggregated overview analytics for your entire site.</p>
 								</div>
 
-							</div>
-						</div>
-					</section>
-
-					<section class="features features-5">
-						<div class="container">
-							<div class="row">
-
 								<div class="child">
-									<h4>Live Import Status &amp; Selective post sync.</h4>
-									<p>When a post is published or updated the Instant Article status is retrieved live from Facebook and displayed in the Admin. Any errors with the article can be seen immediately.</p>
-									<p>Control which posts you want to convert to Instant Articles or import them as drafts until you're ready to publish.</p>
-								</div>
-
-								<div class="child">
-									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/wordpress-instant-articles-import-status.png', WPNA_BASE_FILE ) ); ?>">
+									<img alt="<?php esc_html_e( 'Instant Articles Analytics', 'wp-native-articles' ); ?>" src="<?php echo esc_url( plugins_url( '/assets/img/wordpress-instant-articles-api-stats.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
 
 							</div>
@@ -183,7 +216,7 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 						<div class="container">
 							<div class="row">
 								<div class="child">
-									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/placement-manager-overview.png', WPNA_BASE_FILE ) ); ?>">
+									<img alt="<?php esc_html_e( 'Placement Manager', 'wp-native-articles' ); ?>" src="<?php echo esc_url( plugins_url( '/assets/img/placement-manager-overview.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
 
 								<div class="child">
@@ -202,19 +235,17 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 							<div class="row">
 
 								<div class="child">
-									<h4>Readable Code.</h4>
-									<p>
-										Coded to WordPress standards, fully commented and contains as many filters and actions as we could possibly fit. The full documentation can be found at <a target="_blank" href="http://docs.wp-native-articles.com">docs.wp-native-articles.com</a>.
-									</p>
+									<h4>Live Import Status.</h4>
+									<p>When a post is published or updated the Instant Article status is retrieved live from Facebook and displayed in the Admin. Any errors with the article can be seen immediately.</p>
 								</div>
 
 								<div class="child">
-									<img alt="Feature Image" src="<?php echo esc_url( plugins_url( '/assets/img/wp-instant-articles-comments-filters.png', WPNA_BASE_FILE ) ); ?>">
+									<img alt="<?php esc_html_e( 'Instant Article Status', 'wp-native-articles' ); ?>" src="<?php echo esc_url( plugins_url( '/assets/img/wordpress-instant-articles-import-status.png', WPNA_BASE_FILE ) ); ?>">
 								</div>
+
 							</div>
 						</div>
 					</section>
-
 
 					<section class="features features-4">
 						<div class="container">
@@ -268,7 +299,12 @@ class WPNA_Admin_Premium extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		do_action( 'add_meta_boxes', $screen->id, null );
 
 		// Add screen option: user can choose between 1 or 2 columns (default 2).
-		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
+		add_screen_option( 'layout_columns',
+			array(
+				'max'     => 2,
+				'default' => 2,
+			)
+		);
 	}
 
 }

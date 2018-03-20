@@ -69,7 +69,7 @@
 									// Manually pass all mime type to wp_check_filetype().
 									// Incase the current user has upload mime type restrictions applied.
 									$mime_types = wp_get_mime_types();
-									$filetype = wp_check_filetype( $video_url, $mime_types );
+									$filetype   = wp_check_filetype( $video_url, $mime_types );
 								?>
 								<source src="<?php echo esc_url( $video_url ); ?>" type="<?php echo esc_attr( $filetype['type'] ); ?>" />
 							</video>
@@ -232,7 +232,7 @@
 				<?php
 				// Check if any manual related articles exist for this post.
 				$manual_related_articles = $post->get_manual_related_articles();
-				if ( ! empty( $manual_related_articles )  ) : ?>
+				if ( ! empty( $manual_related_articles ) ) : ?>
 
 					<ul class="op-related-articles">
 						<?php foreach ( $manual_related_articles as $related_article ) : ?>
@@ -279,8 +279,9 @@
 								$attrs = apply_filters( 'wpna_facebook_article_related_articles_attributes', $attrs, $related_article, $post );
 								?>
 
-								<?php // @codingStandardsIgnoreLine ?>
+								<?php // @codingStandardsIgnoreStart ?>
 								<li<?php echo $attrs; ?>><a href="<?php echo esc_url( get_permalink( $related_article ) ); ?>"></a></li>
+								<?php // @codingStandardsIgnoreEnd ?>
 
 							<?php endforeach; ?>
 						</ul>

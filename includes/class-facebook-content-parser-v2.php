@@ -299,9 +299,11 @@ class WPNA_Facebook_Content_Parser {
 				continue;
 			} elseif ( isset( $override_tags[ $tag ] ) ) {
 				// If the tag has a custom callback, set that.
+				// @codingStandardsIgnoreLine
 				$shortcode_tags[ $tag ] = $override_tags[ $tag ];
 			} else {
 				// Overwrite the callback function.
+				// @codingStandardsIgnoreLine
 				$shortcode_tags[ $tag ] = array( $this, 'default_shortcode_callback' );
 			}
 		}
@@ -401,7 +403,7 @@ class WPNA_Facebook_Content_Parser {
 		// Grab all the comment elements.
 		$nodes = $xpath->query( '//comment()' );
 
-		$i = $nodes->length -1;
+		$i = $nodes->length - 1;
 
 		// Using a regressive loop. When Removing elements with a
 		// foreach loop the index changing can confuse it.
@@ -432,7 +434,7 @@ class WPNA_Facebook_Content_Parser {
 		// Grab figure elements.
 		$nodes = $dom_document->getElementsByTagName( 'figure' );
 
-		$i = $nodes->length -1;
+		$i = $nodes->length - 1;
 
 		// Using a regressive loop. When Removing elements with a
 		// foreach loop the index changing can confuse it.
@@ -474,7 +476,7 @@ class WPNA_Facebook_Content_Parser {
 		// Grab all elements.
 		$nodes = $dom_document->getElementsByTagName( '*' );
 
-		$i = $nodes->length -1;
+		$i = $nodes->length - 1;
 
 		// Using a regressive loop. When Removing elements with a
 		// foreach loop the index changing can confuse it.
@@ -878,8 +880,16 @@ class WPNA_Facebook_Content_Parser {
 
 		$sponsored = $node->getAttribute( 'data-sponsored' );
 
-		// Strip out any attributes.
-		$node = $this->strip_attributes( $node, $dom_document );
+		$node_content = $dom_document->saveXML( $node );
+		$node_content = strip_tags( $node_content, '<strong><b><i><em><a>' );
+
+		$fragment = $dom_document->createDocumentFragment();
+		$fragment->appendXML( $node_content );
+
+		$new_list_element_node = $dom_document->createElement( 'li' );
+		$new_list_element_node->appendChild( $fragment );
+
+		$node->parentNode->replaceChild( $new_list_element_node, $node );
 
 		// If it's a sponsored link add it back.
 		if ( $sponsored ) {
@@ -892,7 +902,7 @@ class WPNA_Facebook_Content_Parser {
 	/**
 	 * Transform <dd> elements.
 	 *
-	 * Converts them to <p> tags with <strong> for emphasis.
+	 * Converts them to <ul> tags with <strong> for emphasis.
 	 *
 	 * @access public
 	 * @param DOMElement $node DOMElement representation of the current node.
@@ -904,26 +914,69 @@ class WPNA_Facebook_Content_Parser {
 			return false;
 		}
 
+		// Just remove it if it's empty.
 		if ( $node->childNodes->length <= 0 ) {
 			$node->parentNode->removeChild( $node );
-
 			return false;
 		}
 
-		$node_content = $dom_document->saveXML( $node );
+		// Create the new <ul> tag.
+		$ul_node = $dom_document->createElement( 'ul' );
 
-		$node_content = str_ireplace( array( '<dd>', '<dl>', '</dl>' ), '', $node_content );
-		$node_content = str_ireplace( '<dt>', '<li><strong>', $node_content );
-		$node_content = str_ireplace( '</dt>', '</strong>', $node_content );
-		$node_content = str_ireplace( '</dd>', '</li>', $node_content );
+		// Grab all the <dd> elements.
+		$dd_nodes = $node->getElementsByTagName( 'dd' );
 
+		$i = $dd_nodes->length - 1;
+
+		// Using a regressive loop. When Removing elements with a
+		// foreach loop the index changing can confuse it.
+		while ( $i > -1 ) {
+			// Setup the node.
+			$child_node = $dd_nodes->item( $i );
+			// Create a new <li> tag.
+			$li_node = $dom_document->createElement( 'li' );
+			// Add in the value from the <dd> element.
+			$li_node->nodeValue = $child_node->nodeValue;
+
+			// Grab the previous sibling.
+			$next = $child_node->previousSibling;
+
+			// Cycle through all the previous sibligns looking for <dt>.
+			while ( $next ) {
+				// Search for the previous <dt> element.
+				if ( 'dt' === $next->nodeName ) {
+					// Check it's got some content (might've been an image that's been removed).
+					if ( ! empty( $next->nodeValue ) ) {
+						// Create a new <strong> tag.
+						$new_strong_node = $dom_document->createElement( 'strong' );
+						// Set the content to the <dt>.
+						$new_strong_node->nodeValue = $next->nodeValue;
+						// Add it in at the begining of the new <li> tag.
+						$li_node->insertBefore( $new_strong_node, $li_node->firstChild );
+					}
+					break;
+				}
+
+				// If we hit another dd element we've gone too far.
+				if ( 'dd' === $next->nodeName ) {
+					break;
+				}
+
+				$next = $next->previousSibling;
+			}
+
+			// Add this new element to the new fragment.
+			$ul_node->appendChild( $li_node );
+
+			$i--;
+		}
+
+		// Create a new document fragment.
 		$fragment = $dom_document->createDocumentFragment();
-		$fragment->appendXML( $node_content );
-
-		$new_list_node = $dom_document->createElement( 'ul' );
-		$new_list_node->appendChild( $fragment );
-
-		$node->parentNode->replaceChild( $new_list_node, $node );
+		// Add our new <ul> element to it.
+		$fragment->appendChild( $ul_node );
+		// Replace the entire <dd> list with the new element.
+		$node->parentNode->replaceChild( $fragment, $node );
 
 		return $node;
 	}
@@ -1054,8 +1107,8 @@ class WPNA_Facebook_Content_Parser {
 					$featured_image_path = $url_parts['path'];
 
 					$featured_image_path_ext = '.' . pathinfo( $featured_image_path, PATHINFO_EXTENSION );
-					$featured_image_path = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
-					$regex = sprintf( '/%s(?:-\d+[Xx]\d+){0,1}%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
+					$featured_image_path     = substr( $featured_image_path, 0, strrpos( $featured_image_path, $featured_image_path_ext ) );
+					$regex                   = sprintf( '/%s(?:-\d+[Xx]\d+){0,1}%s/', preg_quote( $featured_image_path, '/' ), preg_quote( $featured_image_path_ext, '/' ) );
 
 					if ( preg_match( $regex, $node->getAttribute( 'src' ) ) ) {
 						// Remove the element completely.
@@ -1116,7 +1169,7 @@ class WPNA_Facebook_Content_Parser {
 
 					// If we're reasonably confident that it's the same image.
 					// (Some sites use a CDN, this is a sanity check).
-					if ( strcmp( dirname( $possible_large_image ), dirname( $image_source ) ) === 0  ) {
+					if ( strcmp( dirname( $possible_large_image ), dirname( $image_source ) ) === 0 ) {
 						$image_src_large = $possible_large_image;
 					}
 				}
@@ -1178,7 +1231,7 @@ class WPNA_Facebook_Content_Parser {
 			}
 
 			$response_code = wp_remote_retrieve_response_code( $response );
-			$headers = wp_remote_retrieve_headers( $response );
+			$headers       = wp_remote_retrieve_headers( $response );
 
 			// The image doesn't exist, remove it.
 			// If the image is smaller than 1024 bytes, remove it.

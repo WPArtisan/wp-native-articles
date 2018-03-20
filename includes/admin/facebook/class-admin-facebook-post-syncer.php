@@ -215,9 +215,9 @@ class WPNA_Admin_Facebook_Post_Syncer extends WPNA_Admin_Base implements WPNA_Ad
 						<select name="categories[]" id="categories" class="postform" disabled="disabled">
 							<option value="0" selected="selected"><?php esc_html_e( 'All', 'wp-native-articles' ); ?></option>
 							<?php $categories = get_categories( array( 'hide_empty' => false ) ); ?>
-							<?php foreach ( $categories as $category ) :?>
+							<?php foreach ( $categories as $category ) : ?>
 								<option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_html( $category->name ); ?></option>
-							<?php endforeach;?>
+							<?php endforeach; ?>
 						</select>
 					</label>
 				</li>
@@ -227,20 +227,27 @@ class WPNA_Admin_Facebook_Post_Syncer extends WPNA_Admin_Base implements WPNA_Ad
 					<span class="label-responsive"><?php esc_html_e( 'Authors', 'wp-native-articles' ); ?>:</span>
 					<select name="authors[]" id="authors" class="postform" disabled="disabled">
 						<option value="0" selected="selected"><?php esc_html_e( 'All', 'wp-native-articles' ); ?></option>
-						<?php $users = get_users( array( 'orderby' => 'nicename', 'fields' => array( 'ID', 'display_name' ) ) ); ?>
-						<?php foreach ( $users as $user ) :?>
+						<?php
+							$users = get_users(
+								array(
+									'orderby' => 'nicename',
+									'fields'  => array( 'ID', 'display_name' ),
+								)
+							);
+						?>
+						<?php foreach ( $users as $user ) : ?>
 							<option value="<?php echo esc_attr( $user->ID ); ?>"><?php echo esc_html( $user->display_name ); ?></option>
-						<?php endforeach;?>
+						<?php endforeach; ?>
 					</select>
 				</li>
 
 				<?php do_action( 'wpna_post_syncer_form_before_date' ); ?>
 				<li>
 					<fieldset>
-						<legend class="screen-reader-text"><?php esc_html_e( 'Date range:' ); ?></legend>
-						<label for="post-start-date" class="label-responsive"><?php esc_html_e( 'Start date' ); ?>:</label>
+						<legend class="screen-reader-text"><?php esc_html_e( 'Date range:', 'wp-native-articles' ); ?></legend>
+						<label for="post-start-date" class="label-responsive"><?php esc_html_e( 'Start date', 'wp-native-articles' ); ?>:</label>
 						<input type="date" id="post-start-date" name="post_start_date" value="" disabled="disabled" />
-						<label for="post-end-date" class="label-responsive"><?php esc_html_e( 'End date' ); ?>:</label>
+						<label for="post-end-date" class="label-responsive"><?php esc_html_e( 'End date', 'wp-native-articles' ); ?>:</label>
 						<input type="date" id="post-end-date" name="post_end_date" value="" disabled="disabled" />
 					</fieldset>
 				</li>

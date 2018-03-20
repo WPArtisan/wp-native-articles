@@ -47,6 +47,7 @@ if ( ! function_exists( 'wpna_uninstall' ) ) :
 					delete_blog_option( absint( $site->blog_id ), 'wpna_options' );
 				}
 			} elseif ( function_exists( 'wp_get_sites' ) ) {
+				// @codingStandardsIgnoreLine
 				$sites = wp_get_sites();
 				foreach ( $sites as $site ) {
 					delete_blog_option( absint( $site['blog_id'] ), 'wpna_options' );

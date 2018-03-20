@@ -178,7 +178,12 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		do_action( 'add_meta_boxes', $screen->id, null );
 
 		// Add screen option: user can choose between 1 or 2 columns (default 2).
-		add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
+		add_screen_option( 'layout_columns',
+			array(
+				'max'     => 2,
+				'default' => 2,
+			)
+		);
 	}
 
 	/**
@@ -192,20 +197,70 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @return void
 	 */
 	public function general_tab_callback() {
-		$allowed_html = array( 'a' => array( 'href' => array(), 'target' => array() ) );
+		$allowed_html = array(
+			'a' => array(
+				'href'   => array(),
+				'target' => array(),
+			),
+		);
 		?>
 		<h1><?php esc_html_e( 'Support', 'wp-native-articles' ); ?></h1>
 
 		<h3><?php esc_html_e( 'Documentation &amp; Knowledge Base', 'wp-native-articles' ); ?></h3>
-		<p><?php echo sprintf( wp_kses( __( 'Documentation, tutorials and knowledge base for both the free and pro versions of the plugin can be found at <a target="_blank" href="%s">docs.wp-native-articles.com</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'http://docs.wp-native-articles.com' ) );?></p>
+		<p>
+			<?php echo sprintf(
+				wp_kses(
+					// translators: Placeholder is the URL to the docs site.
+					__( 'Documentation, tutorials and knowledge base for both the free and pro versions of the plugin can be found at <a target="_blank" href="%s">docs.wp-native-articles.com</a>.', 'wp-native-articles' ),
+					$allowed_html
+				),
+				esc_url( 'http://docs.wp-native-articles.com' )
+			); ?>
+		</p>
 
 		<h3><?php esc_html_e( 'Bugs and Support', 'wp-native-articles' ); ?></h3>
-		<p><?php echo sprintf( wp_kses( __( 'All bugs for the free version of the plugin should be reported via the <a target="_blank" href="%s">WordPress plugin support forum</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/support/plugin/wp-native-articles' ) );?></p>
-		<p><?php echo sprintf( wp_kses( __( 'If you have the Pro version of the plugin you can access our premium support and email us directly by visiting your account <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wp-native-articles.com/account/' ) );?></p>
+		<p>
+			<?php echo sprintf(
+				wp_kses(
+					// translators: Placeholder is the URL to the support forums.
+					__( 'All bugs for the free version of the plugin should be reported via the <a target="_blank" href="%s">WordPress plugin support forum</a>.', 'wp-native-articles' ),
+					$allowed_html
+				),
+				esc_url( 'https://wordpress.org/support/plugin/wp-native-articles' )
+			); ?>
+		</p>
+		<p>
+			<?php echo sprintf(
+				wp_kses(
+					// translators: Placeholder is the URL account page.
+					__( 'If you have the Pro version of the plugin you can access our premium support and email us directly by visiting your account <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ),
+					$allowed_html
+				),
+				esc_url( 'https://wp-native-articles.com/account/' )
+			); ?>
+		</p>
 
 		<h3><?php esc_html_e( 'FAQs', 'wp-native-articles' ); ?></h3>
-		<p><?php echo sprintf( wp_kses( __( 'Popular FAQs regarding the free version are included in the WordPress readme <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wordpress.org/plugins/wp-native-articles/' ) );?></p>
-		<p><?php echo sprintf( wp_kses( __( 'Further FAQs can be found on our website <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ), $allowed_html ), esc_url( 'https://wp-native-articles.com/#faqs' ) );?></p>
+		<p>
+			<?php echo sprintf(
+				wp_kses(
+					// translators: Placeholder is the URL to the plugin on WordPress.org.
+					__( 'Popular FAQs regarding the free version are included in the WordPress readme <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ),
+					$allowed_html
+				),
+				esc_url( 'https://wordpress.org/plugins/wp-native-articles/' )
+			); ?>
+		</p>
+		<p>
+			<?php echo sprintf(
+				wp_kses(
+					// translators: Placeholder is the URL to the FAQs on wp-native-articles.com.
+					__( 'Further FAQs can be found on our website <a target="_blank" href="%s">here</a>.', 'wp-native-articles' ),
+					$allowed_html
+				),
+				esc_url( 'https://wp-native-articles.com/#faqs' )
+			); ?>
+		</p>
 		<?php
 	}
 
@@ -229,19 +284,19 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		<table class="widefat fixed" cellspacing="0">
 			<tbody>
 				<tr>
-					<td class="param"><?php esc_html_e( 'WordPress Version', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'WordPress Version', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php bloginfo( 'version', __( 'Unavailable', 'wp-native-articles' ) ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Site URL', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Site URL', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php bloginfo( 'url', esc_html__( 'Unavailable', 'wp-native-articles' ) ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Active Theme', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Active Theme', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( wp_get_theme() ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'User Operating System', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'User Operating System', 'wp-native-articles' ); ?>:</td>
 					<td class="value">
 						<?php
 						$user_agent = null;
@@ -259,27 +314,27 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 					</td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'PHP Version', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'PHP Version', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo function_exists( 'phpversion' ) ? esc_html( phpversion() ) : esc_html__( 'Unavailable', 'wp-native-articles' ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'MySql Version', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'MySql Version', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( $this->get_mysql_version() ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Memory Limit', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Memory Limit', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( WP_MEMORY_LIMIT ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Upload Max Filesize', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Upload Max Filesize', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( ini_get( 'upload_max_filesize' ) ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Post Max Size', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Post Max Size', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( ini_get( 'post_max_size' ) ); ?></td>
 				</tr>
 				<tr>
-					<td class="param"><?php esc_html_e( 'Max Execution Time', 'wp-native-articles' ) ?>:</td>
+					<td class="param"><?php esc_html_e( 'Max Execution Time', 'wp-native-articles' ); ?>:</td>
 					<td class="value"><?php echo esc_html( sprintf( '%s %s', ini_get( 'max_execution_time' ), esc_html__( 'seconds', 'wp-native-articles' ) ) ); ?></td>
 				</tr>
 			</tbody>
@@ -352,17 +407,15 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 			'WP_CONTENT_URL'              => WP_CONTENT_URL,
 			'WP_PLUGIN_DIR'               => WP_PLUGIN_DIR,
 			'WP_PLUGIN_URL'               => WP_PLUGIN_URL,
-			'PLUGINDIR'                   => PLUGINDIR,
 			'WPMU_PLUGIN_DIR'             => WPMU_PLUGIN_DIR,
 			'WPMU_PLUGIN_URL'             => WPMU_PLUGIN_URL,
-			'MUPLUGINDIR'                 => MUPLUGINDIR,
 			'FORCE_SSL_ADMIN'             => FORCE_SSL_ADMIN,
 			'AUTOSAVE_INTERVAL'           => AUTOSAVE_INTERVAL,
 			'EMPTY_TRASH_DAYS'            => EMPTY_TRASH_DAYS,
 			'WP_POST_REVISIONS'           => WP_POST_REVISIONS,
 			'WP_CRON_LOCK_TIMEOUT'        => WP_CRON_LOCK_TIMEOUT,
-			'TEMPLATEPATH'                => TEMPLATEPATH,
-			'STYLESHEETPATH'              => STYLESHEETPATH,
+			'TEMPLATEPATH'                => get_template_directory(),
+			'STYLESHEETPATH'              => get_stylesheet_directory(),
 		);
 
 		// WordPress Plugin details.
@@ -431,7 +484,7 @@ class WPNA_Admin_Support extends WPNA_Admin_Base implements WPNA_Admin_Interface
 				$server = 'localhost';
 			}
 
-			$memcache = new Memcache;
+			$memcache = new Memcache();
 			try {
 				$is_memcache_available = $memcache->connect( $server );
 

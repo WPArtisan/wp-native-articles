@@ -82,8 +82,14 @@ class WPNA_Analytics_Google_Analytics {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'GADWP Plugin found but it has not yet been <a target="_blank" href="%s">authorised</a>.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/admin.php?page=gadash_settings' ) )
 						); ?>
@@ -98,7 +104,7 @@ class WPNA_Analytics_Google_Analytics {
 					</label>
 				<?php endif; ?>
 			</div>
-		<?php endif;?>
+		<?php endif; ?>
 
 		<?php if ( function_exists( 'MonsterInsights' ) ) : ?>
 			<div>
@@ -113,8 +119,14 @@ class WPNA_Analytics_Google_Analytics {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'MonsterInsights Plugin found but no <a target="_blank" href="%s">tracking code</a> has been set yet.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/admin.php?page=monsterinsights_settings' ) )
 						); ?>
@@ -145,8 +157,14 @@ class WPNA_Analytics_Google_Analytics {
 						<p>
 							<?php echo sprintf(
 								wp_kses(
+									// translators: Placeholder is the URL to the plugin.
 									__( 'Google Analytics Plugin found but <a target="_blank" href="%s">All Features</a> are disabled.', 'wp-native-articles' ),
-									array( 'a' => array( 'href' => array(), 'target' => array() ) )
+									array(
+										'a' => array(
+											'href'   => array(),
+											'target' => array(),
+										),
+									)
 								),
 								esc_url( admin_url( '/admin.php?page=googleanalytics/settings' ) )
 							); ?>
@@ -155,8 +173,14 @@ class WPNA_Analytics_Google_Analytics {
 						<p>
 							<?php echo sprintf(
 								wp_kses(
+									// translators: Placeholder is the URL to the plugin.
 									__( 'Google Analytics Plugin found but no <a target="_blank" href="%s">Tracking Code</a> was found.', 'wp-native-articles' ),
-									array( 'a' => array( 'href' => array(), 'target' => array() ) )
+									array(
+										'a' => array(
+											'href'   => array(),
+											'target' => array(),
+										),
+									)
 								),
 								esc_url( admin_url( '/admin.php?page=googleanalytics/settings' ) )
 							); ?>
@@ -170,7 +194,7 @@ class WPNA_Analytics_Google_Analytics {
 							<?php esc_html_e( 'Enable this tracking code', 'wp-native-articles' ); ?>
 						</label>
 
-					<?php endif;?>
+					<?php endif; ?>
 				</div>
 		<?php endif; ?>
 
@@ -191,8 +215,14 @@ class WPNA_Analytics_Google_Analytics {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'GA Google Analytics Plugin found but <a target="_blank" href="%s">analytics are disabled</a>.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/options-general.php?page=ga-google-analytics/ga-google-analytics.php' ) )
 						); ?>
@@ -201,8 +231,14 @@ class WPNA_Analytics_Google_Analytics {
 					<p>
 						<?php echo sprintf(
 							wp_kses(
+								// translators: Placeholder is the URL to the plugin.
 								__( 'GA Google Analytics Plugin found but no <a target="_blank" href="%s">tracking code</a>.', 'wp-native-articles' ),
-								array( 'a' => array( 'href' => array(), 'target' => array() ) )
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
 							),
 							esc_url( admin_url( '/options-general.php?page=ga-google-analytics/ga-google-analytics.php' ) )
 						); ?>

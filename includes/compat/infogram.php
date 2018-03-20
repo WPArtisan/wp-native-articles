@@ -50,7 +50,10 @@ if ( ! function_exists( 'wpna_infogram_embed' ) ) :
 				'id'     => '',
 				'prefix' => '',
 				'format' => 'interactive',
-		), $atts, 'id' );
+			),
+			$atts,
+			'id'
+		);
 
 		if ( empty( $atts['id'] ) ) {
 			return esc_html_e( 'id is required', 'wp-native-articles' );
@@ -64,7 +67,7 @@ if ( ! function_exists( 'wpna_infogram_embed' ) ) :
 		}
 
 		// Construct the async JS.
-		$output = '<figure class="op-interactive">';
+		$output  = '<figure class="op-interactive">';
 		$output .= '<iframe>';
 		$output .= '<div class="infogram-embed" data-id="' . esc_attr( $atts['id'] ) . '" data-type="' . esc_attr( $format ) . '"></div>';
 		$output .= '<script>!function(e,t,n,s){var i="InfogramEmbeds",o=e.getElementsByTagName(t),d=o[0],a=/^http:/.test(e.location)?"http:":"https:";if(/^\/{2}/.test(s)&&(s=a+s),window[i]&&window[i].initialized)window[i].process&&window[i].process();else if(!e.getElementById(n)){var r=e.createElement(t);r.async=1,r.id=n,r.src=s,d.parentNode.insertBefore(r,d)}}(document,"script","infogram-async","//e.infogr.am/js/dist/embed-loader-min.js");</script>';

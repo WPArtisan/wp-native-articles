@@ -24,17 +24,17 @@ function wpna_placements_contextual_help() {
 
 	// Default help tab.
 	$screen->add_help_tab( array(
-		'id'       => 'wpna-placement-general',
-		'title'    => esc_html__( 'Default', 'wp-native-articles' ),
-		'content'  => 'Placements are an easy way of adding any content you like within your Instant Articles.',
+		'id'      => 'wpna-placement-general',
+		'title'   => esc_html__( 'Default', 'wp-native-articles' ),
+		'content' => 'Placements are an easy way of adding any content you like within your Instant Articles.',
 	));
 
 	// Adding Placements help tab.
 	// @codingStandardsIgnoreStart
 	$screen->add_help_tab( array(
-		'id'       => 'wpna-placement-add',
-		'title'    => esc_html__( 'Add Placement', 'wp-native-articles' ),
-		'content'  =>
+		'id'      => 'wpna-placement-add',
+		'title'   => esc_html__( 'Add Placement', 'wp-native-articles' ),
+		'content' =>
 			'<p>' . esc_html__( 'You can easily create any number of Placements using this page.', 'wp-native-articles' ) . '</p>',
 	));
 

@@ -239,7 +239,7 @@ class WPNA_Multisite_Admin {
 	 */
 	public function access_level_field_callback( $args ) {
 		$options = get_site_option( 'wpna_options' );
-		$value = isset( $options['access_level'] ) ? $options['access_level'] : null;
+		$value   = isset( $options['access_level'] ) ? $options['access_level'] : null;
 		?>
 		<select name="wpna_options[access_level]" id="access_level">
 			<option value="administrator"<?php selected( $value, 'administrator' ); ?>><?php esc_html_e( 'Administrator', 'wp-native-articles' ); ?></option>
@@ -264,7 +264,7 @@ class WPNA_Multisite_Admin {
 	 */
 	public function inherit_id_field_callback( $args ) {
 		$options = get_site_option( 'wpna_options' );
-		$value = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
+		$value   = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
 		?>
 		<input type="number" id="inheit_id" name="wpna_options[inherit_id]" value="<?php echo absint( $value ); ?>" min="0" class="regular-text">
 		<p class="description"><?php esc_html_e( 'When creating a new site inherit settings from this site.', 'wp-native-articles' ); ?></p>
@@ -288,7 +288,7 @@ class WPNA_Multisite_Admin {
 		$values = array();
 
 		if ( ! empty( $data['access_level'] ) ) {
-			$values['access_level'] = in_array( $data['access_level'], array( 'administrator', 'network_administrator' ), true ) ? $data['access_level'] : 'administrator' ;
+			$values['access_level'] = in_array( $data['access_level'], array( 'administrator', 'network_administrator' ), true ) ? $data['access_level'] : 'administrator';
 		}
 
 		if ( ! empty( $data['inherit_id'] ) ) {
@@ -347,7 +347,10 @@ class WPNA_Multisite_Admin {
 		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
-				array( 'page' => $this->page_slug, 'wpna-message' => $updated ? 'multisite_options_update_success' : 'multisite_options_update_error' ),
+				array(
+					'page'         => $this->page_slug,
+					'wpna-message' => $updated ? 'multisite_options_update_success' : 'multisite_options_update_error',
+				),
 				network_admin_url( 'admin.php' )
 			)
 		);
@@ -454,7 +457,7 @@ class WPNA_Multisite_Admin {
 			$notice = 'multisite_reset_error_missing_id';
 		} else {
 			// Get the ID of the blog to copy the options from.
-			$options = get_site_option( 'wpna_options' );
+			$options       = get_site_option( 'wpna_options' );
 			$souce_blog_id = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
 
 			// Reset the blog options.
@@ -467,7 +470,10 @@ class WPNA_Multisite_Admin {
 		// Redirect back with a notice flag.
 		wp_safe_redirect(
 			add_query_arg(
-				array( 'page' => $this->page_slug, 'wpna-message' => $notice ),
+				array(
+					'page'         => $this->page_slug,
+					'wpna-message' => $notice,
+				),
 				network_admin_url( 'admin.php' )
 			)
 		);
@@ -494,15 +500,16 @@ class WPNA_Multisite_Admin {
 	 * @return void
 	 */
 	public function new_blog_defaults( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
-		$options = get_site_option( 'wpna_options' );
+		$options       = get_site_option( 'wpna_options' );
 		$souce_blog_id = isset( $options['inherit_id'] ) ? $options['inherit_id'] : get_current_blog_id();
+
 		$this->set_blog_defaults( absint( $souce_blog_id ), absint( $blog_id ) );
 	}
 
 	/**
 	 * Copies all `wpna` options from one blog to another.
 	 *
-	 * If you need to filter this us the WordPRess update_blog_option filters.
+	 * If you need to filter this us the WordPress update_blog_option filters.
 	 *
 	 * @since 1.0.0
 	 *
@@ -554,6 +561,7 @@ class WPNA_Multisite_Admin {
 			// Cycle through the menu and set the new capabilities.
 			if ( ! empty( $submenu['wpna_general'] ) ) {
 				foreach ( $submenu['wpna_general'] as $position => $data ) {
+					// @codingStandardsIgnoreLine
 					$submenu['wpna_general'][ $position ][1] = $access_level;
 				}
 			}
