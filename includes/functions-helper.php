@@ -649,7 +649,7 @@ if ( ! function_exists( 'wpna_should_convert_post_ia' ) ) :
 		 * @var bool
 		 * @var WP_Post
 		 */
-		$return = apply_filters( 'wpna_should_convert_post_ia', 'wp-native-articles', $return, $wp_post );
+		$return = apply_filters( 'wpna_should_convert_post_ia', $return, $wp_post );
 
 		return $return;
 	}

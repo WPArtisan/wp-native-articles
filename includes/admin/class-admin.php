@@ -196,14 +196,14 @@ class WPNA_Admin extends WPNA_Admin_Base {
 		// Edit post and New post pages.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) ) {
 			if ( in_array( get_post_type(), wpna_allowed_post_types(), true ) ) {
-				wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', WPNA_BASE_FILE ), '0.6.1', true );
-				wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', WPNA_BASE_FILE ), WPNA_VERSION );
+				wp_enqueue_style( 'pure', plugins_url( '/assets/css/pure-min.css', WPNA_BASE_FILE ), null, '0.6.1' );
+				wp_enqueue_style( 'wpna-admin-post', plugins_url( '/assets/css/post.css', WPNA_BASE_FILE ), null, WPNA_VERSION );
 			}
 		}
 
 		// Main plugin options page CSS.
 		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'toplevel_page_wpna_general', 'toplevel_page_wpna_facebook', 'native-articles_page_wpna_facebook', 'native-articles_page_wpna_placements', 'native-articles_page_wpna_transformers' ), true ) ) {
-			wp_enqueue_style( 'wpna-admin', plugins_url( '/assets/css/admin.css', WPNA_BASE_FILE ), WPNA_VERSION );
+			wp_enqueue_style( 'wpna-admin', plugins_url( '/assets/css/admin.css', WPNA_BASE_FILE ), null, WPNA_VERSION );
 		}
 
 	}
