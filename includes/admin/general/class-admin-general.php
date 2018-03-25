@@ -51,7 +51,7 @@ class WPNA_Admin_General extends WPNA_Admin_Base implements WPNA_Admin_Interface
 	 * @return void
 	 */
 	public function page_hooks() {
-		add_action( current_action(), array( $this, 'setup_tabs' ), 11 );
+		add_action( current_filter(), array( $this, 'setup_tabs' ), 11 );
 	}
 
 	/**
@@ -414,9 +414,14 @@ class WPNA_Admin_General extends WPNA_Admin_Base implements WPNA_Admin_Interface
 							<td class="wide subtitle"><?php esc_html_e( '- Active Analytics Integrations', 'wp-native-articles' ); ?></td>
 							<td class="">
 								<?php
-								$analytics_nice_names                  = wpna()->admin_facebook_analytics->get_integrations();
-								$active_analytics_providers_nice_names = array_intersect_key( $analytics_nice_names, array_flip( $active_analytics_providers ) );
-								echo esc_html( implode( ', ', $active_analytics_providers_nice_names ) ); ?>
+								// Important PHP 5.2 compat. Can only array_flip int & string. Can't nest functions in empty().
+								$active_analytics_providers = array_filter( $active_analytics_providers );
+								if ( ! empty( $active_analytics_providers ) ) {
+									$analytics_nice_names                  = wpna()->admin_facebook_analytics->get_integrations();
+									$active_analytics_providers_nice_names = array_intersect_key( $analytics_nice_names, array_flip( $active_analytics_providers ) );
+									echo esc_html( implode( ', ', $active_analytics_providers_nice_names ) );
+								}
+								?>
 							</td>
 						</tr>
 

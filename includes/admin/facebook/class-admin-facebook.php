@@ -124,8 +124,8 @@ class WPNA_Admin_Facebook extends WPNA_Admin_Base implements WPNA_Admin_Interfac
 	 * @return void
 	 */
 	public function page_hooks() {
-		add_action( current_action(), array( $this, 'setup_tabs' ), 11, 0 );
-		add_action( current_action(), array( $this, 'setup_meta_boxes' ), 11, 0 );
+		add_action( current_filter(), array( $this, 'setup_tabs' ), 11, 0 );
+		add_action( current_filter(), array( $this, 'setup_meta_boxes' ), 11, 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10, 0 );
 	}
 

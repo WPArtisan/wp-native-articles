@@ -104,11 +104,11 @@ class WPNA_Admin_Transformers extends WPNA_Admin_Base implements WPNA_Admin_Inte
 	public function page_hooks() {
 		// @todo Add better help.
 		if ( 1 === 2 ) {
-			add_action( current_action(), 'wpna_transformers_contextual_help', 10, 0 );
+			add_action( current_filter(), 'wpna_transformers_contextual_help', 10, 0 );
 		}
 
-		add_action( current_action(), array( $this, 'setup_admin_transformers_list_table' ), 10, 0 );
-		add_action( current_action(), array( $this, 'add_screen_options' ), 10, 0 );
+		add_action( current_filter(), array( $this, 'setup_admin_transformers_list_table' ), 10, 0 );
+		add_action( current_filter(), array( $this, 'add_screen_options' ), 10, 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10, 1 );
 	}
 

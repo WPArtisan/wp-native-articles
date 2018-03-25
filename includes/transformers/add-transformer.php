@@ -204,7 +204,7 @@ $facebook_transformers = wpna_facebook_sdk_rules();
 						<p class="description">
 							<?php echo wp_kses(
 								// translators: Placeholder is literal.
-								__( 'Match wildcard strings with <b>%%s</b>.', 'wp-native-articles' ),
+								__( 'Match wildcard strings with <b>%s</b>.', 'wp-native-articles' ),
 								array(
 									'b' => array(),
 								)
@@ -292,7 +292,7 @@ $facebook_transformers = wpna_facebook_sdk_rules();
 					</th>
 					<td>
 						<textarea class="js-trigger-properties" rows="8" cols="50" name="properties" placeholder='{
-	anchor.href" : {
+	"anchor.href" : {
 		"type" : "string",
 		"selector" : "span.custom-href",
 		"attribute": "data-link"

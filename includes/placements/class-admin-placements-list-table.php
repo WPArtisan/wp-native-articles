@@ -247,6 +247,11 @@ class WPNA_Admin_Placements_List_Table extends WP_List_Table {
 	public function get_items() {
 		global $wpdb;
 
+		// Only show for premium users.
+		if ( ! defined( 'WPNA_PREMIUM' ) || ! WPNA_PREMIUM ) {
+			return;
+		}
+
 		// Ordering parameters.
 		$order = 'ASC';
 		// @codingStandardsIgnoreLine

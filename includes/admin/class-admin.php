@@ -335,7 +335,7 @@ class WPNA_Admin extends WPNA_Admin_Base {
 	 * @param  bool $update  Whether this is an existing post being updated or not.
 	 * @return void
 	 */
-	public function save_post_meta( $post_id, $post, $update ) {
+	public function save_post_meta( $post_id, $post, $update = false ) {
 
 		// Don't save if it's an autosave.
 		if ( wp_is_post_autosave( $post_id ) ) {

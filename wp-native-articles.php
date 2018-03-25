@@ -4,7 +4,7 @@
  * Description: Advanced Facebook Instant Articles integration for WordPress
  * Author: OzTheGreat (WPArtisan)
  * Author URI: https://wpartisan.me
- * Version: 1.5.1
+ * Version: 1.5.2
  * Plugin URI: https://wp-native-articles.com
  *
  * @package wp-native-articles
@@ -43,7 +43,7 @@ if ( ! class_exists( 'WP_Native_Articles' ) ) :
 		 * @since  1.5.0
 		 * @var    string
 		 */
-		private $version = '1.5.1';
+		private $version = '1.5.2';
 
 		/**
 		 * The shortcodes class.
@@ -293,6 +293,11 @@ if ( ! class_exists( 'WP_Native_Articles' ) ) :
 		 * @return void
 		 */
 		private function includes() {
+			// Only incldue these if the PHP version is high enough.
+			if ( version_compare( PHP_VERSION, '5.4', '>=' ) ) {
+				require WPNA_BASE_PATH . '/vendor/autoload.php';
+				require WPNA_BASE_PATH . '/includes/transformers/actions-transformers-facebook.php';
+			}
 			require WPNA_BASE_PATH . '/class-activator.php';
 			require WPNA_BASE_PATH . '/class-deactivator.php';
 			require WPNA_BASE_PATH . '/includes/functions-helper.php';

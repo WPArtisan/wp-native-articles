@@ -302,7 +302,7 @@ $transformer = wpna_get_transformer( $transformer_id );
 					</th>
 					<td>
 						<textarea class="js-trigger-properties" rows="8" cols="50" name="properties" placeholder='{
-	anchor.href" : {
+	"anchor.href" : {
 		"type" : "string",
 		"selector" : "span.custom-href",
 		"attribute": "data-link"

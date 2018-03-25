@@ -768,3 +768,20 @@ if ( ! function_exists( 'wpna_parse_url' ) ) :
 		return $url_parts;
 	}
 endif;
+
+if ( ! function_exists( 'wp_json_encode' ) ) :
+
+	/**
+	 * WP function wp_json_encode() wasn't added until WP 4.1.
+	 * It's not a full port, we don't care much about the other two params.
+	 *
+	 * @param  mixed $data The data to encode.
+	 * @param  int   $options Encode options.
+	 * @param  int   $depth The depth to encode to.
+	 * @return array
+	 */
+	function wp_json_encode( $data, $options = 0, $depth = 512 ) {
+		// @codingStandardsIgnoreLine
+		return json_encode( $data );
+	}
+endif;
