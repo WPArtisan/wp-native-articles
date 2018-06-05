@@ -216,7 +216,7 @@ class WPNA_Admin_Facebook_Post_Syncer extends WPNA_Admin_Base implements WPNA_Ad
 							<option value="0" selected="selected"><?php esc_html_e( 'All', 'wp-native-articles' ); ?></option>
 							<?php $categories = get_categories( array( 'hide_empty' => false ) ); ?>
 							<?php foreach ( $categories as $category ) : ?>
-								<option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_html( $category->name ); ?></option>
+								<option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_html( $category->name ); ?> (<?php echo esc_html( $category->count ); ?>)</option>
 							<?php endforeach; ?>
 						</select>
 					</label>

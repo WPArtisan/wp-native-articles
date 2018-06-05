@@ -179,8 +179,6 @@ class WPNA_Facebook_Content_Parser {
 
 		add_filter( 'wpna_facebook_article_content_transform_node_ul',         array( $this, 'transform_list' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_ol',         array( $this, 'transform_list' ), 10, 2 );
-		add_filter( 'wpna_facebook_article_content_transform_node_li',         array( $this, 'transform_list_element' ), 10, 2 );
-		add_filter( 'wpna_facebook_article_content_transform_node_li',         array( $this, 'unwrap_image' ), 10, 2 );
 		add_filter( 'wpna_facebook_article_content_transform_node_dl',         array( $this, 'transform_description' ), 10, 2 );
 
 		add_filter( 'wpna_facebook_article_content_transform_node_code',       array( $this, 'check_not_empty' ), 10, 2 );
@@ -832,6 +830,8 @@ class WPNA_Facebook_Content_Parser {
 	 * Transform <ul> elements.
 	 *
 	 * Strips attributes. Checks if it's a related articles list or not.
+	 * Checks child elements for images and other media. If any are found
+	 * then it splits the list at that point.
 	 *
 	 * @access public
 	 * @param DOMElement $node DOMElement representation of the current node.
@@ -843,58 +843,117 @@ class WPNA_Facebook_Content_Parser {
 			return false;
 		}
 
+		// Going to hold the new list(s).
+		$document_fragment_template = $dom_document->createDocumentFragment();
+
+		// The empty template for the new list.
+		$new_list_node_template = $dom_document->createElement( $node->nodeName );
+
+		// Get the class and title from the current list.
 		$class = $node->getAttribute( 'class' );
 		$title = $node->getAttribute( 'title' );
-
-		// Strip out any attributes.
-		$node = $this->strip_attributes( $node, $dom_document );
 
 		// If it's a related articles block add it as a class.
 		if ( 0 === strpos( $class, 'op-related-articles' ) ) {
 
-			$node->setAttribute( 'class', 'op-related-articles' );
+			$new_list_node_template->setAttribute( 'class', 'op-related-articles' );
 
 			// If it also had a title add it back.
 			if ( $title ) {
-				$node->setAttribute( 'title', esc_attr( $title ) );
+				$new_list_node_template->setAttribute( 'title', esc_attr( $title ) );
 			}
 		}
 
-		return $node;
-	}
+		$new_list_fragment = clone $document_fragment_template;
 
-	/**
-	 * Transform <li> elements.
-	 *
-	 * Strips attributes. Checks if it's a sponsored link or not.
-	 *
-	 * @access public
-	 * @param DOMElement $node DOMElement representation of the current node.
-	 * @param DOMElement $dom_document DOM representation of the content.
-	 * @return false|DOMDocument $dom_document DOM representation of the content.
-	 */
-	public function transform_list_element( $node, $dom_document ) {
-		if ( ! $node ) {
-			return false;
+		// Create our first list element.
+		$new_list_node = clone $new_list_node_template;
+
+		// Get all the li elements of the list. We're not interested
+		// in any other elements that shouldn't be there.
+		$list_elements = $node->getElementsByTagName( 'li' );
+
+		// The order is important.
+		$nodes_to_check_for = array( 'figure', 'img', 'pre' );
+
+		$i = $list_elements->length - 1;
+
+		// Using a regressive loop. When Removing elements with a
+		// foreach loop the index changing can confuse it.
+		while ( $i > -1 ) {
+
+			// Setup the node.
+			$child_node = $list_elements->item( 0 );
+
+			// Add the node to the new list first.
+			$new_list_node->appendChild( $child_node );
+
+			foreach ( $nodes_to_check_for as $node_to_check_for ) {
+
+				$child_child_nodes = $child_node->getElementsByTagName( $node_to_check_for );
+
+				if ( $child_child_nodes->length > 0 ) {
+
+					$fragment_nodes_to_move = clone $document_fragment_template;
+
+					$j = $child_child_nodes->length - 1;
+
+					// Using a regressive loop. When Removing elements with a
+					// foreach loop the index changing can confuse it.
+					while ( $j > -1 ) {
+						// Setup the node.
+						$child_child_node = $child_child_nodes->item( $j );
+
+						$fragment_nodes_to_move->appendChild( $child_child_node );
+
+						$j--;
+					}
+
+					// Add the new list node to the new fragment we're building.
+					$new_list_fragment->appendChild( $new_list_node );
+
+					// Add the images in after the new list node.
+					$new_list_fragment->appendChild( $fragment_nodes_to_move );
+
+					// Create a new list node and start building that.
+					$new_list_node = clone $new_list_node_template;
+				}
+			}
+
+			// If the image was the only content in the list element then
+			// we can remove the now empty element from the fragment.
+			if ( $child_node->childNodes->length <= 0 ) {
+				$child_node->parentNode->removeChild( $child_node );
+			} else {
+				$sponsored = $child_node->getAttribute( 'data-sponsored' );
+
+				$child_node_content = $dom_document->saveXML( $child_node );
+				$child_node_content = strip_tags( $child_node_content, '<strong><b><i><em><a>' );
+
+				$child_node_fragment = $dom_document->createDocumentFragment();
+				$child_node_fragment->appendXML( $child_node_content );
+
+				$new_list_element_node = $dom_document->createElement( 'li' );
+				$new_list_element_node->appendChild( $child_node_fragment );
+
+				// If it's a sponsored link add it back.
+				if ( $sponsored ) {
+					$new_list_element_node->setAttribute( 'data-sponsored', 'true' );
+				}
+
+				$child_node->parentNode->replaceChild( $new_list_element_node, $child_node );
+			}
+
+			$i--;
 		}
 
-		$sponsored = $node->getAttribute( 'data-sponsored' );
-
-		$node_content = $dom_document->saveXML( $node );
-		$node_content = strip_tags( $node_content, '<strong><b><i><em><a>' );
-
-		$fragment = $dom_document->createDocumentFragment();
-		$fragment->appendXML( $node_content );
-
-		$new_list_element_node = $dom_document->createElement( 'li' );
-		$new_list_element_node->appendChild( $fragment );
-
-		$node->parentNode->replaceChild( $new_list_element_node, $node );
-
-		// If it's a sponsored link add it back.
-		if ( $sponsored ) {
-			$node->setAttribute( 'data-sponsored', 'true' );
+		// Add the new list to the fragment if it's not empty.
+		if ( '' !== $new_list_node->nodeValue && $new_list_node->childNodes->length > 0 ) {
+			$new_list_fragment->appendChild( $new_list_node );
 		}
+
+		// Replace the list with the new, nicely formed one.
+		$node->parentNode->replaceChild( $new_list_fragment, $node );
 
 		return $node;
 	}

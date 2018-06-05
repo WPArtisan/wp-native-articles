@@ -3,8 +3,8 @@ Contributors: ozthegreat
 Donate link: https://wp-native-articles.com
 Tags: facebook, instant articles, facebook instant articles, mobile, speed, optimize, performance
 Requires at least: 4.0
-Tested up to: 4.9.4
-Stable tag: 1.5.2
+Tested up to: 4.9.6
+Stable tag: 1.5.3
 Requires PHP: 5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -149,6 +149,10 @@ through the WordPress support forum, found on the Plugin download page.
 12. Multisite options page.
 
 == Changelog ==
+
+= 1.5.3 =
+* Feature. Superior handling of images in lists
+* Fix. PHP 7.2 compatibility
 
 = 1.5.2 =
 * Fix. PHP 5.2 compatibility.

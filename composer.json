@@ -8,7 +8,7 @@
         }
     ],
     "scripts": {
-        "build": "./vendor/bin/wpartisan build && composer install -d=./build/wp-native-articles --no-dev && composer install -d=./build/wp-native-articles-pro --no-dev",
+        "build": "./vendor/bin/wpartisan build && composer install -d build/wp-native-articles --no-dev && composer install -d build/wp-native-articles-pro --no-dev",
         "php-lint": "./vendor/jakub-onderka/php-parallel-lint/parallel-lint ./build",
         "php-sniff-free": "\"vendor/bin/phpcs\" -s -p --standard=ruleset.xml --runtime-set testVersion 5.2- --extensions=php ./build/wp-native-articles",
         "php-sniff-pro": "\"vendor/bin/phpcs\" -s -p --standard=ruleset.xml --runtime-set testVersion 5.2- --extensions=php ./build/wp-native-articles-pro",

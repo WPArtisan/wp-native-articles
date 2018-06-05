@@ -180,7 +180,7 @@ class WPNA_Admin_General extends WPNA_Admin_Base implements WPNA_Admin_Interface
 		$ads            = ( wpna_switch_to_boolean( wpna_get_option( 'fbia_enable_ads' ) ) ? $enabled : $disabled );
 
 		// This is aggressively cached so is quick.
-		$transformers = wpna_get_transformers(
+		$transformers = (array) wpna_get_transformers(
 			array(
 				// @codingStandardsIgnoreLine
 				'posts_per_page' => 250,
